@@ -1,4 +1,4 @@
-package de.wacodis.sensorwebconsumer;
+package de.wacodis.sensorweb.consumer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ import de.wacodis.api.model.AbstractSubsetDefinition;
 import de.wacodis.api.model.Job;
 import de.wacodis.api.model.SensorWebSubsetDefinition;
 import de.wacodis.sensorweb.observer.ObservationObserver;
+import de.wacodis.sensorweb.scheduler.SensorWebJob;
 
 @EnableBinding(Channels.class)
 public class MessageListener {

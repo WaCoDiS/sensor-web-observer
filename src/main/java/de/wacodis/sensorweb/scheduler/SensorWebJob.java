@@ -1,4 +1,4 @@
-package de.wacodis.sensorwebconsumer;
+package de.wacodis.sensorweb.scheduler;
 
 import java.util.List;
 

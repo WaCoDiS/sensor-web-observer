@@ -1,4 +1,4 @@
-package de.wacodis.sensorwebconsumer;
+package de.wacodis.sensorweb.consumer;
 
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.messaging.SubscribableChannel;
