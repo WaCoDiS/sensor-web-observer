@@ -35,12 +35,15 @@ public class SensorWebJob implements Job{
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		
+		System.out.println("---> " + context.toString());
+		System.out.println("---> " + context.getMergedJobDataMap().size());
 		try {
 			log.info("called SensorWebJob's execute()");
 			log.info("SensorWebJob's Observer = {}", observer != null);
 			
-			observer.setDateOfLastObs(date);		//for test only
+			observer = (ObservationObserver) context.getMergedJobDataMap().get("observer");
+//			date = (DateTime) context.getMergedJobDataMap().get("date");
+			observer.setDateOfLastObs(new DateTime(2012, 11, 19, 12, 0, 0));		//for test only
 			
 			if(observer.checkForAvailableUpdates()) {
 				observer.updateObservations(observer.getDateOfNextToLastObs(), observer.getDateOfLastObs());

@@ -84,8 +84,6 @@ public class SensorWebJobScheduler {
 		}
 		observer = new ObservationObserver(N52_URL, procedures, observedProperties, offerings, featureIdentifiers);
 		
-		
-		
 	}
 
 	private Trigger prepareTrigger(Job job) {
@@ -111,7 +109,6 @@ public class SensorWebJobScheduler {
 	private void initializeScheduler() throws SchedulerException {
 		scheduler = new StdSchedulerFactory(QUARTZ_JOB_PROPERTIES).getScheduler();
 		scheduler.start();
-
 	}
 
 }
