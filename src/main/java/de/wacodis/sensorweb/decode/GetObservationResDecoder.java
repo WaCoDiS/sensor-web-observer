@@ -1,5 +1,6 @@
 package de.wacodis.sensorweb.decode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.xmlbeans.XmlException;
@@ -22,7 +23,9 @@ import org.w3.x2003.x05.soapEnvelope.Envelope;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 import net.opengis.sos.x20.GetObservationResponseDocument;
 
-public class GetObservationResDecoder {
+public class GetObservationResDecoder implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 
 	public List<OmObservation> decode(String soapResponse)
 			throws XmlException, DecodingException, OwsExceptionReport {

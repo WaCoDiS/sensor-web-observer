@@ -1,5 +1,6 @@
 package de.wacodis.sensorweb.decode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,10 @@ import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 import net.opengis.sosgda.x10.GetDataAvailabilityResponseDocument;
 
-public class GetDataAvailabilityResDecoder {
+public class GetDataAvailabilityResDecoder implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	public List<DataAvailability> decode(String soapResponse)
 			throws XmlException, DecodingException {
 		

@@ -1,5 +1,6 @@
 package de.wacodis.sensorweb.observer;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
@@ -15,8 +16,9 @@ import de.wacodis.sensorweb.encode.GetDataAvailabilityReqEncoder;
 import de.wacodis.sensorweb.encode.GetObservationReqEncoder;
 import de.wacodis.sensorweb.http.SimpleHttpPost;
 
-public class ObservationObserver {
+public class ObservationObserver implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	private List<String> procedures;
 	private List<String> observedProperties;
 	private List<String> offerings;

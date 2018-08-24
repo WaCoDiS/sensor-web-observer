@@ -1,5 +1,6 @@
 package de.wacodis.sensorweb.encode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,9 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 
-public class GetDataAvailabilityReqEncoder {
+public class GetDataAvailabilityReqEncoder implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityReqEncoder.class.getName());
 
 	public String encode(List<String> procedures, List<String> observedProperties,

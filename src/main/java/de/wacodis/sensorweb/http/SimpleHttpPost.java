@@ -4,14 +4,16 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleHttpPost {
+public class SimpleHttpPost implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleHttpPost.class.getName());
 	
 	public String doPost(String url, String payload) {

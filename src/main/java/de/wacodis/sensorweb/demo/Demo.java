@@ -24,10 +24,17 @@ import de.wacodis.sensorweb.encode.GetDataAvailabilityReqEncoder;
 import de.wacodis.sensorweb.encode.GetObservationReqEncoder;
 import de.wacodis.sensorweb.http.SimpleHttpPost;
 import de.wacodis.sensorweb.observer.ObservationObserver;
+import de.wacodis.sensorweb.scheduler.QuartzServer;
 
 public class Demo {
 	
 	public static void main(String[] args) {
+		QuartzServer jdbcQuartzServer = new QuartzServer();
+		jdbcQuartzServer.startup();
+	}
+	
+	
+//	public static void main(String[] args) {
 //		String fluggsURL = "http://fluggs.wupperverband.de/sos2/sos/soap";
 //		
 //		// parameters to identify data
@@ -53,11 +60,7 @@ public class Demo {
 //		} catch (EncodingException | DecodingException | XmlException e) {
 //			e.printStackTrace();
 //		}
-		
-		String id = "id=\"tp_663ccea4e97cf653a533f0b936d78369144d3e6c014bc2715eb971414386afeb\"";
-		id = id.replaceAll("id=\"tp_[0-9a-f]*\"", "id=\"tp_101010");
-		System.out.println(id);
-	}
+//	}
 	
 //	public static void main(String[] args) throws EncodingException, DecodingException, XmlException, OwsExceptionReport {
 //		String fluggsURL = "http://fluggs.wupperverband.de/sos2/sos/soap";

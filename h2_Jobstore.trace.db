@@ -1,0 +1,8 @@
+2018-08-23 14:45:08 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Tabelle "QRTZ_TRIGGERS" nicht gefunden
+Table "QRTZ_TRIGGERS" not found; SQL statement:
+UPDATE QRTZ_TRIGGERS SET TRIGGER_STATE = ? WHERE SCHED_NAME = 'QuartzScheduler' AND (TRIGGER_STATE = ? OR TRIGGER_STATE = ?) [42102-196]
+2018-08-23 14:46:06 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Tabelle "QRTZ_TRIGGERS" nicht gefunden
+Table "QRTZ_TRIGGERS" not found; SQL statement:
+UPDATE QRTZ_TRIGGERS SET TRIGGER_STATE = ? WHERE SCHED_NAME = 'QuartzScheduler' AND (TRIGGER_STATE = ? OR TRIGGER_STATE = ?) [42102-196]

@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>sensor-web-observer</name>
-	
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -28,7 +28,12 @@
 	</properties>
 
 	<dependencies>
-	<dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.196</version>
+		</dependency>
+		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 			<version>2.2.1</version>
@@ -73,7 +78,7 @@
 			<artifactId>spring-cloud-stream-test-support</artifactId>
 			<scope>test</scope>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-w3c-schema</artifactId>
@@ -177,7 +182,7 @@
 			<version>2.5.0</version>
 		</dependency>
 	</dependencies>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -189,7 +194,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -198,5 +203,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>
