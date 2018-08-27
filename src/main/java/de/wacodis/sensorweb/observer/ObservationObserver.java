@@ -149,8 +149,8 @@ public class ObservationObserver implements Serializable{
 		return dateOfLastObs;
 	}
 
-	public void setDateOfLastObs(DateTime timeOfLastObs) {
-		this.dateOfLastObs = timeOfLastObs;
+	public void setDateOfLastObs(DateTime dateOfLastObs) {
+		this.dateOfLastObs = dateOfLastObs;
 	}
 
 	public DateTime getDateOfNextToLastObs() {

@@ -48,16 +48,17 @@ public class SensorWebJobScheduler {
 	
 	public void scheduleJob(Job job) {
 		
-		initializeObserver(job);	//supply Observer with (sensor)job data
-		
-		log.info("Observer initialized = {}", observer != null);
+		initializeParameters(job);	//(sensor)job data
 		
 		try {
 			initializeScheduler();
 			log.info("Scheduler initialized = {}", scheduler != null);
 			
 			JobDataMap data = new JobDataMap();
-			data.put("observer", observer);
+			data.put("procedures", procedures);
+			data.put("observedProperties", observedProperties);
+			data.put("offerings", offerings);
+			data.put("featureIdentifiers", featureIdentifiers);
 			data.put("date", new DateTime(2012, 11, 19, 12, 0, 0)); // set fake past date for test
 
 			JobDetail jobDetail = prepareJob(job, data);
@@ -72,7 +73,7 @@ public class SensorWebJobScheduler {
 
 	}
 
-	private void initializeObserver(Job job) {
+	private void initializeParameters(Job job) {
 		for(AbstractSubsetDefinition subset : job.getInputs()) {
 			if(subset instanceof SensorWebSubsetDefinition) {
 				SensorWebSubsetDefinition senSubset = (SensorWebSubsetDefinition) subset;
@@ -82,8 +83,6 @@ public class SensorWebJobScheduler {
 				featureIdentifiers.add(senSubset.getFeatureOfInterest());
 			}
 		}
-		observer = new ObservationObserver(N52_URL, procedures, observedProperties, offerings, featureIdentifiers);
-		
 	}
 
 	private Trigger prepareTrigger(Job job) {

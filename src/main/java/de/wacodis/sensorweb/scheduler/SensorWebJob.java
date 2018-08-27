@@ -1,5 +1,6 @@
 package de.wacodis.sensorweb.scheduler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
@@ -27,27 +28,43 @@ public class SensorWebJob implements Job{
 	
 	private static final Logger log = LoggerFactory.getLogger(SensorWebJob.class);
 
-	
-	private ObservationObserver observer;
-	private List<OmObservation> results;
 	private DateTime date;	//fake date in past for test
+	
+	private final String FLUGGS_URL = "http://fluggs.wupperverband.de/sos2/sos/soap";
+	private final String N52_URL = "http://sensorweb.demo.52north.org/52n-sos-webapp/service";
+	
+	private List<String> procedures, observedProperties, offerings, featureIdentifiers;
+	private DateTime dateOfLastObs, dateOfNextToLastObs;
 	
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		System.out.println("---> " + context.toString());
-		System.out.println("---> " + context.getMergedJobDataMap().size());
+		procedures = (ArrayList<String>) context.getMergedJobDataMap().get("procedures");
+		observedProperties = (ArrayList<String>) context.getMergedJobDataMap().get("observedProperties");
+		offerings = (ArrayList<String>) context.getMergedJobDataMap().get("offerings");
+		featureIdentifiers = (ArrayList<String>) context.getMergedJobDataMap().get("featureIdentifiers");
+		ObservationObserver observer = new ObservationObserver(N52_URL, procedures, observedProperties, offerings, featureIdentifiers);
+
 		try {
 			log.info("called SensorWebJob's execute()");
 			log.info("SensorWebJob's Observer = {}", observer != null);
 			
-			observer = (ObservationObserver) context.getMergedJobDataMap().get("observer");
-//			date = (DateTime) context.getMergedJobDataMap().get("date");
-			observer.setDateOfLastObs(new DateTime(2012, 11, 19, 12, 0, 0));		//for test only
+			dateOfLastObs = (DateTime) context.getMergedJobDataMap().get("dateOfLastObs");
+			dateOfNextToLastObs = (DateTime) context.getMergedJobDataMap().get("dateOfNextToLastObs");
+			
+			if(dateOfLastObs != null && dateOfNextToLastObs != null) {
+				observer.setDateOfLastObs(dateOfLastObs);
+				observer.setDateOfNextToLastObs(dateOfNextToLastObs);
+			} else {
+				observer.setDateOfLastObs(new DateTime(2012, 11, 19, 12, 0, 0));		//for test only				
+			}
+			
 			
 			if(observer.checkForAvailableUpdates()) {
-				observer.updateObservations(observer.getDateOfNextToLastObs(), observer.getDateOfLastObs());
-				results = observer.getObservations();
+				dateOfLastObs = observer.getDateOfLastObs();
+				dateOfNextToLastObs = observer.getDateOfNextToLastObs();
+				observer.updateObservations(dateOfNextToLastObs, dateOfLastObs);
+				List<OmObservation> results = observer.getObservations();
 				//-->... notify broker?
 				for(OmObservation o : results) {
 					System.out.println(o.getValue().getValue());
@@ -55,10 +72,9 @@ public class SensorWebJob implements Job{
 				//<--
 			}
 			
-			date = observer.getDateOfLastObs();		//for test only
 			JobDataMap data = context.getJobDetail().getJobDataMap();
-			data.put("observer", observer);	
-			data.put("date", date);					//for test only
+			data.put("dateOfLastObs", dateOfLastObs);
+			data.put("dateOfNextToLastObs", dateOfNextToLastObs);
 			
 		} catch (EncodingException | DecodingException | XmlException e) {
 			e.printStackTrace();
@@ -66,18 +82,27 @@ public class SensorWebJob implements Job{
 		
 	}
 	
-	//autom. DI via setters by QuartzScheduler for JobDataMap-Attributes
-	
 	public void setDate(DateTime date) {		//for test only
 		this.date = date;
-		log.info("called date()");
+	}
+
+	public void setProcedures(List<String> procedures) {
+		this.procedures = procedures;
+	}
+
+	public void setObservedProperties(List<String> observedProperties) {
+		this.observedProperties = observedProperties;
+	}
+
+	public void setOfferings(List<String> offerings) {
+		this.offerings = offerings;
+	}
+
+	public void setFeatureIdentifiers(List<String> featureIdentifiers) {
+		this.featureIdentifiers = featureIdentifiers;
 	}
 	
 	
-	public void setObserver(ObservationObserver observer) {
-		this.observer = observer;
-		Log.info("called setObserver()");
-	}
 
 	
 	
