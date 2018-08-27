@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    stream:
+    #EinAusChannel
+      bindings:
+        jobCreation:
+          destination: wacodis.jobs.creation
+          binder: wacodis_rabbit
+          content-type: application/json
+      #MessageBroker
+      binders:
+        wacodis_rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: eum-dcsi.demo.52north.org
+                port: 5672
+                username: rabbitmq
+                password: rabbitmq
