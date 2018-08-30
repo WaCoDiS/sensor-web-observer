@@ -4,7 +4,7 @@ spring:
     #EinAusChannel
       bindings:
         jobCreation:
-          destination: wacodis.jobs.creation
+          destination: wacodis.jobs.creation22
           binder: wacodis_rabbit
           content-type: application/json
       #MessageBroker

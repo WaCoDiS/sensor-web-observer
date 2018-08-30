@@ -58,6 +58,7 @@ public class SensorWebJobScheduler {
 
 	private void initializeParameters(Job job, JobDataMap data) {
 		for (AbstractSubsetDefinition subset : job.getInputs()) {
+			
 			if (subset instanceof SensorWebSubsetDefinition) {
 				SensorWebSubsetDefinition senSubset = (SensorWebSubsetDefinition) subset;
 				data.put("procedures", Collections.singletonList(senSubset.getProcedure()));

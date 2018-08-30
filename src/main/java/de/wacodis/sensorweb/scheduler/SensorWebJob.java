@@ -39,10 +39,10 @@ public class SensorWebJob implements Job{
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		procedures = (ArrayList<String>) context.getMergedJobDataMap().get("procedures");
-		observedProperties = (ArrayList<String>) context.getMergedJobDataMap().get("observedProperties");
-		offerings = (ArrayList<String>) context.getMergedJobDataMap().get("offerings");
-		featureIdentifiers = (ArrayList<String>) context.getMergedJobDataMap().get("featureIdentifiers");
+		procedures = (List<String>) context.getMergedJobDataMap().get("procedures");
+		observedProperties = (List<String>) context.getMergedJobDataMap().get("observedProperties");
+		offerings = (List<String>) context.getMergedJobDataMap().get("offerings");
+		featureIdentifiers = (List<String>) context.getMergedJobDataMap().get("featureIdentifiers");
 		ObservationObserver observer = new ObservationObserver(N52_URL, procedures, observedProperties, offerings, featureIdentifiers);
 
 		try {

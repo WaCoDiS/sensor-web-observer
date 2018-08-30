@@ -15,6 +15,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import com.esotericsoftware.minlog.Log;
+
 public class SimpleHttpPost implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -27,22 +29,9 @@ public class SimpleHttpPost implements Serializable {
 		headers.set("Accept", "application/soap+xml");
 		HttpEntity<String> requestBody = new HttpEntity<>(payload, headers);
 		ResponseEntity<String> responseEntity = rest.postForEntity(url, requestBody, String.class);
-		                        
+		
+		Log.info("Response from " + url + ": " + responseEntity.getBody());
 		return responseEntity.getBody();
-	}
-
-	private String readResponse(HttpURLConnection con) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-		
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-		
-		LOG.info(response.toString());
-		return response.toString();
 	}
 
 }
