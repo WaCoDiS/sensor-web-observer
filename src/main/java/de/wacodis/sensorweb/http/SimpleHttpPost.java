@@ -10,6 +10,10 @@ import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public class SimpleHttpPost implements Serializable {
 	
@@ -17,31 +21,14 @@ public class SimpleHttpPost implements Serializable {
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleHttpPost.class.getName());
 	
 	public String doPost(String url, String payload) {
-		try {
-			URL urlObj = new URL(url);
-			HttpURLConnection con;
-			con = (HttpURLConnection) urlObj.openConnection();
-			con.setRequestMethod("POST");
-			con.setRequestProperty("Content-Type", "application/soap+xml");
-			
-			con.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes(payload);
-			wr.flush();
-			wr.close();
-			
-			int responseCode = con.getResponseCode();
-			
-			LOG.info("Sending 'POST' request to URL: " + url);
-			LOG.info("Response Code: " + responseCode + " " + con.getResponseMessage());
-			
-			String response = readResponse(con);
-			
-			return response;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return "Error occured!";
+		RestTemplate rest = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/soap+xml");
+		headers.set("Accept", "application/soap+xml");
+		HttpEntity<String> requestBody = new HttpEntity<>(payload, headers);
+		ResponseEntity<String> responseEntity = rest.postForEntity(url, requestBody, String.class);
+		                        
+		return responseEntity.getBody();
 	}
 
 	private String readResponse(HttpURLConnection con) throws IOException {

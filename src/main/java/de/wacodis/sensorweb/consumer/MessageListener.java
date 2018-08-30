@@ -2,6 +2,7 @@ package de.wacodis.sensorweb.consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 
@@ -13,6 +14,7 @@ import de.wacodis.sensorweb.scheduler.SensorWebJobScheduler;
 @EnableBinding(Channels.class)
 public class MessageListener {
 
+	@Autowired
 	private SensorWebJobScheduler jobScheduler;
 
 	private static final Logger log = LoggerFactory.getLogger(MessageListener.class);
@@ -22,7 +24,6 @@ public class MessageListener {
 		log.info("new job received \n{}", newJob);
 		
 		if(checkSensorWebSubsetDefinition(newJob)) {
-			jobScheduler = new SensorWebJobScheduler();
 			log.info("JobScheduler calls scheduleJob()");
 			jobScheduler.scheduleJob(newJob);
 		}

@@ -1,13 +1,20 @@
 package de.wacodis.sensorweb.scheduler;
 
+import java.util.Date;
+
+import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
-public class QuartzServer {
+@Component
+public class QuartzServer implements InitializingBean{
 	
 	
 	private static final Logger log = LoggerFactory.getLogger(QuartzServer.class);
@@ -18,7 +25,8 @@ public class QuartzServer {
 	private Scheduler scheduler;
 	private SchedulerFactory schedulerFactory;
 	
-	public void startup() {
+	@Override
+	public void afterPropertiesSet() {
 		try {
 			schedulerFactory = new StdSchedulerFactory(QUARTZ_PROPERTIES);
 			scheduler = schedulerFactory.getScheduler();
@@ -31,5 +39,10 @@ public class QuartzServer {
 			e.printStackTrace();
 		}
 	}
+	
+	public Date scheduleJob(JobDetail jobDetail, Trigger trigger) throws SchedulerException {
+		return this.scheduler.scheduleJob(jobDetail, trigger);
+	}
+	
 
 }

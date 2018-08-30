@@ -1,4 +1,4 @@
-package de.wacodis.sensorweb.consumer;
+package de.wacodis.sensorweb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

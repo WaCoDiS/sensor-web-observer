@@ -77,7 +77,7 @@ public class SensorWebJob implements Job{
 			data.put("dateOfNextToLastObs", dateOfNextToLastObs);
 			
 		} catch (EncodingException | DecodingException | XmlException e) {
-			e.printStackTrace();
+			log.info(e.getMessage(), e);
 		}
 		
 	}
