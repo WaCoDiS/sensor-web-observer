@@ -20,6 +20,7 @@ import de.wacodis.api.model.AbstractSubsetDefinition;
 import de.wacodis.api.model.Job;
 import de.wacodis.api.model.SensorWebSubsetDefinition;
 import de.wacodis.sensorweb.observer.ObservationObserver;
+import de.wacodis.sensorweb.publisher.PublishChannels;
 
 @Component
 public class SensorWebJobScheduler {
@@ -31,6 +32,9 @@ public class SensorWebJobScheduler {
 
 	@Autowired
 	private QuartzServer scheduler;
+	
+	@Autowired
+	private PublishChannels publisher;
 
 	public SensorWebJobScheduler() {
 	}
@@ -42,8 +46,10 @@ public class SensorWebJobScheduler {
 
 			JobDataMap data = new JobDataMap();
 			initializeParameters(job, data);
-			data.put("date", new DateTime(2012, 11, 19, 12, 0, 0)); // set fake past date for test
-
+			data.put("date", new DateTime(2018, 3, 28, 4, 0, 0)); // set fake past date for test
+			data.put("publisher", publisher);
+			
+			
 			JobDetail jobDetail = prepareJob(job, data);
 
 			Trigger trigger = prepareTrigger(job);
@@ -79,8 +85,10 @@ public class SensorWebJobScheduler {
 
 	private JobDetail prepareJob(Job job, JobDataMap data) {
 		log.info("preparing Job, observer in jobDataMap = {}", data.get("observer"));
+		
 		return JobBuilder.newJob(SensorWebJob.class).withIdentity(job.getId(), job.getName()).usingJobData(data)
 				.build();
+		
 	}
 
 }

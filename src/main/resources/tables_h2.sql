@@ -4,7 +4,7 @@
 --
 -- In your Quartz properties file, you'll need to set 
 -- org.quartz.jobStore.driverDelegateClass = org.quartz.impl.jdbcjobstore.StdJDBCDelegate
-DROP ALL OBJECTS;
+DROP ALL OBJECTS; 	
 
 
 CREATE TABLE QRTZ_CALENDARS (

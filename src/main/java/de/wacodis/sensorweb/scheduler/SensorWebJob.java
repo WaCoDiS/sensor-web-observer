@@ -1,11 +1,9 @@
 package de.wacodis.sensorweb.scheduler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlException;
 import org.joda.time.DateTime;
-import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.quartz.DisallowConcurrentExecution;
@@ -16,10 +14,13 @@ import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.integration.support.MessageBuilder;
 
-import com.esotericsoftware.minlog.Log;
-
+import de.wacodis.sensorweb.data_envelope.AbstractDataEnvelope.SourceTypeEnum;
+import de.wacodis.sensorweb.data_envelope.SensorWebDataEnvelope;
+import de.wacodis.sensorweb.http.SimpleHttpPost;
 import de.wacodis.sensorweb.observer.ObservationObserver;
+import de.wacodis.sensorweb.publisher.PublishChannels;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
@@ -27,15 +28,16 @@ public class SensorWebJob implements Job{
 	
 	
 	private static final Logger log = LoggerFactory.getLogger(SensorWebJob.class);
-
-	private DateTime date;	//fake date in past for test
 	
 	private final String FLUGGS_URL = "http://fluggs.wupperverband.de/sos2/sos/soap";
-	private final String N52_URL = "http://sensorweb.demo.52north.org/52n-sos-webapp/service";
+//	private final String N52_URL = "http://sensorweb.demo.52north.org/52n-sos-webapp/service";
+	private final String N52_URL = "http://sensorweb.demo.52north.org/sensorwebtestbed/service";
+	private final String PUBLISH_URL = "http://localhost:8080/pub";
+	
 	
 	private List<String> procedures, observedProperties, offerings, featureIdentifiers;
 	private DateTime dateOfLastObs, dateOfNextToLastObs;
-	
+	private SimpleHttpPost post;
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -56,7 +58,7 @@ public class SensorWebJob implements Job{
 				observer.setDateOfLastObs(dateOfLastObs);
 				observer.setDateOfNextToLastObs(dateOfNextToLastObs);
 			} else {
-				observer.setDateOfLastObs(new DateTime(2012, 11, 19, 12, 0, 0));		//for test only				
+				observer.setDateOfLastObs(new DateTime(2018, 3, 28, 4, 0, 0));		//for test only				
 			}
 			
 			
@@ -64,12 +66,23 @@ public class SensorWebJob implements Job{
 				dateOfLastObs = observer.getDateOfLastObs();
 				dateOfNextToLastObs = observer.getDateOfNextToLastObs();
 				observer.updateObservations(dateOfNextToLastObs, dateOfLastObs);
-				List<OmObservation> results = observer.getObservations();
-				//-->... notify broker?
-				for(OmObservation o : results) {
-					System.out.println(o.getValue().getValue());
-				}
-				//<--
+				
+				//Build SensorWebDataEnvelope
+				SensorWebDataEnvelope dataEnvelope = new SensorWebDataEnvelope();
+				dataEnvelope.setServiceUrl(observer.getUrl());
+				dataEnvelope.setOffering(observer.getOfferings().get(0));
+				dataEnvelope.setFeatureOfInterest(observer.getFeatureIdentifiers().get(0));
+				dataEnvelope.setObservedProperty(observer.getObservedProperties().get(0));
+				dataEnvelope.setProcedure(observer.getProcedures().get(0));
+				dataEnvelope.setSourceType(SourceTypeEnum.SENSORWEBDATAENVELOPE);
+				
+				//http->localhost:8080/pub
+				log.info("POST = {}", post);
+				log.info("dataEnvelope = {}", dataEnvelope.toString());
+				PublishChannels pub = (PublishChannels) context.getMergedJobDataMap().get("publisher");
+				publish(pub, dataEnvelope);
+				
+				
 			}
 			
 			JobDataMap data = context.getJobDetail().getJobDataMap();
@@ -82,8 +95,10 @@ public class SensorWebJob implements Job{
 		
 	}
 	
-	public void setDate(DateTime date) {		//for test only
-		this.date = date;
+	public SensorWebDataEnvelope publish(PublishChannels pub, SensorWebDataEnvelope data) {
+		pub.sendDataEnvelope().send(MessageBuilder.withPayload(data).build());
+		log.info("Published: \n{}", data);
+		return data;
 	}
 
 	public void setProcedures(List<String> procedures) {
@@ -101,9 +116,5 @@ public class SensorWebJob implements Job{
 	public void setFeatureIdentifiers(List<String> featureIdentifiers) {
 		this.featureIdentifiers = featureIdentifiers;
 	}
-	
-	
-
-	
 	
 }

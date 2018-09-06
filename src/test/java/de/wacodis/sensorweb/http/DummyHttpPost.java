@@ -5,6 +5,10 @@ import de.wacodis.sensorweb.util.SimpleFileReader;
 
 public class DummyHttpPost extends SimpleHttpPost{
 	
+	public DummyHttpPost(String contentType, String accept) {
+		super(contentType, accept);
+	}
+
 	private boolean isGetDataAvailability = false;
 	private boolean isGetObservation = false;
 	

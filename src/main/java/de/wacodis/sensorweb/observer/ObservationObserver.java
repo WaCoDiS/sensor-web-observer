@@ -49,7 +49,7 @@ public class ObservationObserver implements Serializable{
 		this.availabilityEncoder = new GetDataAvailabilityReqEncoder();
 		this.observationDecoder = new GetObservationResDecoder();
 		this.availabilityDecoder = new GetDataAvailabilityResDecoder();
-		this.post = new SimpleHttpPost();
+		this.post = new SimpleHttpPost("application/soap+xml", "application/soap+xml");
 		initalize();
 	}
 	

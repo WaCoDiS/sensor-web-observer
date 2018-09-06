@@ -30,7 +30,7 @@ public class ObservationObserverTest {
 		List<String> offerings = Lists.newArrayList("Zeitreihen_Einzelwert");
 		List<String> featureIdentifiers = Lists.newArrayList("Laaken");
 		
-		DummyHttpPost post = new DummyHttpPost();
+		DummyHttpPost post = new DummyHttpPost("application/soap+xml", "application/soap+xml");
 		post.setGetDataAvailability(true);
 
 		ObservationObserver observer = new ObservationObserver(url, procedures, observedProperties, offerings, featureIdentifiers);
@@ -55,7 +55,7 @@ public class ObservationObserverTest {
 		DateTime start = new DateTime(2018, 3, 3, 0, 0, 0);
 		DateTime end = new DateTime(2018, 3, 3, 12, 0, 0);
 		
-		DummyHttpPost post = new DummyHttpPost();
+		DummyHttpPost post = new DummyHttpPost("application/soap+xml", "application/soap+xml");
 		post.setGetObservation(true);
 
 		ObservationObserver observer = new ObservationObserver(url, procedures, observedProperties, offerings,
