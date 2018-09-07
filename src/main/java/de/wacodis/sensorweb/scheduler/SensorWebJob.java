@@ -12,12 +12,13 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.integration.support.MessageBuilder;
 
-import de.wacodis.sensorweb.data_envelope.AbstractDataEnvelope.SourceTypeEnum;
-import de.wacodis.sensorweb.data_envelope.SensorWebDataEnvelope;
+import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
+import de.wacodis.dataaccess.model.AbstractDataEnvelope.SourceTypeEnum;
 import de.wacodis.sensorweb.http.SimpleHttpPost;
 import de.wacodis.sensorweb.observer.ObservationObserver;
 import de.wacodis.sensorweb.publisher.PublishChannels;
@@ -37,7 +38,6 @@ public class SensorWebJob implements Job{
 	
 	private List<String> procedures, observedProperties, offerings, featureIdentifiers;
 	private DateTime dateOfLastObs, dateOfNextToLastObs;
-	private SimpleHttpPost post;
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -76,20 +76,18 @@ public class SensorWebJob implements Job{
 				dataEnvelope.setProcedure(observer.getProcedures().get(0));
 				dataEnvelope.setSourceType(SourceTypeEnum.SENSORWEBDATAENVELOPE);
 				
-				//http->localhost:8080/pub
-				log.info("POST = {}", post);
+				
+				
 				log.info("dataEnvelope = {}", dataEnvelope.toString());
-				PublishChannels pub = (PublishChannels) context.getMergedJobDataMap().get("publisher");
+				PublishChannels pub = (PublishChannels) context.getScheduler().getContext().get(QuartzServer.PUBLISHER);
 				publish(pub, dataEnvelope);
-				
-				
 			}
 			
 			JobDataMap data = context.getJobDetail().getJobDataMap();
 			data.put("dateOfLastObs", dateOfLastObs);
 			data.put("dateOfNextToLastObs", dateOfNextToLastObs);
 			
-		} catch (EncodingException | DecodingException | XmlException e) {
+		} catch (EncodingException | DecodingException | XmlException | SchedulerException e) {
 			log.info(e.getMessage(), e);
 		}
 		

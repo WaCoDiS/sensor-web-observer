@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 
-public interface PublishChannels extends Serializable{
+public interface PublishChannels {
 	
 	String DATAENVELOPE_OUTPUT = "outputDataEnvelope";
 	

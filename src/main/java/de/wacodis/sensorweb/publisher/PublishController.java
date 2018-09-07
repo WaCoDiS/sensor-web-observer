@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.wacodis.sensorweb.data_envelope.SensorWebDataEnvelope;
+import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
 
 @RestController
 public class PublishController{

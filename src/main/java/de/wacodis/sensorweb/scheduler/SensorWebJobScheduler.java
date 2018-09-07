@@ -33,9 +33,6 @@ public class SensorWebJobScheduler {
 	@Autowired
 	private QuartzServer scheduler;
 	
-	@Autowired
-	private PublishChannels publisher;
-
 	public SensorWebJobScheduler() {
 	}
 
@@ -47,14 +44,13 @@ public class SensorWebJobScheduler {
 			JobDataMap data = new JobDataMap();
 			initializeParameters(job, data);
 			data.put("date", new DateTime(2018, 3, 28, 4, 0, 0)); // set fake past date for test
-			data.put("publisher", publisher);
 			
 			
 			JobDetail jobDetail = prepareJob(job, data);
 
 			Trigger trigger = prepareTrigger(job);
 
-			scheduler.scheduleJob(jobDetail, trigger); // execute SensorWebJob's execute()
+			scheduler.scheduleJob(jobDetail, trigger); 
 
 		} catch (SchedulerException e) {
 			e.printStackTrace();
