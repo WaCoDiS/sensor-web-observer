@@ -28,6 +28,7 @@ public class ObservationObserver implements Serializable{
 	private List<OmObservation> observations;
 	private DateTime dateOfLastObs;
 	private DateTime dateOfNextToLastObs;
+	private DateTime dateOfFirstObs;
 	
 	private GetObservationReqEncoder observationEncoder;
 	private GetDataAvailabilityReqEncoder availabilityEncoder;
@@ -62,6 +63,7 @@ public class ObservationObserver implements Serializable{
 		try {
 			String request = availabilityEncoder.encode(procedures, observedProperties, offerings, featureIdentifiers);
 			String response = post.doPost(url, request);
+			dateOfFirstObs = availabilityDecoder.decode(response).get(0).getPhenomenonTime().getStart();
 			dateOfLastObs = availabilityDecoder.decode(response).get(0).getPhenomenonTime().getEnd();
 			dateOfNextToLastObs = dateOfLastObs;
 		} catch (EncodingException | DecodingException | XmlException e) {
@@ -183,6 +185,14 @@ public class ObservationObserver implements Serializable{
 	
 	public void setPost(SimpleHttpPost post) {
 		this.post = post;
+	}
+	
+	public DateTime getDateOfFirstObs() {
+		return dateOfFirstObs;
+	}
+	
+	public void setDateOfFirstObs(DateTime dateOfFirstObs) {
+		this.dateOfFirstObs = dateOfFirstObs;
 	}
 	
 	

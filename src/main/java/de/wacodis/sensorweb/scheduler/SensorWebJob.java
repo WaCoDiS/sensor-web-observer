@@ -19,7 +19,8 @@ import org.springframework.integration.support.MessageBuilder;
 
 import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
 import de.wacodis.dataaccess.model.AbstractDataEnvelope.SourceTypeEnum;
-import de.wacodis.sensorweb.http.SimpleHttpPost;
+import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.dataaccess.model.AbstractDataEnvelopeTimeFrame;
 import de.wacodis.sensorweb.observer.ObservationObserver;
 import de.wacodis.sensorweb.publisher.PublishChannels;
 
@@ -38,6 +39,7 @@ public class SensorWebJob implements Job{
 	
 	private List<String> procedures, observedProperties, offerings, featureIdentifiers;
 	private DateTime dateOfLastObs, dateOfNextToLastObs;
+	
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -75,7 +77,15 @@ public class SensorWebJob implements Job{
 				dataEnvelope.setObservedProperty(observer.getObservedProperties().get(0));
 				dataEnvelope.setProcedure(observer.getProcedures().get(0));
 				dataEnvelope.setSourceType(SourceTypeEnum.SENSORWEBDATAENVELOPE);
+				dataEnvelope.setAreaOfInterest(new AbstractDataEnvelopeAreaOfInterest().extent((List<Float>) context.getMergedJobDataMap().get("extent")));
+
+				dataEnvelope.setModified(observer.getDateOfLastObs());
+				dataEnvelope.setCreated(observer.getDateOfFirstObs());
 				
+				AbstractDataEnvelopeTimeFrame timeFrame = new AbstractDataEnvelopeTimeFrame();
+				timeFrame.setStartTime(observer.getDateOfFirstObs());
+				timeFrame.setEndTime(dateOfLastObs);
+				dataEnvelope.setTimeFrame(timeFrame);
 				
 				
 				log.info("dataEnvelope = {}", dataEnvelope.toString());

@@ -43,9 +43,10 @@ public class SensorWebJobScheduler {
 
 			JobDataMap data = new JobDataMap();
 			initializeParameters(job, data);
+			
 			data.put("date", new DateTime(2018, 3, 28, 4, 0, 0)); // set fake past date for test
-			
-			
+
+			data.put("extent", job.getAreaOfInterest().getExtent());
 			JobDetail jobDetail = prepareJob(job, data);
 
 			Trigger trigger = prepareTrigger(job);
