@@ -67,7 +67,7 @@ public class SensorWebJob implements Job{
 			if(observer.checkForAvailableUpdates()) {
 				dateOfLastObs = observer.getDateOfLastObs();
 				dateOfNextToLastObs = observer.getDateOfNextToLastObs();
-				observer.updateObservations(dateOfNextToLastObs, dateOfLastObs);
+//				observer.updateObservations(dateOfNextToLastObs, dateOfLastObs);
 				
 				//Build SensorWebDataEnvelope
 				SensorWebDataEnvelope dataEnvelope = new SensorWebDataEnvelope();
