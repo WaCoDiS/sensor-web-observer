@@ -1,21 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.wacodis.sensorweb</groupId>
-	<artifactId>sensor-web-observer</artifactId>
+	<groupId>de.wacodis</groupId>
+	<artifactId>datasource-observer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
+	<name>WaCoDiS datasource-observer</name>
 
-	<name>sensor-web-observer</name>
+	<modules>
+		<module>sensor-web-observer</module>
+		<module>datasource-observer-app</module>
+		<module>datasource-observer-core</module>
+	</modules>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.4.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,167 +24,27 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<version.arctic-sea>5.0.0</version.arctic-sea>
 		<spring-cloud.version>Finchley.SR1</spring-cloud.version>
+		<spring-boot.version>2.0.4.RELEASE</spring-boot.version>
 		<java.version>1.8</java.version>
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.4.196</version>
-		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz-jobs</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>de.wacodis</groupId>
-			<artifactId>data-models</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-amqp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-test-support</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>52n-w3c-schema</artifactId>
-			<version>2.5.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>iceland</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>faroe</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>faroe-annotations</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>faroe-utils</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>faroe-json</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>svalbard</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>svalbard-xmlstream</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>svalbard-json</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>svalbard-json-common</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>svalbard-exi</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>svalbard-xmlbeans</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>svalbard-odata</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>shetland</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.arctic-sea</groupId>
-			<artifactId>janmayen</artifactId>
-			<version>${version.arctic-sea}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>52n-xml-sos-v20</artifactId>
-			<version>2.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.25</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.2.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>52n-xml-soap-v12</artifactId>
-			<version>2.5.0</version>
-		</dependency>
-	</dependencies>
-
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>de.wacodis</groupId>
+				<artifactId>data-models</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			
+			<dependency>
+				<!-- Import dependency management from Spring Boot -->
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>2.0.4.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
@@ -192,16 +52,172 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>1.4.196</version>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz-jobs</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework.boot</groupId> -->
+<!-- 				<artifactId>spring-boot-starter-amqp</artifactId> -->
+<!-- 				<version>2.0.4.RELEASE</version> -->
+<!-- 			</dependency> -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework.boot</groupId> -->
+<!-- 				<artifactId>spring-boot-starter-web</artifactId> -->
+<!-- 				<version>2.0.4.RELEASE</version> -->
+<!-- 			</dependency> -->
+
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework.boot</groupId> -->
+<!-- 				<artifactId>spring-boot-starter-test</artifactId> -->
+<!-- 				<version>${spring-starter.version}</version> -->
+<!-- 				<scope>test</scope> -->
+<!-- 			</dependency> -->
+
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework.cloud</groupId> -->
+<!-- 				<artifactId>spring-cloud-starter</artifactId> -->
+<!-- 				<version>2.0.4.RELEASE</version> -->
+<!-- 			</dependency> -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework.cloud</groupId> -->
+<!-- 				<artifactId>spring-cloud-stream</artifactId> -->
+<!-- 				<version>2.0.4.RELEASE</version> -->
+<!-- 			</dependency> -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework.cloud</groupId> -->
+<!-- 				<artifactId>spring-cloud-stream-binder-rabbit</artifactId> -->
+<!-- 				<version>${spring-starter.version}</version> -->
+<!-- 			</dependency> -->
+
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework.cloud</groupId> -->
+<!-- 				<artifactId>spring-cloud-stream-test-support</artifactId> -->
+<!-- 				<version>${spring-starter.version}</version> -->
+<!-- 				<scope>test</scope> -->
+<!-- 			</dependency> -->
+
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>52n-w3c-schema</artifactId>
+				<version>2.5.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>52n-xml-sos-v20</artifactId>
+				<version>2.5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>52n-xml-soap-v12</artifactId>
+				<version>2.5.0</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>iceland</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>faroe</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>faroe-annotations</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>faroe-utils</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>faroe-json</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>svalbard</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>svalbard-xmlstream</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>svalbard-json</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>svalbard-json-common</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>svalbard-exi</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>svalbard-xmlbeans</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>svalbard-odata</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>shetland</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.arctic-sea</groupId>
+				<artifactId>janmayen</artifactId>
+				<version>${version.arctic-sea}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.25</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.2.3</version>
+			</dependency>
+			
+			<!-- Test-Scope -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+				<scope>test</scope>
+			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
