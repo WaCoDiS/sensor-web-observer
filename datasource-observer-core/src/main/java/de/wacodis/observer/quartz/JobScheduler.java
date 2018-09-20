@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.api.model.Job;
 import de.wacodis.observer.core.JobFactory;
 
 @Component
@@ -26,7 +26,7 @@ public class JobScheduler {
 	public JobScheduler() {
 	}
 
-	public void scheduleJob(WacodisJobDefinition job, JobFactory factory) {
+	public void scheduleJob(Job job, JobFactory factory) {
 		try {
 			
 			JobDataMap data = new JobDataMap();
@@ -45,10 +45,10 @@ public class JobScheduler {
 		}
 	}
 
-	private Trigger prepareTrigger(WacodisJobDefinition job) {
+	private Trigger prepareTrigger(Job job) {
 		log.info("Build new Trigger");
 		return TriggerBuilder.newTrigger()
-				.withIdentity(job.getId().toString(), job.getName())
+				.withIdentity(job.getId(), job.getName())
 				.startNow()
 				.withSchedule(SimpleScheduleBuilder
 						.simpleSchedule().repeatForever()

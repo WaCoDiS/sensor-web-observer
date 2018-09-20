@@ -8,7 +8,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.api.model.Job;
 
 @Component
 public class NewJobHandler implements InitializingBean {
@@ -24,7 +24,7 @@ public class NewJobHandler implements InitializingBean {
 	 * @param job - Instance of new Job
 	 * @return corresponding JobFactory to job's inputDefinition
 	 */
-	public JobFactory receiveJob(WacodisJobDefinition job) {
+	public JobFactory receiveJob(Job job) {
 		JobFactory candidate = null;
 		for(JobFactory jobFactory : jobFactories) {
 			if(jobFactory.supportsJobDefinition(job)) {

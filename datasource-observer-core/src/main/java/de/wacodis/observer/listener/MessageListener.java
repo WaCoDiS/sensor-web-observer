@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.api.model.Job;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.core.NewJobHandler;
 import de.wacodis.observer.quartz.JobScheduler;
@@ -23,7 +23,7 @@ public class MessageListener {
 	private static final Logger log = LoggerFactory.getLogger(MessageListener.class);
 
 	@StreamListener(ListenerChannel.JOBCREATION_INPUT)
-	public void receiveNewJob(WacodisJobDefinition newJob) {
+	public void receiveNewJob(Job newJob) {
 		log.info("New job received:\n{}", newJob);
 		
 		JobFactory factory = newJobHandler.receiveJob(newJob);
