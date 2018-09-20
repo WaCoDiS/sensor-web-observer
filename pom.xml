@@ -35,7 +35,7 @@
 				<artifactId>data-models</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
-			
+
 			<dependency>
 				<!-- Import dependency management from Spring Boot -->
 				<groupId>org.springframework.boot</groupId>
@@ -44,7 +44,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
@@ -52,7 +52,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.datatype</groupId>
+				<artifactId>jackson-datatype-joda</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+
 			<dependency>
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
@@ -68,47 +74,6 @@
 				<artifactId>quartz-jobs</artifactId>
 				<version>2.2.1</version>
 			</dependency>
-
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework.boot</groupId> -->
-<!-- 				<artifactId>spring-boot-starter-amqp</artifactId> -->
-<!-- 				<version>2.0.4.RELEASE</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework.boot</groupId> -->
-<!-- 				<artifactId>spring-boot-starter-web</artifactId> -->
-<!-- 				<version>2.0.4.RELEASE</version> -->
-<!-- 			</dependency> -->
-
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework.boot</groupId> -->
-<!-- 				<artifactId>spring-boot-starter-test</artifactId> -->
-<!-- 				<version>${spring-starter.version}</version> -->
-<!-- 				<scope>test</scope> -->
-<!-- 			</dependency> -->
-
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework.cloud</groupId> -->
-<!-- 				<artifactId>spring-cloud-starter</artifactId> -->
-<!-- 				<version>2.0.4.RELEASE</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework.cloud</groupId> -->
-<!-- 				<artifactId>spring-cloud-stream</artifactId> -->
-<!-- 				<version>2.0.4.RELEASE</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework.cloud</groupId> -->
-<!-- 				<artifactId>spring-cloud-stream-binder-rabbit</artifactId> -->
-<!-- 				<version>${spring-starter.version}</version> -->
-<!-- 			</dependency> -->
-
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.springframework.cloud</groupId> -->
-<!-- 				<artifactId>spring-cloud-stream-test-support</artifactId> -->
-<!-- 				<version>${spring-starter.version}</version> -->
-<!-- 				<scope>test</scope> -->
-<!-- 			</dependency> -->
 
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
@@ -126,7 +91,7 @@
 				<artifactId>52n-xml-soap-v12</artifactId>
 				<version>2.5.0</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.n52.arctic-sea</groupId>
 				<artifactId>iceland</artifactId>
@@ -197,7 +162,7 @@
 				<artifactId>janmayen</artifactId>
 				<version>${version.arctic-sea}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
@@ -208,7 +173,7 @@
 				<artifactId>logback-classic</artifactId>
 				<version>1.2.3</version>
 			</dependency>
-			
+
 			<!-- Test-Scope -->
 			<dependency>
 				<groupId>junit</groupId>
@@ -216,7 +181,7 @@
 				<version>4.12</version>
 				<scope>test</scope>
 			</dependency>
-			
+
 		</dependencies>
 	</dependencyManagement>
 

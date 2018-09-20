@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class SensorwebConsumerApplication {
+public class DatasourceObserverApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SensorwebConsumerApplication.class, args);
+		SpringApplication.run(DatasourceObserverApplication.class, args);
 	}
 }

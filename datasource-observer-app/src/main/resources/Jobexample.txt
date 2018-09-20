@@ -1,0 +1,21 @@
+# SensorWebJob-Example for datasourceObserver
+
+{
+    "id": "38400000-8cf0-11bd-b23e-10b96e4ef00d",
+    "name": "test-jobName",
+    "description": "test-jobDescription",
+    "useCase": "test-useCase",
+    "created": "2018-08-20T14:15:19.048+02:00",
+    "timeInterval": "10",
+    "areaOfInterest": {
+        "extent": [0.0, 0.0, 1.0, 1.0]
+    },
+    "processingTool": "test-processingTool",
+    "inputs": [ {
+        "sourceType": "SensorWebSubsetDefinition",
+        "offering": "wxt520",
+        "featureOfInterest": "Vaisala-WXT520",
+        "observedProperty": "AirTemperature",
+        "procedure": "wxt520"
+    }]
+}
