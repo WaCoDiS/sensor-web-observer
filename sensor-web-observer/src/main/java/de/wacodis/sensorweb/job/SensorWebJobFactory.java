@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import de.wacodis.api.model.AbstractSubsetDefinition;
-import de.wacodis.api.model.Job;
 import de.wacodis.api.model.SensorWebSubsetDefinition;
+import de.wacodis.api.model.WacodisJobDefinition;
 import de.wacodis.observer.core.JobFactory;
 
 @Component
@@ -21,7 +21,7 @@ public class SensorWebJobFactory implements JobFactory {
 	private static final Logger log = LoggerFactory.getLogger(SensorWebJobFactory.class);
 
 	@Override
-	public boolean supportsJobDefinition(Job job) {
+	public boolean supportsJobDefinition(WacodisJobDefinition job) {
 		Optional<AbstractSubsetDefinition> sweDefs = job.getInputs().stream()
 				.filter(in -> in instanceof SensorWebSubsetDefinition).findAny();
 
@@ -29,7 +29,7 @@ public class SensorWebJobFactory implements JobFactory {
 	}
 
 	@Override
-	public void initializeParameters(Job job, JobDataMap data) {
+	public void initializeParameters(WacodisJobDefinition job, JobDataMap data) {
 		for (AbstractSubsetDefinition subset : job.getInputs()) {
 			if (subset instanceof SensorWebSubsetDefinition) {
 				SensorWebSubsetDefinition senSubset = (SensorWebSubsetDefinition) subset;
@@ -42,11 +42,11 @@ public class SensorWebJobFactory implements JobFactory {
 	}
 
 	@Override
-	public JobDetail prepareJob(Job job, JobDataMap data) {
+	public JobDetail prepareJob(WacodisJobDefinition job, JobDataMap data) {
 		log.info("Preparing JobDetail");
 
 		return JobBuilder.newJob(SensorWebJob.class)
-				.withIdentity(job.getId(), job.getName())
+				.withIdentity(job.getId().toString(), job.getName())
 				.usingJobData(data)
 				.build();
 	}

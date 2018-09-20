@@ -3,7 +3,7 @@ package de.wacodis.observer.core;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 
-import de.wacodis.api.model.Job;
+import de.wacodis.api.model.WacodisJobDefinition;
 
 /**
  * Factory-Pattern Interface for SubsetDefinitionJobs
@@ -15,14 +15,14 @@ public interface JobFactory {
 	 * @param job - Instance of a new Job
 	 * @return true if job's inputDefinition is supported
 	 */
-	boolean supportsJobDefinition(Job job);
+	boolean supportsJobDefinition(WacodisJobDefinition job);
 	
 	/**
 	 * Pack business logic data into JobDataMap's data package
 	 * @param job - Instance of a new Job
 	 * @param data - Contains the business logic
 	 */
-	void initializeParameters(Job job, JobDataMap data);
+	void initializeParameters(WacodisJobDefinition job, JobDataMap data);
 
 	/**
 	 * Build new JobDetail
@@ -30,5 +30,5 @@ public interface JobFactory {
 	 * @param data - Contains the business logic
 	 * @return JobDetail using job's data within JobDataMap
 	 */
-	JobDetail prepareJob(Job job, JobDataMap data);
+	JobDetail prepareJob(WacodisJobDefinition job, JobDataMap data);
 }
