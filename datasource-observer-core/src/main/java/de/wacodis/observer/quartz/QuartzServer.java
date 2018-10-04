@@ -1,6 +1,8 @@
 package de.wacodis.observer.quartz;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.Properties;
 
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -21,7 +23,8 @@ public class QuartzServer implements InitializingBean {
 
 	private static final Logger log = LoggerFactory.getLogger(QuartzServer.class);
 
-	private final String QUARTZ_PROPERTIES = "src/main/resources/quartzServer.properties";
+//	private final String QUARTZ_PROPERTIES = "src/main/resources/quartzServer.properties";
+	private final String QUARTZ_PROPERTIES = "/quartzServer.properties";
 	public static final String PUBLISHER = "PUBLISHER";
 
 	private Scheduler scheduler;
@@ -33,7 +36,11 @@ public class QuartzServer implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() {
 		try {
-			schedulerFactory = new StdSchedulerFactory(QUARTZ_PROPERTIES);
+			Properties props = new Properties();
+			props.load(getClass().getResourceAsStream(QUARTZ_PROPERTIES));
+			
+//			schedulerFactory = new StdSchedulerFactory(QUARTZ_PROPERTIES);
+			schedulerFactory = new StdSchedulerFactory(props);
 			scheduler = schedulerFactory.getScheduler();
 
 			scheduler.getContext().put(PUBLISHER, publisher);
@@ -41,7 +48,7 @@ public class QuartzServer implements InitializingBean {
 			log.info("QuartzServer starts");
 			scheduler.start();
 
-		} catch (SchedulerException e) {
+		} catch (SchedulerException | IOException e) {
 			log.warn(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
