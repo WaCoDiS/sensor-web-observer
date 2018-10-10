@@ -38,7 +38,7 @@ public class ObservationObserverTest {
 		observer.setPost(post);
 		
 		try {
-			boolean value = observer.checkForAvailableUpdates();
+			boolean value = observer.checkForAvailableUpdates(new DateTime(2018, 8, 3, 0, 0, 0));
 			assertTrue(value);
 		} catch (EncodingException | DecodingException | XmlException e) {
 			e.printStackTrace();

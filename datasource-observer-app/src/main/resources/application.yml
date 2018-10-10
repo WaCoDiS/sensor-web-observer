@@ -1,4 +1,7 @@
 spring:
+  profiles:
+    #valid profiles: docker, dev
+    active: dev
   cloud:
     stream:
     #EinAusChannel
@@ -22,3 +25,6 @@ spring:
                 port: 5672
                 username: rabbitmq
                 password: rabbitmq
+execution:
+    interval:
+        sensorWeb: 30

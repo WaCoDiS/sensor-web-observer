@@ -16,15 +16,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import de.wacodis.observer.config.ProfileConfig;
 import de.wacodis.observer.publisher.PublisherChannel;
 
 @Component
 public class QuartzServer implements InitializingBean {
 
 	private static final Logger log = LoggerFactory.getLogger(QuartzServer.class);
-
-//	private final String QUARTZ_PROPERTIES = "src/main/resources/quartzServer.properties";
-	private final String QUARTZ_PROPERTIES = "/quartzServer.properties";
+	
 	public static final String PUBLISHER = "PUBLISHER";
 
 	private Scheduler scheduler;
@@ -35,12 +34,25 @@ public class QuartzServer implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() {
+		
+		final String QUARTZ_PROPERTIES;
+		
 		try {
+			if(ProfileConfig.activeProfile.equalsIgnoreCase("docker")) {
+				QUARTZ_PROPERTIES = "/quartzServer-docker.properties";
+			}
+			else if(ProfileConfig.activeProfile.equalsIgnoreCase("dev")) {
+				QUARTZ_PROPERTIES = "/quartzServer-dev.properties";
+			}
+			else {
+				QUARTZ_PROPERTIES = null;
+				// throw execption
+			}
+			
 			Properties props = new Properties();
 			props.load(getClass().getResourceAsStream(QUARTZ_PROPERTIES));
-			
-//			schedulerFactory = new StdSchedulerFactory(QUARTZ_PROPERTIES);
 			schedulerFactory = new StdSchedulerFactory(props);
+			
 			scheduler = schedulerFactory.getScheduler();
 
 			scheduler.getContext().put(PUBLISHER, publisher);

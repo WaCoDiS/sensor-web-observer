@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import de.wacodis.api.model.AbstractSubsetDefinition;
 import de.wacodis.api.model.SensorWebSubsetDefinition;
 import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.config.ExecutionIntervalConfig;
 import de.wacodis.observer.core.JobFactory;
 
 @Component
@@ -37,6 +38,7 @@ public class SensorWebJobFactory implements JobFactory {
 				data.put("observedProperties", Collections.singletonList(senSubset.getObservedProperty()));
 				data.put("offerings", Collections.singletonList(senSubset.getOffering()));
 				data.put("featureIdentifiers", Collections.singletonList(senSubset.getFeatureOfInterest()));
+				data.put("executionInterval", ExecutionIntervalConfig.sensorWeb);
 			}
 		}
 	}

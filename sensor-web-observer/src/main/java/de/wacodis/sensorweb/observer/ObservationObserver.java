@@ -16,7 +16,7 @@ import de.wacodis.sensorweb.decode.GetObservationResDecoder;
 import de.wacodis.sensorweb.encode.GetDataAvailabilityReqEncoder;
 import de.wacodis.sensorweb.encode.GetObservationReqEncoder;
 
-public class ObservationObserver implements Serializable{
+public class ObservationObserver implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private List<String> procedures;
@@ -27,7 +27,6 @@ public class ObservationObserver implements Serializable{
 	
 	private List<OmObservation> observations;
 	private DateTime dateOfLastObs;
-	private DateTime dateOfNextToLastObs;
 	private DateTime dateOfFirstObs;
 	
 	private GetObservationReqEncoder observationEncoder;
@@ -51,42 +50,43 @@ public class ObservationObserver implements Serializable{
 		this.observationDecoder = new GetObservationResDecoder();
 		this.availabilityDecoder = new GetDataAvailabilityResDecoder();
 		this.post = new SimpleHttpPost("application/soap+xml", "application/soap+xml");
-		initalize();
 	}
 	
 	/**
 	 * initialize dates of last observations with valid values.
+	 * @return 
 	 */
-	private void initalize() {
-		dateOfLastObs = null;
-		dateOfNextToLastObs = null;
+	public DateTime initalizeDatesOfObservation() {
 		try {
 			String request = availabilityEncoder.encode(procedures, observedProperties, offerings, featureIdentifiers);
 			String response = post.doPost(url, request);
 			dateOfFirstObs = availabilityDecoder.decode(response).get(0).getPhenomenonTime().getStart();
 			dateOfLastObs = availabilityDecoder.decode(response).get(0).getPhenomenonTime().getEnd();
-			dateOfNextToLastObs = dateOfLastObs;
+			System.out.println("DATE OF LAST OBS: " + dateOfLastObs);
+			return dateOfLastObs;
 		} catch (EncodingException | DecodingException | XmlException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
 	/**
+	 * @param dateOfLastObservation 
 	 * @return boolean true if date of last observation is before current observation.
 	 * @throws EncodingException
 	 * @throws DecodingException
 	 * @throws XmlException
 	 */
-	public boolean checkForAvailableUpdates() throws EncodingException, DecodingException, XmlException {
+	public boolean checkForAvailableUpdates(DateTime dateOfLastObservation) throws EncodingException, DecodingException, XmlException {
 		String request;
-		if(dateOfLastObs == null) {
+		if(dateOfLastObservation == null) {
 			throw new NullPointerException("date of last observation must not be null!");
 		}
 		request = availabilityEncoder.encode(procedures, observedProperties, offerings, featureIdentifiers);
 		String response = post.doPost(url, request);
 		DateTime responseDate = availabilityDecoder.decode(response).get(0).getPhenomenonTime().getEnd();
-		if(responseDate != null && dateOfLastObs.isBefore(responseDate)) {
-			dateOfNextToLastObs = dateOfLastObs;
+		dateOfFirstObs = availabilityDecoder.decode(response).get(0).getPhenomenonTime().getStart();
+		if(responseDate != null && dateOfLastObservation.isBefore(responseDate)) {
 			dateOfLastObs = responseDate;
 			return true;
 		}
@@ -154,14 +154,6 @@ public class ObservationObserver implements Serializable{
 		this.dateOfLastObs = dateOfLastObs;
 	}
 
-	public DateTime getDateOfNextToLastObs() {
-		return dateOfNextToLastObs;
-	}
-
-	public void setDateOfNextToLastObs(DateTime dateOfNextToLastObs) {
-		this.dateOfNextToLastObs = dateOfNextToLastObs;
-	}
-
 	public List<OmObservation> getObservations() {
 		return observations;
 	}
@@ -185,16 +177,14 @@ public class ObservationObserver implements Serializable{
 	public void setPost(SimpleHttpPost post) {
 		this.post = post;
 	}
-	
+
 	public DateTime getDateOfFirstObs() {
 		return dateOfFirstObs;
 	}
-	
+
 	public void setDateOfFirstObs(DateTime dateOfFirstObs) {
 		this.dateOfFirstObs = dateOfFirstObs;
-	}
-	
-	
+	}	
 	
 
 }

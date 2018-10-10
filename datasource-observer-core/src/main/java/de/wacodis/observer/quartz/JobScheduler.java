@@ -30,13 +30,13 @@ public class JobScheduler {
 		try {
 			
 			JobDataMap data = new JobDataMap();
-			data.put("date", new DateTime(2018, 3, 28, 4, 0, 0)); // set fake past date for test
 			data.put("extent", job.getAreaOfInterest().getExtent());
-
+			data.put("created", job.getCreated());
+			
 			factory.initializeParameters(job, data);
 			JobDetail jobDetail = factory.prepareJob(job, data);
 
-			Trigger trigger = prepareTrigger(job);
+			Trigger trigger = prepareTrigger(job, data);
 
 			scheduler.scheduleJob(jobDetail, trigger); 
 
@@ -45,14 +45,14 @@ public class JobScheduler {
 		}
 	}
 
-	private Trigger prepareTrigger(WacodisJobDefinition job) {
+	private Trigger prepareTrigger(WacodisJobDefinition job, JobDataMap data) {
 		log.info("Build new Trigger");
 		return TriggerBuilder.newTrigger()
 				.withIdentity(job.getId().toString(), job.getName())
 				.startNow()
 				.withSchedule(SimpleScheduleBuilder
 						.simpleSchedule().repeatForever()
-				.withIntervalInSeconds(Integer.parseInt(job.getTimeInterval())))
+				.withIntervalInSeconds(data.getInt("executionInterval")))
 				.build();
 	}
 

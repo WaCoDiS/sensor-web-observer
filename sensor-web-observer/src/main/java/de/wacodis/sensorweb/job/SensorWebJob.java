@@ -37,7 +37,7 @@ public class SensorWebJob implements Job{
 	
 	
 	private List<String> procedures, observedProperties, offerings, featureIdentifiers;
-	private DateTime dateOfLastObs, dateOfNextToLastObs;
+//	private DateTime dateOfLastObs;
 	
 
 	@SuppressWarnings("unchecked")
@@ -49,22 +49,18 @@ public class SensorWebJob implements Job{
 		offerings = (List<String>) context.getMergedJobDataMap().get("offerings");
 		featureIdentifiers = (List<String>) context.getMergedJobDataMap().get("featureIdentifiers");
 		ObservationObserver observer = new ObservationObserver(N52_URL, procedures, observedProperties, offerings, featureIdentifiers);
+		if(context.getJobDetail().getJobDataMap().get("dateOfLastObs") == null) {
+			context.getJobDetail().getJobDataMap().put("dateOfLastObs", observer.initalizeDatesOfObservation());
+			context.getJobDetail().getJobDataMap().put("dateOfFirstObs", observer.getDateOfFirstObs());
+		}
 
 		try {
-			dateOfLastObs = (DateTime) context.getMergedJobDataMap().get("dateOfLastObs");
-			dateOfNextToLastObs = (DateTime) context.getMergedJobDataMap().get("dateOfNextToLastObs");
-			
-			if(dateOfLastObs != null && dateOfNextToLastObs != null) {
-				observer.setDateOfLastObs(dateOfLastObs);
-				observer.setDateOfNextToLastObs(dateOfNextToLastObs);
-			} else {
-				observer.setDateOfLastObs(new DateTime(2018, 3, 28, 4, 0, 0));		//for test only				
-			}
-			
-			
-			if(observer.checkForAvailableUpdates()) {	//if new data Available -> Publish new DataEnvelope
+			DateTime dateOfLastObs = (DateTime) context.getJobDetail().getJobDataMap().get("dateOfLastObs");
+			DateTime dateOfFirstObs = (DateTime) context.getJobDetail().getJobDataMap().get("dateOfFirstObs");
+
+			if(observer.checkForAvailableUpdates(dateOfLastObs)) {	//if new data Available -> Publish new DataEnvelope
 				dateOfLastObs = observer.getDateOfLastObs();
-				dateOfNextToLastObs = observer.getDateOfNextToLastObs();
+				dateOfFirstObs = observer.getDateOfFirstObs();
 				
 				//Build new SensorWebDataEnvelope
 				SensorWebDataEnvelope dataEnvelope = new SensorWebDataEnvelope();
@@ -76,11 +72,11 @@ public class SensorWebJob implements Job{
 				dataEnvelope.setSourceType(SourceTypeEnum.SENSORWEBDATAENVELOPE);
 				dataEnvelope.setAreaOfInterest(new AbstractDataEnvelopeAreaOfInterest().extent((List<Float>) context.getMergedJobDataMap().get("extent")));
 
-				dataEnvelope.setModified(observer.getDateOfLastObs());
-				dataEnvelope.setCreated(observer.getDateOfFirstObs());
+				dataEnvelope.setModified(dateOfLastObs);
+				dataEnvelope.setCreated((DateTime) context.getJobDetail().getJobDataMap().get("created"));
 				
 				AbstractDataEnvelopeTimeFrame timeFrame = new AbstractDataEnvelopeTimeFrame();
-				timeFrame.setStartTime(observer.getDateOfFirstObs());
+				timeFrame.setStartTime(dateOfFirstObs);
 				timeFrame.setEndTime(dateOfLastObs);
 				dataEnvelope.setTimeFrame(timeFrame);
 				
@@ -90,11 +86,11 @@ public class SensorWebJob implements Job{
 				//Publish DataEnvelope through PublishChannel to MessageBroker's Exchange
 				PublisherChannel pub = (PublisherChannel) context.getScheduler().getContext().get(QuartzServer.PUBLISHER);
 				publish(pub, dataEnvelope);
+
 			}
+			context.getJobDetail().getJobDataMap().put("dateOfLastObs", dateOfLastObs);
+			context.getJobDetail().getJobDataMap().put("dateOfFirstObs", dateOfFirstObs);
 			
-			JobDataMap data = context.getJobDetail().getJobDataMap();
-			data.put("dateOfLastObs", dateOfLastObs);
-			data.put("dateOfNextToLastObs", dateOfNextToLastObs);
 			
 		} catch (EncodingException | DecodingException | XmlException | SchedulerException e) {
 			log.warn(e.getMessage(), e);
