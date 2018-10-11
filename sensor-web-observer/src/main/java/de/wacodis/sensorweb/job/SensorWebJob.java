@@ -8,7 +8,6 @@ import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
@@ -17,12 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.integration.support.MessageBuilder;
 
-import de.wacodis.dataaccess.model.SensorWebDataEnvelope;
-import de.wacodis.dataaccess.model.AbstractDataEnvelope.SourceTypeEnum;
+import de.wacodis.api.model.AbstractDataEnvelope.SourceTypeEnum;
+import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.api.model.AbstractDataEnvelopeTimeFrame;
+import de.wacodis.api.model.SensorWebDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
 import de.wacodis.observer.quartz.QuartzServer;
-import de.wacodis.dataaccess.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.dataaccess.model.AbstractDataEnvelopeTimeFrame;
 import de.wacodis.sensorweb.observer.ObservationObserver;
 
 @PersistJobDataAfterExecution
@@ -31,13 +30,8 @@ public class SensorWebJob implements Job{
 	
 	
 	private static final Logger log = LoggerFactory.getLogger(SensorWebJob.class);
-	
-//	private final String FLUGGS_URL = "http://fluggs.wupperverband.de/sos2/sos/soap";
-	private final String N52_URL = "http://sensorweb.demo.52north.org/sensorwebtestbed/service";
-	
-	
+		
 	private List<String> procedures, observedProperties, offerings, featureIdentifiers;
-//	private DateTime dateOfLastObs;
 	
 
 	@SuppressWarnings("unchecked")
@@ -48,7 +42,8 @@ public class SensorWebJob implements Job{
 		observedProperties = (List<String>) context.getMergedJobDataMap().get("observedProperties");
 		offerings = (List<String>) context.getMergedJobDataMap().get("offerings");
 		featureIdentifiers = (List<String>) context.getMergedJobDataMap().get("featureIdentifiers");
-		ObservationObserver observer = new ObservationObserver(N52_URL, procedures, observedProperties, offerings, featureIdentifiers);
+		String serviceURL = (String) context.getMergedJobDataMap().get("serviceURL");
+		ObservationObserver observer = new ObservationObserver(serviceURL, procedures, observedProperties, offerings, featureIdentifiers);
 		if(context.getJobDetail().getJobDataMap().get("dateOfLastObs") == null) {
 			context.getJobDetail().getJobDataMap().put("dateOfLastObs", observer.initalizeDatesOfObservation());
 			context.getJobDetail().getJobDataMap().put("dateOfFirstObs", observer.getDateOfFirstObs());
@@ -64,16 +59,16 @@ public class SensorWebJob implements Job{
 				
 				//Build new SensorWebDataEnvelope
 				SensorWebDataEnvelope dataEnvelope = new SensorWebDataEnvelope();
-				dataEnvelope.setServiceUrl(observer.getUrl());
-				dataEnvelope.setOffering(observer.getOfferings().get(0));
-				dataEnvelope.setFeatureOfInterest(observer.getFeatureIdentifiers().get(0));
-				dataEnvelope.setObservedProperty(observer.getObservedProperties().get(0));
-				dataEnvelope.setProcedure(observer.getProcedures().get(0));
+				
+				dataEnvelope.setServiceUrl(context.getJobDetail().getJobDataMap().getString("serviceURL"));
+				dataEnvelope.setOffering(((List<String>) context.getJobDetail().getJobDataMap().get("offerings")).get(0));
+				dataEnvelope.setFeatureOfInterest(((List<String>) context.getJobDetail().getJobDataMap().get("featureIdentifiers")).get(0));
+				dataEnvelope.setObservedProperty(((List<String>) context.getJobDetail().getJobDataMap().get("observedProperties")).get(0));
+				dataEnvelope.setProcedure(((List<String>) context.getJobDetail().getJobDataMap().get("procedures")).get(0));
 				dataEnvelope.setSourceType(SourceTypeEnum.SENSORWEBDATAENVELOPE);
-				dataEnvelope.setAreaOfInterest(new AbstractDataEnvelopeAreaOfInterest().extent((List<Float>) context.getMergedJobDataMap().get("extent")));
-
-				dataEnvelope.setModified(dateOfLastObs);
-				dataEnvelope.setCreated((DateTime) context.getJobDetail().getJobDataMap().get("created"));
+				
+				dataEnvelope.setAreaOfInterest((AbstractDataEnvelopeAreaOfInterest) context.getMergedJobDataMap().get("areaOfInterest"));
+				dataEnvelope.setModified(dateOfLastObs);	// better done by ckan-connector?
 				
 				AbstractDataEnvelopeTimeFrame timeFrame = new AbstractDataEnvelopeTimeFrame();
 				timeFrame.setStartTime(dateOfFirstObs);
@@ -83,7 +78,8 @@ public class SensorWebJob implements Job{
 				
 				log.info("New dataEnvelope:\n{}", dataEnvelope.toString());
 				
-				//Publish DataEnvelope through PublishChannel to MessageBroker's Exchange
+				// publish DataEnvelope through PublishChannel to MessageBroker's Exchange
+				
 				PublisherChannel pub = (PublisherChannel) context.getScheduler().getContext().get(QuartzServer.PUBLISHER);
 				publish(pub, dataEnvelope);
 

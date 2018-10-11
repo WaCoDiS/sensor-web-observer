@@ -7,15 +7,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import de.wacodis.api.model.AbstractSubsetDefinition;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
  * CopernicusSubsetDefinition
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2018-09-20T09:13:37.029+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2018-10-10T15:05:21.476+02:00[Europe/Berlin]")
 
-public class CopernicusSubsetDefinition extends AbstractSubsetDefinition  {
+public class CopernicusSubsetDefinition extends AbstractSubsetDefinition implements Serializable {
+  private static final long serialVersionUID = 1L;
+
   /**
    * Gets or Sets satellite
    */

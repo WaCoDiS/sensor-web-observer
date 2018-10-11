@@ -1,6 +1,5 @@
 package de.wacodis.observer.quartz;
 
-import org.joda.time.DateTime;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
@@ -30,9 +29,8 @@ public class JobScheduler {
 		try {
 			
 			JobDataMap data = new JobDataMap();
-			data.put("extent", job.getAreaOfInterest().getExtent());
-			data.put("created", job.getCreated());
-			
+			data.put("areaOfInterest", job.getAreaOfInterest());				
+
 			factory.initializeParameters(job, data);
 			JobDetail jobDetail = factory.prepareJob(job, data);
 
@@ -55,5 +53,4 @@ public class JobScheduler {
 				.withIntervalInSeconds(data.getInt("executionInterval")))
 				.build();
 	}
-
 }

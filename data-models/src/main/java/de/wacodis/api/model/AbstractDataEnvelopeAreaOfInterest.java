@@ -7,25 +7,28 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * WacodisJobDefinitionAreaOfInterest
+ * AbstractDataEnvelopeAreaOfInterest
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2018-09-20T09:13:37.029+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2018-10-10T15:05:21.476+02:00[Europe/Berlin]")
 
-public class WacodisJobDefinitionAreaOfInterest   {
+public class AbstractDataEnvelopeAreaOfInterest  implements Serializable {
+  private static final long serialVersionUID = 1L;
+
   @JsonProperty("extent")
   @Valid
   private List<Float> extent = null;
 
-  public WacodisJobDefinitionAreaOfInterest extent(List<Float> extent) {
+  public AbstractDataEnvelopeAreaOfInterest extent(List<Float> extent) {
     this.extent = extent;
     return this;
   }
 
-  public WacodisJobDefinitionAreaOfInterest addExtentItem(Float extentItem) {
+  public AbstractDataEnvelopeAreaOfInterest addExtentItem(Float extentItem) {
     if (this.extent == null) {
       this.extent = new ArrayList<Float>();
     }
@@ -57,8 +60,8 @@ public class WacodisJobDefinitionAreaOfInterest   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    WacodisJobDefinitionAreaOfInterest wacodisJobDefinitionAreaOfInterest = (WacodisJobDefinitionAreaOfInterest) o;
-    return Objects.equals(this.extent, wacodisJobDefinitionAreaOfInterest.extent);
+    AbstractDataEnvelopeAreaOfInterest abstractDataEnvelopeAreaOfInterest = (AbstractDataEnvelopeAreaOfInterest) o;
+    return Objects.equals(this.extent, abstractDataEnvelopeAreaOfInterest.extent);
   }
 
   @Override
@@ -69,7 +72,7 @@ public class WacodisJobDefinitionAreaOfInterest   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class WacodisJobDefinitionAreaOfInterest {\n");
+    sb.append("class AbstractDataEnvelopeAreaOfInterest {\n");
     
     sb.append("    extent: ").append(toIndentedString(extent)).append("\n");
     sb.append("}");

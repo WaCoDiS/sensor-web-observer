@@ -9,15 +9,18 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
  * PaginatedWacodisJobDefinitionResponse
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2018-09-20T09:13:37.029+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2018-10-10T15:05:21.476+02:00[Europe/Berlin]")
 
-public class PaginatedWacodisJobDefinitionResponse extends PaginatedResponse  {
+public class PaginatedWacodisJobDefinitionResponse extends PaginatedResponse implements Serializable {
+  private static final long serialVersionUID = 1L;
+
   @JsonProperty("data")
   @Valid
   private List<WacodisJobDefinition> data = new ArrayList<WacodisJobDefinition>();

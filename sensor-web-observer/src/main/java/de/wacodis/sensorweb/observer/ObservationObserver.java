@@ -62,7 +62,6 @@ public class ObservationObserver implements Serializable {
 			String response = post.doPost(url, request);
 			dateOfFirstObs = availabilityDecoder.decode(response).get(0).getPhenomenonTime().getStart();
 			dateOfLastObs = availabilityDecoder.decode(response).get(0).getPhenomenonTime().getEnd();
-			System.out.println("DATE OF LAST OBS: " + dateOfLastObs);
 			return dateOfLastObs;
 		} catch (EncodingException | DecodingException | XmlException e) {
 			e.printStackTrace();

@@ -4,19 +4,22 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.wacodis.api.model.AbstractSubsetDefinition;
+import de.wacodis.api.model.AbstractDataEnvelope;
+import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.api.model.AbstractDataEnvelopeTimeFrame;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.joda.time.DateTime;
 import java.io.Serializable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * SensorWebSubsetDefinition
+ * SensorWebDataEnvelope
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2018-10-10T15:05:21.476+02:00[Europe/Berlin]")
 
-public class SensorWebSubsetDefinition extends AbstractSubsetDefinition implements Serializable {
+public class SensorWebDataEnvelope extends AbstractDataEnvelope implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @JsonProperty("serviceUrl")
@@ -34,7 +37,7 @@ public class SensorWebSubsetDefinition extends AbstractSubsetDefinition implemen
   @JsonProperty("procedure")
   private String procedure = null;
 
-  public SensorWebSubsetDefinition serviceUrl(String serviceUrl) {
+  public SensorWebDataEnvelope serviceUrl(String serviceUrl) {
     this.serviceUrl = serviceUrl;
     return this;
   }
@@ -55,7 +58,7 @@ public class SensorWebSubsetDefinition extends AbstractSubsetDefinition implemen
     this.serviceUrl = serviceUrl;
   }
 
-  public SensorWebSubsetDefinition offering(String offering) {
+  public SensorWebDataEnvelope offering(String offering) {
     this.offering = offering;
     return this;
   }
@@ -76,7 +79,7 @@ public class SensorWebSubsetDefinition extends AbstractSubsetDefinition implemen
     this.offering = offering;
   }
 
-  public SensorWebSubsetDefinition featureOfInterest(String featureOfInterest) {
+  public SensorWebDataEnvelope featureOfInterest(String featureOfInterest) {
     this.featureOfInterest = featureOfInterest;
     return this;
   }
@@ -97,7 +100,7 @@ public class SensorWebSubsetDefinition extends AbstractSubsetDefinition implemen
     this.featureOfInterest = featureOfInterest;
   }
 
-  public SensorWebSubsetDefinition observedProperty(String observedProperty) {
+  public SensorWebDataEnvelope observedProperty(String observedProperty) {
     this.observedProperty = observedProperty;
     return this;
   }
@@ -118,7 +121,7 @@ public class SensorWebSubsetDefinition extends AbstractSubsetDefinition implemen
     this.observedProperty = observedProperty;
   }
 
-  public SensorWebSubsetDefinition procedure(String procedure) {
+  public SensorWebDataEnvelope procedure(String procedure) {
     this.procedure = procedure;
     return this;
   }
@@ -148,12 +151,12 @@ public class SensorWebSubsetDefinition extends AbstractSubsetDefinition implemen
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SensorWebSubsetDefinition sensorWebSubsetDefinition = (SensorWebSubsetDefinition) o;
-    return Objects.equals(this.serviceUrl, sensorWebSubsetDefinition.serviceUrl) &&
-        Objects.equals(this.offering, sensorWebSubsetDefinition.offering) &&
-        Objects.equals(this.featureOfInterest, sensorWebSubsetDefinition.featureOfInterest) &&
-        Objects.equals(this.observedProperty, sensorWebSubsetDefinition.observedProperty) &&
-        Objects.equals(this.procedure, sensorWebSubsetDefinition.procedure) &&
+    SensorWebDataEnvelope sensorWebDataEnvelope = (SensorWebDataEnvelope) o;
+    return Objects.equals(this.serviceUrl, sensorWebDataEnvelope.serviceUrl) &&
+        Objects.equals(this.offering, sensorWebDataEnvelope.offering) &&
+        Objects.equals(this.featureOfInterest, sensorWebDataEnvelope.featureOfInterest) &&
+        Objects.equals(this.observedProperty, sensorWebDataEnvelope.observedProperty) &&
+        Objects.equals(this.procedure, sensorWebDataEnvelope.procedure) &&
         super.equals(o);
   }
 
@@ -165,7 +168,7 @@ public class SensorWebSubsetDefinition extends AbstractSubsetDefinition implemen
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SensorWebSubsetDefinition {\n");
+    sb.append("class SensorWebDataEnvelope {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    serviceUrl: ").append(toIndentedString(serviceUrl)).append("\n");
     sb.append("    offering: ").append(toIndentedString(offering)).append("\n");

@@ -3,6 +3,8 @@ package de.wacodis.api.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import de.wacodis.api.model.AbstractResource;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -10,59 +12,59 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Error
+ * PostResource
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2018-10-10T15:05:21.476+02:00[Europe/Berlin]")
 
-public class Error  implements Serializable {
+public class PostResource extends AbstractResource implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  @JsonProperty("code")
-  private Integer code = null;
+  @JsonProperty("body")
+  private String body = null;
 
-  @JsonProperty("message")
-  private String message = null;
+  @JsonProperty("contentType")
+  private String contentType = null;
 
-  public Error code(Integer code) {
-    this.code = code;
+  public PostResource body(String body) {
+    this.body = body;
     return this;
   }
 
   /**
-   * Get code
-   * @return code
+   * Get body
+   * @return body
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
 
-  public Integer getCode() {
-    return code;
+  public String getBody() {
+    return body;
   }
 
-  public void setCode(Integer code) {
-    this.code = code;
+  public void setBody(String body) {
+    this.body = body;
   }
 
-  public Error message(String message) {
-    this.message = message;
+  public PostResource contentType(String contentType) {
+    this.contentType = contentType;
     return this;
   }
 
   /**
-   * Get message
-   * @return message
+   * Get contentType
+   * @return contentType
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
 
-  public String getMessage() {
-    return message;
+  public String getContentType() {
+    return contentType;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
   }
 
 
@@ -74,23 +76,24 @@ public class Error  implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Error error = (Error) o;
-    return Objects.equals(this.code, error.code) &&
-        Objects.equals(this.message, error.message);
+    PostResource postResource = (PostResource) o;
+    return Objects.equals(this.body, postResource.body) &&
+        Objects.equals(this.contentType, postResource.contentType) &&
+        super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(code, message);
+    return Objects.hash(body, contentType, super.hashCode());
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Error {\n");
-    
-    sb.append("    code: ").append(toIndentedString(code)).append("\n");
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
+    sb.append("class PostResource {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    body: ").append(toIndentedString(body)).append("\n");
+    sb.append("    contentType: ").append(toIndentedString(contentType)).append("\n");
     sb.append("}");
     return sb.toString();
   }

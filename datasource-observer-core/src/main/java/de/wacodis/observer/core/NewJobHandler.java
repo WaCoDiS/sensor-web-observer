@@ -29,7 +29,7 @@ public class NewJobHandler implements InitializingBean {
 		for(JobFactory jobFactory : jobFactories) {
 			if(jobFactory.supportsJobDefinition(job)) {
 				candidate = jobFactory;
-				break;
+				break;										//Abbruch nach erster gef. Factory -> Mehrere Inputs ->> List?
 			}
 		}
 		return candidate;

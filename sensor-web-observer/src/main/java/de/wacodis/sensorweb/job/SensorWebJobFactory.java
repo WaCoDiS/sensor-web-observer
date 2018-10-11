@@ -29,6 +29,7 @@ public class SensorWebJobFactory implements JobFactory {
 		return sweDefs.isPresent();
 	}
 
+	//access job specific inputs
 	@Override
 	public void initializeParameters(WacodisJobDefinition job, JobDataMap data) {
 		for (AbstractSubsetDefinition subset : job.getInputs()) {
@@ -38,6 +39,7 @@ public class SensorWebJobFactory implements JobFactory {
 				data.put("observedProperties", Collections.singletonList(senSubset.getObservedProperty()));
 				data.put("offerings", Collections.singletonList(senSubset.getOffering()));
 				data.put("featureIdentifiers", Collections.singletonList(senSubset.getFeatureOfInterest()));
+				data.put("serviceURL", senSubset.getServiceUrl());
 				data.put("executionInterval", ExecutionIntervalConfig.sensorWeb);
 			}
 		}
