@@ -12,11 +12,9 @@ public class ProfileConfig {
 	public static String activeProfile;
 	
 	public String getActive() {
-		System.out.println("CALLED GETTER");
 		return activeProfile;
 	}
 	public void setActive(String activeProfile) {
-		System.out.println("CALLED SETTER");
 		this.activeProfile = activeProfile;
 	}
 	
