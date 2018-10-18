@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>datasource-observer-core</artifactId>
-	<name>WaCoDiS datasource-observer-core</name>
+	<name>WaCoDiS DatasourceObserverCore</name>
 	<packaging>jar</packaging>
 
 

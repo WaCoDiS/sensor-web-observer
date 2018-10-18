@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: datasource-observer
+  cloud:
+    config:
+      url: http://localhost:8888
+management:
+  security:
+    enabled: false

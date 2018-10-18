@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>sensor-web-observer</artifactId>
-	<name>WaCoDiS sensor-web-observer</name>
+	<name>WaCoDiS SensorWebObserver</name>
 
 	<dependencies>
 		<dependency>

@@ -10,7 +10,7 @@
 
 	<artifactId>data-models</artifactId>
 	<packaging>jar</packaging>
-	<name>WaCoDis data models</name>
+	<name>WaCoDiS DataModels</name>
 	
 
 	<dependencies>
