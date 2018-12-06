@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties("execution.interval")
+@ConfigurationProperties("spring.execution.interval")
 public class ExecutionIntervalConfig {
 
 	public static int sensorWeb;
