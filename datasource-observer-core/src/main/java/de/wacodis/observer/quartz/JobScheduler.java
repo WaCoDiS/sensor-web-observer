@@ -27,19 +27,18 @@ public class JobScheduler {
 
 	public void scheduleJob(WacodisJobDefinition job, JobFactory factory) {
 		try {
-			
 			JobDataMap data = new JobDataMap();
 			data.put("areaOfInterest", job.getAreaOfInterest());				
 
-			factory.initializeParameters(job, data);
-			JobDetail jobDetail = factory.prepareJob(job, data);
+			JobDetail jobDetail = factory.initializeJob(job, data);
 
 			Trigger trigger = prepareTrigger(job, data);
 
 			scheduler.scheduleJob(jobDetail, trigger); 
 
 		} catch (SchedulerException e) {
-			e.printStackTrace();
+			log.warn(e.getMessage());
+                        log.debug(e.getMessage(), e);
 		}
 	}
 

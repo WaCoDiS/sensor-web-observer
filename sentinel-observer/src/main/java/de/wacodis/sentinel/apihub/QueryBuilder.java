@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package de.wacodis.sentinel;
+package de.wacodis.sentinel.apihub;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -14,7 +9,7 @@ import org.springframework.util.StringUtils;
 
 /**
  *
- * @author matthes
+ * @author matthes rieke
  */
 public class QueryBuilder {
     

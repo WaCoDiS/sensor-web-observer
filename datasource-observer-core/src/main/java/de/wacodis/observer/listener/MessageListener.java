@@ -10,6 +10,7 @@ import de.wacodis.api.model.WacodisJobDefinition;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.core.NewJobHandler;
 import de.wacodis.observer.quartz.JobScheduler;
+import java.util.List;
 
 @EnableBinding(ListenerChannel.class)
 public class MessageListener {
@@ -26,9 +27,10 @@ public class MessageListener {
 	public void receiveNewJob(WacodisJobDefinition newJob) {
 		log.info("New job received:\n{}", newJob);
 		
-		JobFactory factory = newJobHandler.receiveJob(newJob);
+		List<JobFactory> factories = newJobHandler.receiveJob(newJob);
 		
-		jobScheduler.scheduleJob(newJob, factory);
-		
+		factories.forEach(factory -> {
+                    jobScheduler.scheduleJob(newJob, factory);
+                });
 	}
 }
