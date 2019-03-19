@@ -13,6 +13,7 @@
 
 	<modules>
 		<module>sensor-web-observer</module>
+                <module>sentinel-observer</module>
 		<module>datasource-observer-app</module>
 		<module>datasource-observer-core</module>
 		<module>data-models</module>
