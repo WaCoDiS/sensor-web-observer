@@ -6,6 +6,41 @@ spring:
   cloud:
     config:
       url: http://localhost:8888
+  datasource.quartz-data-source:
+    name: quartzDataSource
+    jdbc-url: jdbc:h2:/tmp/h2_wacodis_jobs4
+    username: sa
+    password:
+    driver-class: org.h2.Driver
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+      schema: classpath:tables_h2_if_not_exist.sql
+    properties:
+      org.quartz.dataSource.quartzDataSource:
+        driver: org.h2.Driver
+        URL: jdbc:h2:/tmp/h2_wacodis_jobs4
+        provider: hikaricp
+        user: sa
+        password: 
+        maxConnections: 2
+      org.quartz.jobStore:
+        class: org.quartz.impl.jdbcjobstore.JobStoreTX
+        driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+        dataSource: quartzDataSource
+        tablePrefix: QRTZ_
+        isClustered: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
 management:
   security:
     enabled: false
+sentinelhub:
+  baseUrl: https://scihub.copernicus.eu/apihub/
+  user: testuser
+  password: testpwd
+  

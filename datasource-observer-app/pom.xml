@@ -53,6 +53,11 @@
 			<artifactId>sensor-web-observer</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+                <dependency>
+			<groupId>de.wacodis</groupId>
+			<artifactId>sentinel-observer</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 		<!-- Test-Scope -->
 		<dependency>

@@ -20,11 +20,11 @@ public class JobScheduler {
 	private static final Logger log = LoggerFactory.getLogger(JobScheduler.class);
 
 	@Autowired
-	private QuartzServer scheduler;
+	private QuartzServer wacodisQuartz;
 	
 	public JobScheduler() {
 	}
-
+        
 	public void scheduleJob(WacodisJobDefinition job, JobFactory factory) {
 		try {
 			JobDataMap data = new JobDataMap();
@@ -34,7 +34,7 @@ public class JobScheduler {
 
 			Trigger trigger = prepareTrigger(job, data);
 
-			scheduler.scheduleJob(jobDetail, trigger); 
+			wacodisQuartz.scheduleJob(jobDetail, trigger); 
 
 		} catch (SchedulerException e) {
 			log.warn(e.getMessage());
@@ -44,6 +44,14 @@ public class JobScheduler {
 
 	private Trigger prepareTrigger(WacodisJobDefinition job, JobDataMap data) {
 		log.info("Build new Trigger");
+                
+                /**
+                 * set a default execution interval
+                 */
+                if (!data.containsKey("executionInterval")) {
+                    data.put("executionInterval", 60 * 60);
+                }
+                
 		return TriggerBuilder.newTrigger()
 				.withIdentity(job.getId().toString(), job.getName())
 				.startNow()

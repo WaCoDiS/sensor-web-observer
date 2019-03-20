@@ -50,6 +50,23 @@
 				<artifactId>spring-cloud-starter-config</artifactId>
 				<version>2.0.1.RELEASE</version>
 			</dependency>
+                        
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-quartz</artifactId>
+                            <version>2.0.5.RELEASE</version>
+                        </dependency>
+                        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc -->
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-jdbc</artifactId>
+                            <version>2.0.5.RELEASE</version>
+                        </dependency>
+
+                        <dependency>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-context-support</artifactId>
+                        </dependency>
 
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
@@ -129,16 +146,11 @@
 				<artifactId>h2</artifactId>
 				<version>1.4.196</version>
 			</dependency>
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz</artifactId>
-				<version>2.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz-jobs</artifactId>
-				<version>2.2.1</version>
-			</dependency>
+                        <dependency>
+                          <groupId>com.zaxxer</groupId>
+                          <artifactId>HikariCP</artifactId>
+                          <version>3.2.0</version>
+                        </dependency>
 
 			<dependency>
 				<groupId>org.n52.sensorweb</groupId>
