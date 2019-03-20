@@ -2,6 +2,7 @@
 package de.wacodis.sentinel.apihub;
 
 import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
+import java.util.Collections;
 import java.util.List;
 import org.joda.time.DateTime;
 
@@ -10,6 +11,16 @@ import org.joda.time.DateTime;
  * @author matthes rieke
  */
 public class ApiHubClient {
+
+    private final String url;
+    private final String password;
+    private final String user;
+
+    public ApiHubClient(String url, String user, String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
+    }
 
     /**
      * perform an API query with the given parameters
@@ -22,7 +33,7 @@ public class ApiHubClient {
      */
     public List<ProductMetadata> requestProducts(DateTime lastLatestDate, Double maxCloudPercentage,
             String platformName, AbstractDataEnvelopeAreaOfInterest areaOfInterest) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Collections.emptyList();
     }
     
 }

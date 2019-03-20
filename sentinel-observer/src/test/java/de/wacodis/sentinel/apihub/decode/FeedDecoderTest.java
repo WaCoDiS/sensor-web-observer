@@ -55,8 +55,27 @@ public class FeedDecoderTest {
         Assert.assertThat(p1.getInstrumentShortName(), CoreMatchers.equalTo("MSI"));
         Assert.assertThat(p1.getIngestionDate(), CoreMatchers.equalTo(new DateTime("2019-01-30T20:05:43.4Z")));
         Assert.assertThat(p1.getCloudCoverPercentage(), CoreMatchers.equalTo(86.171287));
+        
+        p1 = p.get(1);
+        Assert.assertThat(p1.getId(), CoreMatchers.equalTo("e67b0ebf-b60d-49f6-b665-5ff99adcac60"));
+        Assert.assertThat(p1.getTitle(), CoreMatchers.equalTo("S2A_MSIL2A_20190130T103251_N0211_R108_T32UMB_20190130T115213"));
+        Assert.assertThat(p1.getInstrumentShortName(), CoreMatchers.equalTo("MSI"));
+        Assert.assertThat(p1.getCloudCoverPercentage(), CoreMatchers.equalTo(98.053456));
     }
 
+    @Test
+    public void testDecodingEmptyResponse() throws ParserConfigurationException, SAXException, IOException, ApiHubException {
+        FeedDecoder decoder = new FeedDecoder();
+        Document doc = readXml("/os-response-empty.xml");
+        SearchResult result = decoder.parse(doc);
+        
+        Assert.assertThat(result.getTotalResults(), CoreMatchers.is(0));
+        Assert.assertThat(result.getItemsPerPage(), CoreMatchers.is(0));
+        Assert.assertThat(result.getStartIndex(), CoreMatchers.is(0));
+        
+        Assert.assertThat(result.getProducts().size(), CoreMatchers.is(0));
+    }
+    
     private Document readXml(String osresponsexml) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory fac = new DocumentBuilderFactoryImpl();
         fac.setNamespaceAware(true);

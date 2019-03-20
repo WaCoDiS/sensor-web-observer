@@ -28,6 +28,9 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 
@@ -36,13 +39,24 @@ import org.quartz.PersistJobDataAfterExecution;
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class SentinelJob implements Job {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(SentinelJob.class);
 
     public static String MAX_CLOUD_COVERAGE_KEY = "maximumCloudCoverage";
     public static String PLATFORM_KEY = "platformName";
     public static String PREVIOUS_DAYS_KEY = "previousDays";
     public static String LAST_LATEST_PRODUCT_KEY = "lastLatestProduct";
     public static String LAST_EXECUTION_PRODUCT_IDS_KEY = "lastExecutionProductIds";
-
+    
+    @Value("${sentinelhub.baseUrl}") 
+    private String hubBaseUrl;
+    
+    @Value("${sentinelhub.user}") 
+    private String hubUser;
+    
+    @Value("${sentinelhub.password}") 
+    private String hubPassword;
+    
     @Override
     public void execute(JobExecutionContext ctxt) throws JobExecutionException {
         JobDataMap dataMap = ctxt.getJobDetail().getJobDataMap();
@@ -80,7 +94,7 @@ public class SentinelJob implements Job {
         /**
          * retrieve new products from the API
          */
-        List<ProductMetadata> newProductCandidates = new ApiHubClient()
+        List<ProductMetadata> newProductCandidates = new ApiHubClient(hubBaseUrl, hubUser, hubPassword)
                 .requestProducts(lastLatestDate, maxCloudPercentage, platformName, areaOfInterest);
         
         /** filter out duplicates from previous executions **/
@@ -100,14 +114,19 @@ public class SentinelJob implements Job {
             return pm1.getBeginPosition().isBefore(pm2.getBeginPosition()) ? 1 : -1;
         });
         
-        /** store the last begin position */
-        dataMap.put(LAST_LATEST_PRODUCT_KEY, newProducts.get(newProducts.size() - 1).getBeginPosition());
+        if (!newProducts.isEmpty()) {
+            /** store the last begin position */
+            dataMap.put(LAST_LATEST_PRODUCT_KEY, newProducts.get(newProducts.size() - 1).getBeginPosition());
 
-        /** store the last IDs in the execution environment */
-        dataMap.put(LAST_EXECUTION_PRODUCT_IDS_KEY, newProducts.stream()
-                .map(p -> p.getId())
-                .distinct()
-                .collect(Collectors.toSet()));
+            /** store the last IDs in the execution environment */
+            dataMap.put(LAST_EXECUTION_PRODUCT_IDS_KEY, newProducts.stream()
+                    .map(p -> p.getId())
+                    .distinct()
+                    .collect(Collectors.toSet()));            
+        }
+        
+        LOG.info("Found {} new products for Job {}", newProducts.size(), "");
+        
     }
     
 }

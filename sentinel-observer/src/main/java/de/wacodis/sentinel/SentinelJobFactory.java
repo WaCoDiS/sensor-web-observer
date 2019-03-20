@@ -13,19 +13,22 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
  *
  * @author matthes rieke
  */
+@Component
 public class SentinelJobFactory implements JobFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(SentinelJobFactory.class);
 
     @Override
     public boolean supportsJobDefinition(WacodisJobDefinition job) {
-        return job.getInputs().stream().filter(i -> i instanceof CopernicusSubsetDefinition).count() > 0;
+        long count = job.getInputs().stream().filter(i -> i instanceof CopernicusSubsetDefinition).count();
+        return count > 0;
     }
 
     @Override
