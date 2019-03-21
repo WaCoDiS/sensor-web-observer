@@ -15,7 +15,7 @@
  */
 package de.wacodis.sentinel.apihub.decode;
 
-import de.wacodis.sentinel.apihub.ApiHubException;
+import de.wacodis.sentinel.apihub.DecodingException;
 import de.wacodis.sentinel.apihub.ProductMetadata;
 import de.wacodis.sentinel.apihub.SearchResult;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class FeedDecoder {
         xpath.setNamespaceContext(namespaces);
     }
 
-    public SearchResult parse(Document doc) throws ApiHubException {
+    public SearchResult parse(Document doc) throws DecodingException {
         try {
             XPathExpression expr = this.xpath.compile("/a:feed/os:totalResults");
             Object result = expr.evaluate(doc, XPathConstants.NUMBER);
@@ -85,7 +85,7 @@ public class FeedDecoder {
         } catch (XPathExpressionException ex) {
             LOG.warn(ex.getMessage());
             LOG.debug(ex.getMessage(), ex);
-            throw new ApiHubException("Could not process OpenSearch response", ex);
+            throw new DecodingException("Could not process OpenSearch response", ex);
         }
     }
 

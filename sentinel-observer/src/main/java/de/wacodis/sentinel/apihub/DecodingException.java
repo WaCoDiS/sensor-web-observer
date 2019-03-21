@@ -21,9 +21,9 @@ package de.wacodis.sentinel.apihub;
  *
  * @author Matthes Rieke (m.rieke@52north.org)
  */
-public class ApiHubException extends Exception {
+public class DecodingException extends Exception {
 
-    public ApiHubException(String msg, Exception ex) {
+    public DecodingException(String msg, Exception ex) {
         super(msg, ex);
     }
 

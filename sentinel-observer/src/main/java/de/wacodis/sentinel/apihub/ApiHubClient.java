@@ -2,26 +2,36 @@
 package de.wacodis.sentinel.apihub;
 
 import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 /**
  *
  * @author matthes rieke
  */
+@Component
 public class ApiHubClient {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ApiHubClient.class);
 
-    private final String url;
-    private final String password;
-    private final String user;
-
-    public ApiHubClient(String url, String user, String password) {
-        this.url = url;
-        this.user = user;
-        this.password = password;
-    }
-
+    @Autowired
+    private RestTemplate apiHubRestTemplate;
+    
+    @Value("${sentinelhub.page-rows:10}")
+    private int rows;
+    
+    private QueryBuilder queryBuilder = new QueryBuilder();
+    
     /**
      * perform an API query with the given parameters
      * 
@@ -33,7 +43,49 @@ public class ApiHubClient {
      */
     public List<ProductMetadata> requestProducts(DateTime lastLatestDate, Double maxCloudPercentage,
             String platformName, AbstractDataEnvelopeAreaOfInterest areaOfInterest) {
-        return Collections.emptyList();
+        QueryBuilder qb = queryBuilder.withBeginPosition(lastLatestDate, DateTime.now())
+                .withPlatformName(platformName)
+                .withMaximumCloudcoverPercentage(maxCloudPercentage.intValue());
+        
+        if (areaOfInterest != null) {
+            List<Float> ex = areaOfInterest.getExtent();
+            qb.withFootprint(QueryBuilder.FootprintOperator.Intersects, ex.get(0), ex.get(1), ex.get(2), ex.get(3));
+        }
+        
+        String q = qb.build();
+        
+        // first request to identify the number of pages
+        ResponseEntity<SearchResult> sr1Entity = this.apiHubRestTemplate.getForEntity("/search?rows=" + this.rows
+                + "&q=" + q,
+                SearchResult.class);
+
+        SearchResult sr1 = sr1Entity.getBody();        
+        if (sr1 == null || sr1Entity.getStatusCodeValue() >= HttpStatus.MULTIPLE_CHOICES.value()) {
+            LOG.warn("Could not retrieve OpenSearch response: {}", sr1Entity.getStatusCode());
+            return Collections.emptyList();
+        }
+        
+        List<ProductMetadata> allProducts = new ArrayList<>(sr1.getProducts());
+        
+        /** page through the remaining products */
+        int totalPages = sr1.getTotalResults() / sr1.getItemsPerPage();
+        for (int i = 1; i < totalPages; i++) {
+            ResponseEntity<SearchResult> nextPage = this.apiHubRestTemplate.getForEntity("/search?rows=" + this.rows
+                + "&start=" + (i * this.rows)
+                + "&q=" + q,
+                SearchResult.class);
+            
+            SearchResult nextPageResult = nextPage.getBody();        
+            
+            if (nextPageResult == null || nextPage.getStatusCodeValue() >= HttpStatus.MULTIPLE_CHOICES.value()) {
+                LOG.warn("Could not retrieve page {} of OpenSearch query: {}", i, sr1Entity.getStatusCode());
+            } else {
+                allProducts.addAll(nextPageResult.getProducts());
+            }
+            
+        }
+        
+        return allProducts;
     }
     
 }

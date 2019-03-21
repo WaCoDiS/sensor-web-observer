@@ -1,5 +1,6 @@
 package de.wacodis.observer.listener;
 
+import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.api.model.CopernicusSubsetDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import de.wacodis.api.model.WacodisJobDefinition;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.core.NewJobHandler;
 import de.wacodis.observer.quartz.JobScheduler;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -50,6 +52,7 @@ public class MessageListener {
 //                
 //                WacodisJobDefinition j = new WacodisJobDefinition();
 //                j.setId(UUID.randomUUID());
+//                j.setAreaOfInterest(new AbstractDataEnvelopeAreaOfInterest().extent(Arrays.asList(6.9315f, 50.9854f, 7.6071f, 51.3190f)));
 //                CopernicusSubsetDefinition cs = new CopernicusSubsetDefinition();
 //                cs.setMaximumCloudCoverage(20f);
 //                cs.setIdentifier("cs-test");

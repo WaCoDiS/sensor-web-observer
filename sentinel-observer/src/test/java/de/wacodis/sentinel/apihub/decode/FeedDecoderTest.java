@@ -16,8 +16,7 @@
 
 package de.wacodis.sentinel.apihub.decode;
 
-import com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl;
-import de.wacodis.sentinel.apihub.ApiHubException;
+import de.wacodis.sentinel.apihub.DecodingException;
 import de.wacodis.sentinel.apihub.ProductMetadata;
 import de.wacodis.sentinel.apihub.SearchResult;
 import java.io.IOException;
@@ -38,7 +37,7 @@ import org.xml.sax.SAXException;
 public class FeedDecoderTest {
 
     @Test
-    public void testDecoding() throws ParserConfigurationException, SAXException, IOException, ApiHubException {
+    public void testDecoding() throws ParserConfigurationException, SAXException, IOException, DecodingException {
         FeedDecoder decoder = new FeedDecoder();
         Document doc = readXml("/os-response.xml");
         SearchResult result = decoder.parse(doc);
@@ -64,7 +63,7 @@ public class FeedDecoderTest {
     }
 
     @Test
-    public void testDecodingEmptyResponse() throws ParserConfigurationException, SAXException, IOException, ApiHubException {
+    public void testDecodingEmptyResponse() throws ParserConfigurationException, SAXException, IOException, DecodingException {
         FeedDecoder decoder = new FeedDecoder();
         Document doc = readXml("/os-response-empty.xml");
         SearchResult result = decoder.parse(doc);
@@ -77,7 +76,7 @@ public class FeedDecoderTest {
     }
     
     private Document readXml(String osresponsexml) throws ParserConfigurationException, SAXException, IOException {
-        DocumentBuilderFactory fac = new DocumentBuilderFactoryImpl();
+        DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
         fac.setNamespaceAware(true);
         return fac.newDocumentBuilder().parse(getClass().getResourceAsStream(osresponsexml));
     }
