@@ -16,6 +16,7 @@
 		<module>datasource-observer-app</module>
 		<module>datasource-observer-core</module>
 		<module>data-models</module>
+	 <module>dwd-observer</module>
 	</modules>
 
 
