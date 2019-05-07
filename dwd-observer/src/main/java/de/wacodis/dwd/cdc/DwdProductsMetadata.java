@@ -10,6 +10,6 @@ package de.wacodis.dwd.cdc;
  *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
-public class StationsProductsMetadata {
+public class DwdProductsMetadata {
     //TODO: define required station metadata
 }

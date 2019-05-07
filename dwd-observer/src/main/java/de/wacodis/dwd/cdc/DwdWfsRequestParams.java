@@ -6,11 +6,11 @@
 package de.wacodis.dwd.cdc;
 
 /**
- * Encapuslates parameters for requesting the DWD CDC WFS services
+ * Encapuslates parameters for requesting DWD WFS services
  *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
-public class CdcWfsRequestParams {
+public class DwdWfsRequestParams {
 
     String typeName;
 
