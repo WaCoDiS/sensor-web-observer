@@ -12,15 +12,5 @@ package de.wacodis.dwd.cdc;
  */
 public class DwdWfsRequestParams {
 
-    String typeName;
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
     //TODO: define additional required requests parameters
 }
