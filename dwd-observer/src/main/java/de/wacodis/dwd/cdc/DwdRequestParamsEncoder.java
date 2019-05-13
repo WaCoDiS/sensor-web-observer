@@ -5,7 +5,7 @@
  */
 package de.wacodis.dwd.cdc;
 
-import de.wacodis.observer.models.WacodisJobDefinition;
+import de.wacodis.api.model.WacodisJobDefinition;
 
 /**
  * Encodes a SubsetDefinition into request paramateres for a DWD WFS request
@@ -15,6 +15,9 @@ import de.wacodis.observer.models.WacodisJobDefinition;
 public class DwdRequestParamsEncoder {
 
     public DwdWfsRequestParams encode(WacodisJobDefinition jobDefinition) {
+    	
+
+    	
         return null;
     }
 

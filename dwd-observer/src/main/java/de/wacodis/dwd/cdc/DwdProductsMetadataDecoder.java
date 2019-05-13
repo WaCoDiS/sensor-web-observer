@@ -5,7 +5,7 @@
  */
 package de.wacodis.dwd.cdc;
 
-import de.wacodis.observer.models.DwdDataEnvelope;
+import de.wacodis.api.model.DwdDataEnvelope;
 
 /**
  * Decodes DWD products metadata into a DataEnvelope

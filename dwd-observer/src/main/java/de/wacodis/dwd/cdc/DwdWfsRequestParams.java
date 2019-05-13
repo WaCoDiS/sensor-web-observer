@@ -13,4 +13,5 @@ package de.wacodis.dwd.cdc;
 public class DwdWfsRequestParams {
 
     //TODO: define additional required requests parameters
+	
 }
