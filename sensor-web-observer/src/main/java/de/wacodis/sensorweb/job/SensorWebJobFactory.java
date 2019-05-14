@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import de.wacodis.api.model.AbstractSubsetDefinition;
-import de.wacodis.api.model.SensorWebSubsetDefinition;
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.model.AbstractSubsetDefinition;
+import de.wacodis.observer.model.SensorWebSubsetDefinition;
+import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.config.ExecutionIntervalConfig;
 import de.wacodis.observer.core.JobFactory;
 

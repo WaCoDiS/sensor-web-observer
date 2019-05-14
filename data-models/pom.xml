@@ -64,8 +64,7 @@
                                     <inputSpec>${project.basedir}/src/main/resources/definitions/wacodis-schemas.yml</inputSpec>
                                     <generatorName>spring</generatorName>
                                     <output>${project.basedir}</output>
-                                    <modelPackage>de.wacodis.observer.models</modelPackage>
-                            
+                                    <modelPackage>de.wacodis.observer.model</modelPackage>
                                     <generateApis>false</generateApis>
                                     <generateModels>true</generateModels>
                                     <generateSupportingFiles>false</generateSupportingFiles>
@@ -128,7 +127,7 @@
                                     <inputSpec>${project.basedir}/src/main/resources/definitions/wacodis-schemas.yml</inputSpec>
                                     <generatorName>spring</generatorName>
                                     <output>${project.basedir}</output>
-                                    <modelPackage>de.wacodis.observer.models</modelPackage>
+                                    <modelPackage>de.wacodis.observer.model</modelPackage>
                             
                                     <generateApis>false</generateApis>
                                     <generateModels>true</generateModels>

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.core.JobFactory;
 
 @Component

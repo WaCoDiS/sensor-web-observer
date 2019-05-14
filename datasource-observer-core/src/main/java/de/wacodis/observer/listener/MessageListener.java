@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.core.NewJobHandler;
 import de.wacodis.observer.quartz.JobScheduler;

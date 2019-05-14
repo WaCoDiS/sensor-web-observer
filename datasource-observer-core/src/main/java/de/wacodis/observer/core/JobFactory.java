@@ -3,7 +3,7 @@ package de.wacodis.observer.core;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.model.WacodisJobDefinition;
 
 /**
  * Factory-Pattern Interface for SubsetDefinitionJobs
