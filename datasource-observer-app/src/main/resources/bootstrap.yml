@@ -2,13 +2,13 @@ spring:
   application:
     name: datasource-observer
   profiles:
-      active: docker
+    active: docker
   cloud:
     config:
       url: http://localhost:8888
   datasource.quartz-data-source:
     name: quartzDataSource
-    jdbc-url: jdbc:h2:/tmp/h2_wacodis_jobs67
+    jdbc-url: jdbc:h2:/tmp/h2_wacodis_jobs678
     username: sa
     password:
     driver-class: org.h2.Driver
@@ -32,6 +32,11 @@ spring:
 management:
   security:
     enabled: false
+datasource:
+  execution:
+    interval:
+      sensorWeb: 3600
+      sentinel: 60
 sentinelhub:
   base-url: https://scihub.copernicus.eu/apihub/
   user: testuser

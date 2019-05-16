@@ -16,8 +16,9 @@ import de.wacodis.observer.core.JobFactory;
 
 @Component
 public class JobScheduler {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(JobScheduler.class);
 
-    private static final Logger log = LoggerFactory.getLogger(JobScheduler.class);
 
     @Autowired
     private QuartzServer wacodisQuartz;
@@ -33,24 +34,23 @@ public class JobScheduler {
             JobDetail jobDetail = factory.initializeJob(job, data);
 
             Trigger trigger = prepareTrigger(job, data);
-
+            
             wacodisQuartz.scheduleJob(jobDetail, trigger);
-
         } catch (SchedulerException e) {
-            log.warn(e.getMessage());
-            log.debug(e.getMessage(), e);
+            LOG.warn(e.getMessage());
+            LOG.debug(e.getMessage(), e);
         }
     }
 
     private Trigger prepareTrigger(WacodisJobDefinition job, JobDataMap data) {
-        log.info("Build new Trigger");
-
         /**
          * set a default execution interval
          */
         if (!data.containsKey("executionInterval")) {
             data.put("executionInterval", 60 * 60);
         }
+        
+        LOG.info("Build new Trigger with execution interval: {} seconds", data.get("executionInterval"));
 
         return TriggerBuilder.newTrigger()
                 .withIdentity(job.getId().toString(), job.getName())

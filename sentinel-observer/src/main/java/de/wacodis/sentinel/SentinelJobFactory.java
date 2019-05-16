@@ -3,6 +3,7 @@ package de.wacodis.sentinel;
 import de.wacodis.api.model.AbstractSubsetDefinition;
 import de.wacodis.api.model.CopernicusSubsetDefinition;
 import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.config.ExecutionIntervalConfig;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.sentinel.apihub.QueryBuilder;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -24,6 +26,9 @@ import org.springframework.util.StringUtils;
 public class SentinelJobFactory implements JobFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(SentinelJobFactory.class);
+    
+    @Autowired
+    private ExecutionIntervalConfig intervalConfig;
 
     @Override
     public boolean supportsJobDefinition(WacodisJobDefinition job) {
@@ -66,6 +71,8 @@ public class SentinelJobFactory implements JobFactory {
                 }
                 data.put(SentinelJob.PREVIOUS_DAYS_KEY, baseDays);
             }
+            
+            data.put("executionInterval", intervalConfig.getSentinel());
         }
 
         // create the quartz object

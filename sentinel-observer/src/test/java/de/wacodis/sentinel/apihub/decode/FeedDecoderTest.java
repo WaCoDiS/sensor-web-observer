@@ -27,6 +27,7 @@ import org.hamcrest.CoreMatchers;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
+import org.locationtech.jts.geom.Envelope;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -54,6 +55,16 @@ public class FeedDecoderTest {
         Assert.assertThat(p1.getInstrumentShortName(), CoreMatchers.equalTo("MSI"));
         Assert.assertThat(p1.getIngestionDate(), CoreMatchers.equalTo(new DateTime("2019-01-30T20:05:43.4Z")));
         Assert.assertThat(p1.getCloudCoverPercentage(), CoreMatchers.equalTo(86.171287));
+        Assert.assertThat(p1.getFootprintWkt(), CoreMatchers.equalTo("POLYGON ((6.576402776126024 50.406238167275816,6.628851075629272"
+                + " 50.536822596839706,6.686823508496596 50.68300782013704,6.745473100900398 50.82898642785132,6.804652027737079"
+                + " 50.97486399443909,6.864109136690101 51.120703959269576,6.924048041127735 51.26647095616419,6.971322514095254"
+                + " 51.38160373804328,7.450589699013681 51.366602012514676,7.357621898236907 50.38212225093181,6.576402776126024 50.406238167275816))"));
+        Assert.assertThat(p1.resolveBbox(), CoreMatchers.notNullValue());
+        Envelope bbox = p1.resolveBbox();
+        Assert.assertThat(bbox.getMaxX(), CoreMatchers.is(7.450589699013681));
+        Assert.assertThat(bbox.getMaxY(), CoreMatchers.is(51.38160373804328));
+        Assert.assertThat(bbox.getMinX(), CoreMatchers.is(6.576402776126024));
+        Assert.assertThat(bbox.getMinY(), CoreMatchers.is(50.38212225093181));
         
         p1 = p.get(1);
         Assert.assertThat(p1.getId(), CoreMatchers.equalTo("e67b0ebf-b60d-49f6-b665-5ff99adcac60"));

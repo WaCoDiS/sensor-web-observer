@@ -6,16 +6,26 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties("spring.execution.interval")
+@ConfigurationProperties("datasource.execution.interval")
 public class ExecutionIntervalConfig {
 
-	public static int sensorWeb;
-	
-	public int getSensorWeb() {
-		return sensorWeb;
-	}
-	public void setSensorWeb(int sensorWeb) {
-		this.sensorWeb = sensorWeb;
-	}
-	
+    public int sensorWeb;
+    public int sentinel;
+
+    public int getSensorWeb() {
+        return sensorWeb;
+    }
+
+    public void setSensorWeb(int sensorWeb) {
+        this.sensorWeb = sensorWeb;
+    }
+
+    public int getSentinel() {
+        return sentinel;
+    }
+
+    public void setSentinel(int sentinel) {
+        this.sentinel = sentinel;
+    }
+
 }

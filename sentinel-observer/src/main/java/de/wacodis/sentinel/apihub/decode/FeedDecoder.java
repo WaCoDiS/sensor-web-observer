@@ -103,6 +103,7 @@ public class FeedDecoder {
             XPathExpression beginPositionExpr = this.xpath.compile("./a:date[@name = 'beginposition']");
             XPathExpression endPositionExpr = this.xpath.compile("./a:date[@name = 'endposition']");
             XPathExpression ingestionDateExpr = this.xpath.compile("./a:date[@name = 'ingestiondate']");
+            XPathExpression footprintExpr = this.xpath.compile("./a:str[@name = 'footprint']");
             
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node n = nodes.item(i);
@@ -113,6 +114,7 @@ public class FeedDecoder {
                 Object beginPositionCandidate = beginPositionExpr.evaluate(n, XPathConstants.STRING);
                 Object endPositionCandidate = endPositionExpr.evaluate(n, XPathConstants.STRING);
                 Object ingestionDateCandidate = ingestionDateExpr.evaluate(n, XPathConstants.STRING);
+                Object footprintCandidate = footprintExpr.evaluate(n, XPathConstants.STRING);
                 
                 ProductMetadata p = new ProductMetadata();                
                 p.setTitle(extractString(titleCandidate));
@@ -122,6 +124,7 @@ public class FeedDecoder {
                 p.setBeginPosition(extractDate(beginPositionCandidate));
                 p.setEndPosition(extractDate(endPositionCandidate));
                 p.setIngestionDate(extractDate(ingestionDateCandidate));
+                p.setFootprintWkt(extractString(footprintCandidate));
                 
                 products.add(p);
             }
