@@ -1,22 +1,16 @@
 package de.wacodis.observer.listener;
 
-import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.api.model.CopernicusSubsetDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.core.NewJobHandler;
 import de.wacodis.observer.quartz.JobScheduler;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 
 @EnableBinding(ListenerChannel.class)

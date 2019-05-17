@@ -1,8 +1,8 @@
 package de.wacodis.sentinel;
 
-import de.wacodis.api.model.AbstractSubsetDefinition;
-import de.wacodis.api.model.CopernicusSubsetDefinition;
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.model.AbstractSubsetDefinition;
+import de.wacodis.observer.model.CopernicusSubsetDefinition;
+import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.config.ExecutionIntervalConfig;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.sentinel.apihub.QueryBuilder;

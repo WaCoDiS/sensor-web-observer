@@ -1,7 +1,7 @@
 
 package de.wacodis.sentinel.apihub;
 
-import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

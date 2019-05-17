@@ -15,11 +15,11 @@
  */
 package de.wacodis.sentinel;
 
-import de.wacodis.api.model.AbstractDataEnvelope;
+import de.wacodis.observer.model.AbstractDataEnvelope;
 import de.wacodis.sentinel.apihub.ApiHubClient;
-import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.api.model.AbstractDataEnvelopeTimeFrame;
-import de.wacodis.api.model.CopernicusDataEnvelope;
+import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.observer.model.AbstractDataEnvelopeTimeFrame;
+import de.wacodis.observer.model.CopernicusDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
 import de.wacodis.sentinel.apihub.ProductMetadata;
 import de.wacodis.sentinel.apihub.QueryBuilder;
