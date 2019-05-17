@@ -29,9 +29,9 @@ import org.springframework.web.client.RestTemplate;
 public class ApiHubConfig {
     
     @Bean
-    public RestTemplate apiHubRestTemplate(@Value("${sentinelhub.base-url}") String baseUri,
-            @Value("${sentinelhub.user}") String user,
-            @Value("${sentinelhub.password}") String pw) {
+    public RestTemplate apiHubRestTemplate(@Value("${datasource-observer.sentinelhub.base-url}") String baseUri,
+            @Value("${datasource-observer.sentinelhub.user}") String user,
+            @Value("${datasource-observer.sentinelhub.password}") String pw) {
         return new RestTemplateBuilder()
                 .rootUri(baseUri)
                 .basicAuthorization(user, pw)

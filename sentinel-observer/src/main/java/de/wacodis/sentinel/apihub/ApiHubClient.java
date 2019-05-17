@@ -27,7 +27,7 @@ public class ApiHubClient {
     @Autowired
     private RestTemplate apiHubRestTemplate;
     
-    @Value("${sentinelhub.page-rows:10}")
+    @Value("${datasource-observer.sentinelhub.page-rows:10}")
     private int rows;
     
     private QueryBuilder queryBuilder = new QueryBuilder();

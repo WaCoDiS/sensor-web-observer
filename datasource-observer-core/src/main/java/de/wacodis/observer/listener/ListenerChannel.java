@@ -6,7 +6,7 @@ import org.springframework.messaging.SubscribableChannel;
 public interface ListenerChannel {
 	
 	//reference to applicatoin.yml's binding
-	String JOBCREATION_INPUT = "jobCreation";
+	String JOBCREATION_INPUT = "job-creation";
 
 	@Input(JOBCREATION_INPUT)
 	SubscribableChannel jobCreation();

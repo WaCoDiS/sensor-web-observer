@@ -5,7 +5,7 @@ import org.springframework.messaging.MessageChannel;
 
 public interface PublisherChannel {
 	
-	String DATAENVELOPE_OUTPUT = "outputDataEnvelope";
+	String DATAENVELOPE_OUTPUT = "output-data-envelope";
 	
 	@Output(DATAENVELOPE_OUTPUT)
 	MessageChannel sendDataEnvelope();
