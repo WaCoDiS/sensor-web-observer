@@ -1,0 +1,11 @@
+version: "3"
+services:
+  datasource-observer:
+    build:
+      context: .
+    image: registry.wacodis.demo.52north.org/datasource-observer:2019-05-17
+    ports:
+      - 8080:8080
+    environment: 
+      - spring.rabbitmq.host=test.52north.org
+
