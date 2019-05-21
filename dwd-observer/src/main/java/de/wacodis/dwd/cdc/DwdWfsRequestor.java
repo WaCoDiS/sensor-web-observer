@@ -69,7 +69,6 @@ public class DwdWfsRequestor {
 		// Request
 		FeatureSource<SimpleFeatureType, SimpleFeature> source = data.getFeatureSource(params.getTypeName());
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);
-		FeatureIterator<SimpleFeature> iterator = features.features();
 
 		// DwdProductsMetaData anlegen
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
@@ -80,26 +79,9 @@ public class DwdWfsRequestor {
 		
 		metadata.setLayername(source.getInfo().getName());
 		metadata.setParameter(source.getInfo().getTitle());
-		
 		metadata.setEndDate(params.getEndDate());
 		metadata.setStartDate(params.getStartDate());
-		/*
-		try {
-			int i = 1;
-			while (iterator.hasNext()) {
-				SimpleFeature feature = (SimpleFeature) iterator.next();
-				System.out.print(i + ". ");
-				for (int k = 0; k < feature.getAttributeCount(); k++)
-					System.out.print(feature.getAttribute(k) + " ");
-
-				System.out.println();
-
-				i = i + 1;
-			}
-		} finally {
-			iterator.close();
-		}
-	*/
+		metadata.setServiceUrl(url);
 		return metadata;
 	}
 
