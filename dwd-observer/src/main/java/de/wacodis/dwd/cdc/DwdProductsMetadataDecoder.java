@@ -8,6 +8,7 @@ package de.wacodis.dwd.cdc;
 import org.joda.time.DateTime;
 
 import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.api.model.AbstractDataEnvelopeTimeFrame;
 import de.wacodis.api.model.DwdDataEnvelope;
 
 /**
@@ -19,15 +20,26 @@ public class DwdProductsMetadataDecoder {
     
     public DwdDataEnvelope decode(DwdProductsMetadata metadata){
     	
+    	// create objects
     	DwdDataEnvelope dwdDE = new DwdDataEnvelope();
     	AbstractDataEnvelopeAreaOfInterest extent = new AbstractDataEnvelopeAreaOfInterest();
-    	extent.extent(metadata.getExtent());
-    	dwdDE.setAreaOfInterest(extent);
+    	
+    	// serviceUrl
+    	dwdDE.setServiceUrl(metadata.getServiceUrl());
+    	// layername and clear text
     	dwdDE.setLayerName(metadata.getLayername());
     	dwdDE.setParameter(metadata.getParameter());
+    	// bbox
+    	extent.extent(metadata.getExtent());
+    	dwdDE.setAreaOfInterest(extent);
+    	// timeframe
     	DateTime startDate = new DateTime(metadata.getStartDate());
     	DateTime endDate = new DateTime(metadata.getEndDate());
-    	//dwdDE.setTimeFrame();
+    	AbstractDataEnvelopeTimeFrame timeframe = new AbstractDataEnvelopeTimeFrame();
+    	timeframe.setStartTime(startDate);
+    	timeframe.setEndTime(endDate);
+    	dwdDE.setTimeFrame(timeframe);
+    	
         return dwdDE;
     }
 
