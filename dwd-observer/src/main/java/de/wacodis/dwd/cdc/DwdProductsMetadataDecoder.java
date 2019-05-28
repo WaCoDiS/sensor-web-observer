@@ -18,7 +18,7 @@ import de.wacodis.api.model.DwdDataEnvelope;
  */
 public class DwdProductsMetadataDecoder {
     
-    public DwdDataEnvelope decode(DwdProductsMetadata metadata){
+    public static DwdDataEnvelope decode(DwdProductsMetadata metadata){
     	
     	// create objects
     	DwdDataEnvelope dwdDE = new DwdDataEnvelope();

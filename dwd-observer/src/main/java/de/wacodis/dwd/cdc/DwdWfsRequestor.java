@@ -41,7 +41,7 @@ public class DwdWfsRequestor {
 	 * @return metadata for the found stationary weather data
 	 * @throws IOException
 	 */
-	public DwdProductsMetadata request(String url, DwdWfsRequestParams params) throws IOException {
+	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params) throws IOException {
 
 		// Connect to WFS
 		String getCapabilities = url + "?REQUEST=GetCapabilities";
@@ -72,14 +72,16 @@ public class DwdWfsRequestor {
 
 		// DwdProductsMetaData anlegen
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		ReferencedEnvelope extent = features.getBounds();
-
+		ReferencedEnvelope extent = features.getBounds();	//Runtime Exception
+		/*
 		metadata.setExtent((float) extent.getMinX(), (float) extent.getMinY(), (float) extent.getMaxX(),
 				(float) extent.getMaxY());
-		
+		*/
+		System.out.println((float) bbox.getBounds().getMinX());
+		metadata.setExtent((float) bbox.getBounds().getMinX(), (float) bbox.getBounds().getMinY(), (float) bbox.getBounds().getMaxX(), (float) bbox.getBounds().getMaxY());
 		metadata.setLayername(source.getInfo().getName());
 		metadata.setParameter(source.getInfo().getTitle());
-		metadata.setEndDate(params.getEndDate());
+		metadata.setEndDate(params.getEndDate());		//Startdate aus Anfrage oder aus Rückgabefeatures auslesen?
 		metadata.setStartDate(params.getStartDate());
 		metadata.setServiceUrl(url);
 		return metadata;

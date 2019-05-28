@@ -21,7 +21,7 @@ import de.wacodis.api.model.WacodisJobDefinition;
  */
 public class DwdRequestParamsEncoder {
 
-	public DwdWfsRequestParams encode(String version, String typeName, WacodisJobDefinition jobDefinition,
+	public static DwdWfsRequestParams encode(String version, String typeName, WacodisJobDefinition jobDefinition,
 			Date startDate, Date endDate) {
 
 		DwdWfsRequestParams params = new DwdWfsRequestParams();
@@ -32,11 +32,11 @@ public class DwdRequestParamsEncoder {
 		DirectPosition2D bottomLeft = new DirectPosition2D(coordinates.get(1), coordinates.get(0));
 		DirectPosition2D upperRight = new DirectPosition2D(coordinates.get(3), coordinates.get(2));
 		Envelope2D bounds = new Envelope2D(bottomLeft, upperRight);
-
+		
 		params.setVersion(version);
 		params.setTypeName(typeName);
 		params.setBbox(bounds);
-		params.setStartDate(startDate);
+		params.setStartDate(startDate);	//Temporal Coverage?
 		params.setEndDate(endDate);
 
 		return params;
