@@ -8,6 +8,8 @@ package de.wacodis.dwd.cdc;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
 
 /**
@@ -22,8 +24,8 @@ public class DwdProductsMetadata {
 	String layername;
 	String parameter;
 	List<Float> extent;
-	Date startDate;
-	Date endDate;
+	DateTime startDate;
+	DateTime endDate;
 	
 	public String getServiceUrl() {
 		return serviceUrl;
@@ -65,34 +67,20 @@ public class DwdProductsMetadata {
 		this.extent.add(ymax);
 	}
 
-	public Date getStartDate() {
+	public DateTime getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(DateTime startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	public DateTime getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(DateTime endDate) {
 		this.endDate = endDate;
-	}
-/*
-	public DwdProductsMetadata(String serviceUrl, String layername, String parameter, List<Float> extent,
-			Date startDate, Date endDate) {
-		super();
-		this.serviceUrl = serviceUrl;
-		this.layername = layername;
-		this.parameter = parameter;
-		this.extent = extent;
-		this.startDate = startDate;
-		this.endDate = endDate;
-	}
-*/	
-	
-	
+	}	
 	
 }

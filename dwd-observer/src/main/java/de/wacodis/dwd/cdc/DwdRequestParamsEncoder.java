@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
+import org.joda.time.DateTime;
 
 import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.api.model.WacodisJobDefinition;
@@ -20,10 +21,16 @@ import de.wacodis.api.model.WacodisJobDefinition;
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
 public class DwdRequestParamsEncoder {
+	
+	
 
 	public static DwdWfsRequestParams encode(String version, String typeName, WacodisJobDefinition jobDefinition,
-			Date startDate, Date endDate) {
-
+			DateTime startDate, DateTime endDate) { 
+		
+		
+		//?????
+		//Date changed to DateTime
+		
 		DwdWfsRequestParams params = new DwdWfsRequestParams();
 
 		// Bounding Box

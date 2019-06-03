@@ -33,8 +33,8 @@ public class DwdProductsMetadataDecoder {
     	extent.extent(metadata.getExtent());
     	dwdDE.setAreaOfInterest(extent);
     	// timeframe
-    	DateTime startDate = new DateTime(metadata.getStartDate());
-    	DateTime endDate = new DateTime(metadata.getEndDate());
+    	DateTime startDate = metadata.getStartDate();
+    	DateTime endDate =metadata.getEndDate();
     	AbstractDataEnvelopeTimeFrame timeframe = new AbstractDataEnvelopeTimeFrame();
     	timeframe.setStartTime(startDate);
     	timeframe.setEndTime(endDate);
