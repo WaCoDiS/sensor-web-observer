@@ -6,6 +6,7 @@
 package de.wacodis.dwd.cdc;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,19 +71,35 @@ public class DwdWfsRequestor {
 		FeatureSource<SimpleFeatureType, SimpleFeature> source = data.getFeatureSource(params.getTypeName());
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);
 
-		// DwdProductsMetaData anlegen
+		// create DwdProductsMetaData
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		ReferencedEnvelope extent = features.getBounds();	//Runtime Exception
-		/*
+		ReferencedEnvelope extent = source.getBounds(query);		
+		
+		// set parameters
+		// bbox
 		metadata.setExtent((float) extent.getMinX(), (float) extent.getMinY(), (float) extent.getMaxX(),
 				(float) extent.getMaxY());
-		*/
-		System.out.println((float) bbox.getBounds().getMinX());
-		metadata.setExtent((float) bbox.getBounds().getMinX(), (float) bbox.getBounds().getMinY(), (float) bbox.getBounds().getMaxX(), (float) bbox.getBounds().getMaxY());
+		// name
 		metadata.setLayername(source.getInfo().getName());
+		// clearname
 		metadata.setParameter(source.getInfo().getTitle());
-		metadata.setEndDate(params.getEndDate());		//Startdate aus Anfrage oder aus Rückgabefeatures auslesen?
-		metadata.setStartDate(params.getStartDate());
+		// timeframe
+		
+		FeatureIterator<SimpleFeature> iterator = features.features();
+		try {
+			for(int i=1;iterator.hasNext(); i++){
+				SimpleFeature feature = (SimpleFeature) iterator.next();
+				if(i ==1) {
+					metadata.setStartDate((Date) feature.getAttribute("ZEITSTEMPEL"));
+				}
+				if(!iterator.hasNext()) {
+					metadata.setEndDate((Date) feature.getAttribute("ZEITSTEMPEL"));
+				}
+			}
+		} finally {
+			iterator.close();
+		}
+		// serviceurl
 		metadata.setServiceUrl(url);
 		return metadata;
 	}
