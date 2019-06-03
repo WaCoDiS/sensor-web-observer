@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.wacodis.dwd.cdc;
 
 import java.io.InputStream;
@@ -21,14 +16,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import junit.framework.Assert;
 
 /**
  *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
 public class DwdWfsRequestorTest {
-	
+
 	private static DwdWfsRequestParams params;
 	private static String serviceurl;
 
@@ -38,47 +32,47 @@ public class DwdWfsRequestorTest {
 		params = new DwdWfsRequestParams();
 		params.setVersion("2.0.0");
 		params.setTypeName("CDC:VGSL_FX_MN003");
-		
-		
+
+
 		DirectPosition2D linksUnten = new DirectPosition2D(51.402, 6.966);
 		DirectPosition2D rechtsOben = new DirectPosition2D(51.405, 6.969);
 		Envelope2D bounds = new Envelope2D(linksUnten, rechtsOben);
 		params.setBbox(bounds);
-		
-		
+
+
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
 		Date startDate = df.parse("2019-04-24T01:00:00:00Z");
 		params.setStartDate(startDate);
-		
+
 		//df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
 		Date endDate = df.parse("2019-04-25T10:00:00:00Z");
 		params.setEndDate(endDate);	
-		
-		
-		
+
+
+
 	}
 
 	@DisplayName("Test request Method")
 	@Test
 	void testRequest() throws Exception {
 		DwdProductsMetadata result = DwdWfsRequestor.request(serviceurl, params);
-		
+
 		// object of comparison
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		
+
 		metadata.setServiceUrl(serviceurl);
 		metadata.setLayername("CDC:VGSL_FX_MN003");
 		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
-		
+
 		List<Float> extent = new ArrayList<Float>();
-		
+
 		Float test = 51.402f;
 		extent.add(test);
 		extent.add(6.966f);
 		extent.add(51.405f);
 		extent.add(6.969f);
 		metadata.setExtent(extent);
-		
+
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
 		Date startDate = df.parse("2019-04-24T01:00:00:00Z");
 		Date endDate = df.parse("2019-04-25T10:00:00:00Z");
@@ -89,7 +83,7 @@ public class DwdWfsRequestorTest {
 		// Assertions.assertEquals(metadata.getExtent(), result.getExtent());
 		//Assertions.assertTrue(51.402f, result.getExtent().get(0));
 		// Assertions.assertTrue(result.getStartDate().equals(metadata.getStartDate()));
-		
+
 	}
 
 }

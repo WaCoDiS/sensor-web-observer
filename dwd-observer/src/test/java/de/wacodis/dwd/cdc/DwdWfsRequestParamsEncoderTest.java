@@ -18,13 +18,13 @@ import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.api.model.WacodisJobDefinition;
 
 public class DwdWfsRequestParamsEncoderTest {
-	
+
 	private static String version;
 	private static String typeName;
 	private static WacodisJobDefinition jobDefinition;
 	private static Date startDate;
 	private static Date endDate;
-	
+
 	@BeforeAll
 	static void setup() throws ParseException {
 		version = "2.0.0";
@@ -37,8 +37,8 @@ public class DwdWfsRequestParamsEncoderTest {
 		extent.add(6.969f);
 		area.setExtent(extent);
 		jobDefinition.setAreaOfInterest(area);
-		
-		
+
+
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
 		startDate = df.parse("2019-04-24T01:00:00:00Z");
 		endDate = df.parse("2019-04-25T10:00:00:00Z");
@@ -48,9 +48,9 @@ public class DwdWfsRequestParamsEncoderTest {
 	@Test
 	void testEncodeParams() throws Exception {
 		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, typeName, jobDefinition, startDate, endDate);
-		
+
 		Assertions.assertEquals(null, null);
-		
+
 	}
 
 
