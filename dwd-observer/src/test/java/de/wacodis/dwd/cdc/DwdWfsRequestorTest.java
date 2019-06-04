@@ -11,6 +11,9 @@ import java.util.List;
 
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -40,15 +43,11 @@ public class DwdWfsRequestorTest {
 		params.setBbox(bounds);
 
 
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
-		Date startDate = df.parse("2019-04-24T01:00:00:00Z");
+		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
+		DateTime startDate = DateTime.parse("2019-04-24T01:00:00:00Z", df);
+		DateTime endDate = DateTime.parse("2019-04-25T10:00:00:00Z", df);
 		params.setStartDate(startDate);
-
-		//df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
-		Date endDate = df.parse("2019-04-25T10:00:00:00Z");
-		params.setEndDate(endDate);	
-
-
+		params.setEndDate(endDate);
 
 	}
 
@@ -73,9 +72,10 @@ public class DwdWfsRequestorTest {
 		extent.add(6.969f);
 		metadata.setExtent(extent);
 
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
-		Date startDate = df.parse("2019-04-24T01:00:00:00Z");
-		Date endDate = df.parse("2019-04-25T10:00:00:00Z");
+		
+		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
+		DateTime startDate = DateTime.parse("2019-04-24T01:00:00:00Z", df);
+		DateTime endDate = DateTime.parse("2019-04-25T10:00:00:00Z", df);
 		metadata.setStartDate(startDate);
 		metadata.setEndDate(endDate);
 

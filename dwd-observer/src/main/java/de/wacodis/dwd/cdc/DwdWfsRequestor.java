@@ -19,6 +19,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.factory.GeoTools;
+import org.joda.time.DateTime;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.And;
@@ -90,10 +91,10 @@ public class DwdWfsRequestor {
 			for(int i=1;iterator.hasNext(); i++){
 				SimpleFeature feature = (SimpleFeature) iterator.next();
 				if(i ==1) {
-					metadata.setStartDate((Date) feature.getAttribute("ZEITSTEMPEL"));
+					metadata.setStartDate((DateTime) feature.getAttribute("ZEITSTEMPEL"));
 				}
 				if(!iterator.hasNext()) {
-					metadata.setEndDate((Date) feature.getAttribute("ZEITSTEMPEL"));
+					metadata.setEndDate((DateTime) feature.getAttribute("ZEITSTEMPEL"));
 				}
 			}
 		} finally {
