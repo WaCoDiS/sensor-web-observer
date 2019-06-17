@@ -24,7 +24,7 @@ public class DwdWfsRequestParamsEncoderTest {
 
 	private static String version;
 	private static String typeName;
-	private static WacodisJobDefinition jobDefinition;
+	private static WacodisJobDefinition jobDefinition = new WacodisJobDefinition();
 	private static DateTime startDate;
 	private static DateTime endDate;
 
@@ -52,8 +52,14 @@ public class DwdWfsRequestParamsEncoderTest {
 	void testEncodeParams() throws Exception {
 		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, typeName, jobDefinition, startDate, endDate);
 
-		Assertions.assertEquals(null, null);
-
+		Assertions.assertEquals(version, params.getVersion());
+		Assertions.assertEquals(typeName, params.getTypeName());
+		Assertions.assertEquals(startDate, params.getStartDate());
+		Assertions.assertEquals(endDate, params.getEndDate());
+		Assertions.assertEquals((double) jobDefinition.getAreaOfInterest().getExtent().get(0), params.getBbox().getMinY());
+		Assertions.assertEquals((double) jobDefinition.getAreaOfInterest().getExtent().get(1), params.getBbox().getMinX());
+		Assertions.assertEquals((double) jobDefinition.getAreaOfInterest().getExtent().get(2), params.getBbox().getMaxY());
+		Assertions.assertEquals((double) jobDefinition.getAreaOfInterest().getExtent().get(3), params.getBbox().getMaxX());
 	}
 
 
