@@ -74,7 +74,7 @@ public class DwdWfsRequestParams {
 	}
 
 	public DateTime getEndDate() {
-		return startDate;
+		return endDate;
 	}
 
 	public void setEndDate(DateTime endDate) {
