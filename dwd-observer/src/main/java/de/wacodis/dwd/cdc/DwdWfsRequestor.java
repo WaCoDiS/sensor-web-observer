@@ -25,6 +25,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.And;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.BBOX;
 
 /**
@@ -74,7 +75,8 @@ public class DwdWfsRequestor {
 
 		// create DwdProductsMetaData
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		ReferencedEnvelope extent = source.getBounds(query);		
+		//ReferencedEnvelope extent = source.getBounds(query);
+		ReferencedEnvelope extent = source.getFeatures(query).getBounds();
 		
 		// set parameters
 		// bbox
@@ -87,15 +89,47 @@ public class DwdWfsRequestor {
 		// timeframe
 		
 		FeatureIterator<SimpleFeature> iterator = features.features();
+		DateTime startDate = new DateTime();
+		DateTime endDate= new DateTime();
 		try {
+					
+		
 			for(int i=1;iterator.hasNext(); i++){
 				SimpleFeature feature = (SimpleFeature) iterator.next();
+				DateTime temp = (DateTime) feature.getAttribute("ZEITSTEMPEL");
+				
+				// Set start Values
+				if(i==1) {
+					startDate = temp;
+					endDate = temp;
+					metadata.setStartDate(startDate);
+					metadata.setEndDate(endDate);
+				}
+				
+				// Set StartDate or EndDate
+				if(temp.isBefore(startDate)) {
+					startDate = temp;
+					metadata.setStartDate(startDate);
+				}	
+				
+				if(temp.isAfter(endDate)) {
+					endDate = temp;
+					metadata.setEndDate(endDate);
+				}
+				
+				
+				
+				
+				
+				/*
+				
 				if(i ==1) {
 					metadata.setStartDate((DateTime) feature.getAttribute("ZEITSTEMPEL"));
 				}
 				if(!iterator.hasNext()) {
 					metadata.setEndDate((DateTime) feature.getAttribute("ZEITSTEMPEL"));
 				}
+				*/
 			}
 		} finally {
 			iterator.close();
