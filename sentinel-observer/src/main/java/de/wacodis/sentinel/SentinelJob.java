@@ -173,6 +173,7 @@ public class SentinelJob implements Job {
         newProducts.stream().forEach(p -> {
             CopernicusDataEnvelope env = prepareEnvelop(p.getCloudCoverPercentage(), p.resolveBbox(), p.getId(),
                     satellite, p.getBeginPosition(), p.getEndPosition());
+            env.setPortal(CopernicusDataEnvelope.PortalEnum.SENTINEL_HUB);
 
             publish(env);            
         });
