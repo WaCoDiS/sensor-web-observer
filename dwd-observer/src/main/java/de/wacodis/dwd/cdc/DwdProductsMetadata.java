@@ -5,6 +5,7 @@
  */
 package de.wacodis.dwd.cdc;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class DwdProductsMetadata {
 	String serviceUrl;
 	String layername;
 	String parameter;
-	List<Float> extent;
+	ArrayList<Float> extent = new ArrayList<Float>();
 	DateTime startDate;
 	DateTime endDate;
 	
@@ -56,7 +57,7 @@ public class DwdProductsMetadata {
 	}
 
 	
-	public void setExtent(List<Float> extent) {
+	public void setExtent(ArrayList<Float> extent) {
 		this.extent = extent;
 	}
 

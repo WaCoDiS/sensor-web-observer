@@ -31,7 +31,7 @@ public class DwdDataEnvelopeTest {
 		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
 		
 		// bbox
-		List<Float> extent = new ArrayList<Float>();
+		ArrayList<Float> extent = new ArrayList<Float>();
 		extent.add(51.402f);
 		extent.add(6.966f);
 		extent.add(51.405f);
