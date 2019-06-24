@@ -37,8 +37,8 @@ public class DwdWfsRequestorIT {
 		params.setTypeName("CDC:VGSL_FX_MN003");
 
 
-		DirectPosition2D linksUnten = new DirectPosition2D(51.402, 6.966);
-		DirectPosition2D rechtsOben = new DirectPosition2D(51.405, 6.969);
+		DirectPosition2D linksUnten = new DirectPosition2D(51.0000, 6.6000);
+		DirectPosition2D rechtsOben = new DirectPosition2D(51.5000, 7.3000);
 		Envelope2D bounds = new Envelope2D(linksUnten, rechtsOben);
 		params.setBbox(bounds);
 
@@ -65,13 +65,12 @@ public class DwdWfsRequestorIT {
 		metadata.setLayername("CDC:VGSL_FX_MN003");
 		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
 
-		List<Float> extent = new ArrayList<Float>();
+		ArrayList<Float> extent = new ArrayList<Float>();
 
-		Float test = 51.402f;
-		extent.add(test);
-		extent.add(6.966f);
-		extent.add(51.405f);
-		extent.add(6.969f);
+		extent.add(51.2256f);
+		extent.add(6.7018f);
+		extent.add(51.5088f);
+		extent.add(7.3411f);
 		metadata.setExtent(extent);
 
 		
@@ -82,11 +81,13 @@ public class DwdWfsRequestorIT {
 		metadata.setEndDate(endDate);
 
 		
-		Assertions.assertTrue(false);
+		Assertions.assertTrue(true);
 		// Comparison
-		// Assertions.assertEquals(metadata.getExtent(), result.getExtent());
-		//Assertions.assertTrue(51.402f, result.getExtent().get(0));
-		// Assertions.assertTrue(result.getStartDate().equals(metadata.getStartDate()));
+		
+		
+		Assertions.assertEquals(metadata.getExtent(), result.getExtent());
+		//Assertions.assertEquals(51.402f, result.getExtent().get(0));
+		//Assertions.assertTrue(result.getStartDate().equals(metadata.getStartDate()));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
