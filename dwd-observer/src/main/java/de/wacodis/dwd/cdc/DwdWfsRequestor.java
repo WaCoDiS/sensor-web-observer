@@ -22,6 +22,8 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.factory.GeoTools;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.And;
@@ -64,8 +66,10 @@ public class DwdWfsRequestor {
 		// Filter
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 		BBOX bbox = ff.bbox(ff.property(geomName), params.getBbox());
+		
 		PropertyIsBetween timeFilter = ff.between(
-				ff.property("CDC:ZEITSTEMPEL"), ff.literal(params.getStartDate()), ff.literal(params.getEndDate()));
+				ff.property("CDC:ZEITSTEMPEL"), ff.literal(params.getStartDate().toDate()), ff.literal(params.getEndDate().toDate()));
+		
 		And conjunction = ff.and(timeFilter, bbox);
 
 		// Query
@@ -75,42 +79,42 @@ public class DwdWfsRequestor {
 
 		// Request
 		FeatureSource<SimpleFeatureType, SimpleFeature> source = data.getFeatureSource(params.getTypeName());
-		FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);
 
 		// create DwdProductsMetaData
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		//ReferencedEnvelope extent = source.getBounds(query);
-		//ReferencedEnvelope extent = source.getFeatures(query).getBounds();
+
+		// set parameters		
+		// bbox		
+		ArrayList<Float> extent = generateBBox(source, query);
+		metadata.setExtent(extent.get(0), extent.get(1),  extent.get(2), extent.get(3));
 		
-		// set parameters
-		// bbox
-		
-		ArrayList<Float> extent = generateBBox(features);
-		metadata.setExtent(extent.get(0), extent.get(1),  extent.get(2),
-				extent.get(3));
+		// timeframe
+		ArrayList<DateTime> timeFrame = generateTimeFrame(source, query);
+		metadata.setStartDate(timeFrame.get(0));
+		metadata.setEndDate(timeFrame.get(1));
 				
 		// name
 		metadata.setLayername(source.getInfo().getName());
 		// clearname
 		metadata.setParameter(source.getInfo().getTitle());
-		// timeframe
-		ArrayList<DateTime> timeFrame = generateTimeFrame(features);
-		metadata.setStartDate(timeFrame.get(0));
-		metadata.setEndDate(timeFrame.get(1));
+		
 		// serviceurl
 		metadata.setServiceUrl(url);
 		return metadata;
 	}
 
-	private static ArrayList<DateTime> generateTimeFrame(FeatureCollection<SimpleFeatureType, SimpleFeature> features) {
+	private static ArrayList<DateTime> generateTimeFrame(FeatureSource<SimpleFeatureType, SimpleFeature> source, Query query ) throws IOException {
+		FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);		
 		FeatureIterator<SimpleFeature> iterator = features.features();
 		DateTime startDate = new DateTime();
 		DateTime endDate= new DateTime();
 		ArrayList<DateTime> timeFrame = new ArrayList<DateTime>(2);
 		try {
-			for(int i=1;iterator.hasNext(); i++){
+			for(int i=1;hasNextNew(iterator); i++){
 				SimpleFeature feature = (SimpleFeature) iterator.next();
-				DateTime temp = (DateTime) feature.getAttribute("ZEITSTEMPEL");
+				DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd' 'HH:mm:ss.S");
+				DateTime temp = DateTime.parse(feature.getAttribute("ZEITSTEMPEL").toString(), df);
+				
 				// Set start Values
 				if(i==1) {
 					startDate = temp;
@@ -137,17 +141,30 @@ public class DwdWfsRequestor {
 		return timeFrame;
 	}
 	
-	private static ArrayList<Float> generateBBox(FeatureCollection<SimpleFeatureType, SimpleFeature> features) {
+	
+	private static boolean hasNextNew(FeatureIterator<SimpleFeature> iterator) {
+		boolean hasNext = false;
+		try {
+			hasNext = iterator.hasNext();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return hasNext;
+		
+	}
+	
+	private static ArrayList<Float> generateBBox(FeatureSource<SimpleFeatureType, SimpleFeature> source, Query query) throws IOException {
+		FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);	
 		FeatureIterator<SimpleFeature> iterator = features.features();
 		float xMin = Float.NaN;
 		float yMin = Float.NaN;
 		float xMax = Float.NaN;
 		float yMax = Float.NaN;
-		ArrayList<Float> extent = new ArrayList<Float>(4);
+		ArrayList<Float> extent = new ArrayList<Float>();
 		try {
-			for(int i=1;iterator.hasNext(); i++){
+			for(int i=1;hasNextNew(iterator); i++){
 				SimpleFeature feature = (SimpleFeature) iterator.next();
-				//float temp = feature.getAttribute("GEOM");
 				BoundingBox bBox = feature.getBounds();
 				// Set start Values
 				if(i==1) {
@@ -156,30 +173,37 @@ public class DwdWfsRequestor {
 					xMax = (float) bBox.getMaxX();
 					yMax = (float) bBox.getMaxY();
 					
+					extent.add(0, xMin);
+					extent.add(1, yMin);
+					extent.add(2, xMax);
+					extent.add(3, yMax);
 				}
 				
 				// Set actual Boundingbox
-				if(xMin < bBox.getMinX()) {
+				if(xMin > bBox.getMinX()) {
 					xMin = (float) bBox.getMinX();
+					extent.remove(0);
+					extent.add(0, xMin);
 				}	
 				
-				if(yMin < bBox.getMinY()) {
+				if(yMin > bBox.getMinY()) {
 					yMin = (float) bBox.getMinY();
+					extent.remove(1);
+					extent.add(1, yMin);
 			
 				}
-				if(xMax > bBox.getMaxX()) {
+				if(xMax < bBox.getMaxX()) {
 					xMax = (float) bBox.getMaxX();
+					extent.remove(2);
+					extent.add(2, xMax);
 				}	
 				
 				if(yMax < bBox.getMaxY()) {
 					yMax = (float) bBox.getMaxY();
+					extent.remove(3);
+					extent.add(3, yMax);
 			
 				}
-				
-				extent.add(xMin);
-				extent.add(yMin);
-				extent.add(xMax);
-				extent.add(yMax);
 				
 			}
 		} finally {
