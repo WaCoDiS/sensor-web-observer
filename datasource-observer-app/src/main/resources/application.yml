@@ -21,7 +21,7 @@ spring:
           type: rabbit
   datasource.quartz-data-source:
     name: quartzDataSource
-    jdbc-url: jdbc:h2:/tmp/h2_wacodis_jobs678
+    jdbc-url: jdbc:h2:file:/usr/share/wacodis/data/h2_wacodis_core_jobs
     username: sa
     password:
     driver-class: org.h2.Driver
