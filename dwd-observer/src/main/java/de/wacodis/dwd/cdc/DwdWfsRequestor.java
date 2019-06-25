@@ -108,7 +108,7 @@ public class DwdWfsRequestor {
 		FeatureIterator<SimpleFeature> iterator = features.features();
 		DateTime startDate = new DateTime();
 		DateTime endDate= new DateTime();
-		ArrayList<DateTime> timeFrame = new ArrayList<DateTime>(2);
+		ArrayList<DateTime> timeFrame = new ArrayList<DateTime>();
 		try {
 			for(int i=1;hasNextNew(iterator); i++){
 				SimpleFeature feature = (SimpleFeature) iterator.next();
@@ -119,19 +119,21 @@ public class DwdWfsRequestor {
 				if(i==1) {
 					startDate = temp;
 					endDate = temp;
-					timeFrame.add(startDate);
-					timeFrame.add(endDate);
+					timeFrame.add(0, startDate);
+					timeFrame.add(1, endDate);
 				}
 				
 				// Set StartDate or EndDate
 				if(temp.isBefore(startDate)) {
 					startDate = temp;
-					timeFrame.add(startDate);
+					timeFrame.remove(0);
+					timeFrame.add(0, startDate);
 				}	
 				
 				if(temp.isAfter(endDate)) {
 					endDate = temp;
-					timeFrame.add(endDate);
+					timeFrame.remove(1);
+					timeFrame.add(1, endDate);
 				}
 				
 			}
