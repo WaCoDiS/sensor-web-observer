@@ -15,7 +15,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<geotools.version>21-SNAPSHOT</geotools.version>
+		<geotools.version>21.2</geotools.version>
 		<junit.jupiter.version>5.5.0-M1</junit.jupiter.version>
 	</properties>
 
