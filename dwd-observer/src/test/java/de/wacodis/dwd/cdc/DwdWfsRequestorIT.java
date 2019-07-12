@@ -1,5 +1,6 @@
 package de.wacodis.dwd.cdc;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -34,15 +35,21 @@ public class DwdWfsRequestorIT {
 		params = new DwdWfsRequestParams();
 		params.setVersion("2.0.0");
 		params.setTypeName("CDC:VGSL_FX_MN003");
+		// params.setTypeName("CDC:VGSL_TT_TU_MN009");
 
 		DirectPosition2D linksUnten = new DirectPosition2D(51.0000, 6.6000);
 		DirectPosition2D rechtsOben = new DirectPosition2D(51.5000, 7.3000);
 		Envelope2D bounds = new Envelope2D(linksUnten, rechtsOben);
 		params.setBbox(bounds);
 
-		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
+		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		DateTime startDate = DateTime.parse("2019-04-24T01:00:00:00Z", df);
 		DateTime endDate = DateTime.parse("2019-04-25T10:00:00:00Z", df);
+
+//		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+//		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", df);
+//		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", df);
+//		
 		params.setStartDate(startDate);
 		params.setEndDate(endDate);
 
@@ -50,48 +57,53 @@ public class DwdWfsRequestorIT {
 
 	@DisplayName("Test request Method")
 	@Test
-	void testRequest() {
+	void testRequest() throws IOException {
+		DwdProductsMetadata result = new DwdProductsMetadata();
+		result = DwdWfsRequestor.request(serviceurl, params);
 
-		try {
-			DwdProductsMetadata result = DwdWfsRequestor.request(serviceurl, params);
+		// object of comparison
+		DwdProductsMetadata metadata = new DwdProductsMetadata();
 
-			// object of comparison
-			DwdProductsMetadata metadata = new DwdProductsMetadata();
+		metadata.setServiceUrl(serviceurl);
+		metadata.setLayername("CDC:VGSL_FX_MN003");
+		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
 
-			metadata.setServiceUrl(serviceurl);
-			metadata.setLayername("CDC:VGSL_FX_MN003");
-			metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
+		ArrayList<Float> extent = new ArrayList<Float>();
 
-			ArrayList<Float> extent = new ArrayList<Float>();
+		extent.add(51.2531f);
+		extent.add(6.7686f);
+		extent.add(51.4041f);
+		extent.add(7.2156f);
+		metadata.setExtent(extent);
 
-			extent.add(51.2531f);
-			extent.add(6.7686f);
-			extent.add(51.4041f);
-			extent.add(7.2156f);
-			metadata.setExtent(extent);
+		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
+		DateTime startDate = DateTime.parse("2010-04-24T02:00:00:00Z", df);
+		DateTime endDate = DateTime.parse("2019-04-25T02:00:00:00Z", df);
+		metadata.setStartDate(startDate);
+		metadata.setEndDate(endDate);
 
-			DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
-			DateTime startDate = DateTime.parse("2019-04-24T02:00:00:00Z", df);
-			DateTime endDate = DateTime.parse("2019-04-25T02:00:00:00Z", df);
-			metadata.setStartDate(startDate);
-			metadata.setEndDate(endDate);
+		// Comparison
+		// ServiceURL
+		Assertions.assertEquals(metadata.getServiceUrl(), result.getServiceUrl());
+		// LayerName
+		Assertions.assertEquals(metadata.getLayername(), result.getLayername());
+		// ClearName
+		Assertions.assertEquals(metadata.getParameter(), result.getParameter());
+		// bbox
+		Assertions.assertEquals(metadata.getExtent(), result.getExtent());
+		// time
+		Assertions.assertEquals(metadata.getStartDate(), result.getStartDate());
+		Assertions.assertEquals(metadata.getEndDate(), result.getEndDate());
 
-			// Comparison
-			// ServiceURL
-			Assertions.assertEquals(metadata.getServiceUrl(), result.getServiceUrl());
-			// LayerName
-			Assertions.assertEquals(metadata.getLayername(), result.getLayername());
-			// ClearName
-			Assertions.assertEquals(metadata.getParameter(), result.getParameter());
-			// bbox
-			Assertions.assertEquals(metadata.getExtent(), result.getExtent());
-			// time
-			Assertions.assertEquals(metadata.getStartDate(), result.getStartDate());
-			Assertions.assertEquals(metadata.getEndDate(), result.getEndDate());
+	}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	@DisplayName("Test correct throwing of Exceptions")
+	@Test
+	void testExceptions() {
+		// request
+		Assertions.assertDoesNotThrow(() -> {
+			DwdWfsRequestor.request(serviceurl, params);
+		});
 
 	}
 
