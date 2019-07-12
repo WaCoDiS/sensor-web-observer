@@ -7,9 +7,7 @@ package de.wacodis.dwd.cdc;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.DataStore;
@@ -19,7 +17,6 @@ import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.factory.GeoTools;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -29,8 +26,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.And;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.geometry.BoundingBox;
 

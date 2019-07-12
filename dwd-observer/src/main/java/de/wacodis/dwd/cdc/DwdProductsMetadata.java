@@ -6,12 +6,10 @@
 package de.wacodis.dwd.cdc;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
 
-import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
 
 /**
  * Metadata for DWD station products

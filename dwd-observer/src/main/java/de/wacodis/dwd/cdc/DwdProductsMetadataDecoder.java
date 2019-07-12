@@ -7,9 +7,9 @@ package de.wacodis.dwd.cdc;
 
 import org.joda.time.DateTime;
 
-import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.api.model.AbstractDataEnvelopeTimeFrame;
-import de.wacodis.api.model.DwdDataEnvelope;
+import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.observer.model.AbstractDataEnvelopeTimeFrame;
+import de.wacodis.observer.model.DwdDataEnvelope;
 
 /**
  * Decodes DWD products metadata into a DataEnvelope
