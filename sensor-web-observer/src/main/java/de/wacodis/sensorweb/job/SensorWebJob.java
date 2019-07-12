@@ -16,10 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.integration.support.MessageBuilder;
 
-import de.wacodis.api.model.AbstractDataEnvelope.SourceTypeEnum;
-import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.api.model.AbstractDataEnvelopeTimeFrame;
-import de.wacodis.api.model.SensorWebDataEnvelope;
+import de.wacodis.observer.model.AbstractDataEnvelope.SourceTypeEnum;
+import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.observer.model.AbstractDataEnvelopeTimeFrame;
+import de.wacodis.observer.model.SensorWebDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
 import de.wacodis.observer.quartz.QuartzServer;
 import de.wacodis.sensorweb.observer.ObservationObserver;

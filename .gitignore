@@ -26,4 +26,6 @@
 /.nb-gradle/
 nb*.xml
 **/target/
-/data-models/
+
+.factorypath
+

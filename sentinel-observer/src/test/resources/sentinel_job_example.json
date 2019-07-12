@@ -1,0 +1,24 @@
+{  
+   "areaOfInterest":{  
+      "extent":[  
+         6.9315, 50.9854, 7.6071, 51.3190
+      ]
+   },
+   "description":"hahaha",
+   "execution":{  
+      "pattern":"* 1 * * *"
+   },
+    "inputs": [ {
+        "identifier": "OPTICAL_IMAGE",
+        "sourceType": "CopernicusSubsetDefinition",
+        "maximumCloudCoverage": 10.5,
+        "satellite": "sentinel-2"
+    }],
+   "name":"super job",
+   "processingTool":"tool.a",
+   "status":"waiting",
+   "temporalCoverage":{  
+      "duration":"P1M"
+   },
+   "useCase":"UC123"
+}

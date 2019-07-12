@@ -15,9 +15,26 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator-maven-plugin</artifactId>
-            <version>3.3.0</version>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+        </dependency>
+        <!--SpringFox dependencies -->
+        <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+        <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <!-- Bean Validation API support -->
+        <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
         </dependency>
     </dependencies>
     <profiles>
@@ -64,8 +81,7 @@
                                     <inputSpec>${project.basedir}/src/main/resources/definitions/wacodis-schemas.yml</inputSpec>
                                     <generatorName>spring</generatorName>
                                     <output>${project.basedir}</output>
-                                    <modelPackage>de.wacodis.observer.models</modelPackage>
-                            
+                                    <modelPackage>de.wacodis.observer.model</modelPackage>
                                     <generateApis>false</generateApis>
                                     <generateModels>true</generateModels>
                                     <generateSupportingFiles>false</generateSupportingFiles>
@@ -86,6 +102,11 @@
                     <groupId>de.wacodis</groupId>
                     <artifactId>openapi</artifactId>
                     <version>0.0.1-SNAPSHOT</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>3.3.0</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -129,7 +150,7 @@
                                     <inputSpec>${project.basedir}/src/main/resources/definitions/wacodis-schemas.yml</inputSpec>
                                     <generatorName>spring</generatorName>
                                     <output>${project.basedir}</output>
-                                    <modelPackage>de.wacodis.api.model</modelPackage>
+                                    <modelPackage>de.wacodis.observer.model</modelPackage>
                             
                                     <generateApis>false</generateApis>
                                     <generateModels>true</generateModels>
@@ -146,6 +167,13 @@
                     </plugin>
                 </plugins>
             </build>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>3.3.0</version>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>
