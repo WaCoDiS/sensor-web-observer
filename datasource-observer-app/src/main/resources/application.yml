@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: datasource-observer
+  profiles:
+    active: docker
+  cloud:
+    config:
+      url: http://localhost:8888
+    stream:
+      bindings:
+        job-creation:
+          destination: wacodis.test.jobs.new
+          binder: wacodis_rabbit
+          content-type: application/json
+        output-data-envelope:
+          destination: wacodis.test.data.available
+          binder: wacodis_rabbit
+          content-type: application/json
+      binders:
+        wacodis_rabbit:
+          type: rabbit
+  datasource.quartz-data-source:
+    name: quartzDataSource
+    jdbc-url: jdbc:h2:file:/usr/share/wacodis/data/h2_wacodis_core_jobs
+    username: sa
+    password:
+    driver-class: org.h2.Driver
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+      schema: classpath:tables_h2_if_not_exist.sql
+    properties:
+      org.quartz.jobStore:
+        class: org.quartz.impl.jdbcjobstore.JobStoreTX
+        driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+        dataSource: quartzDataSource
+        tablePrefix: QRTZ_
+        isClustered: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: rabbitmq
+    password: rabbitmq
+management:
+  security:
+    enabled: false
+datasource-observer:
+  execution:
+    interval:
+      sensorWeb: 3600
+      sentinel: 60  
+  sentinelhub:
+    base-url: https://scihub.copernicus.eu/apihub/
+    user: testuser
+    password: testpwd

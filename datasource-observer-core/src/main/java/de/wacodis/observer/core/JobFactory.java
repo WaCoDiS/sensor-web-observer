@@ -21,14 +21,32 @@ public interface JobFactory {
 	 * Pack business logic data into JobDataMap's data package
 	 * @param job - Instance of a new Job
 	 * @param data - Contains the business logic
+         * @deprecated replaced by #initializeJob
 	 */
-	void initializeParameters(WacodisJobDefinition job, JobDataMap data);
+        @Deprecated
+        default void initializeParameters(WacodisJobDefinition job, JobDataMap data) {
+        };
 
 	/**
 	 * Build new JobDetail
 	 * @param job - Instance of a new Job
 	 * @param data - Contains the business logic
 	 * @return JobDetail using job's data within JobDataMap
+         * @deprecated replaced by #initializeJob
 	 */
-	JobDetail prepareJob(WacodisJobDefinition job, JobDataMap data);
+        @Deprecated
+        default JobDetail prepareJob(WacodisJobDefinition job, JobDataMap data) {
+            return null;
+        };
+        
+	/**
+	 * Pack business logic data into JobDataMap's data package and build new JobDetail
+	 * @param job - Instance of a new Job
+	 * @param data - Contains the business logic
+	 * @return JobDetail using job's data within JobDataMap
+	 */
+        default JobDetail initializeJob(WacodisJobDefinition job, JobDataMap data) {
+            initializeParameters(job, data);
+            return prepareJob(job, data);
+        }
 }

@@ -15,9 +15,26 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator-maven-plugin</artifactId>
-            <version>3.3.0</version>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+        </dependency>
+        <!--SpringFox dependencies -->
+        <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+        <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <!-- Bean Validation API support -->
+        <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
         </dependency>
     </dependencies>
     <profiles>
@@ -86,6 +103,11 @@
                     <artifactId>openapi</artifactId>
                     <version>0.0.1-SNAPSHOT</version>
                 </dependency>
+                <dependency>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>3.3.0</version>
+                </dependency>
             </dependencies>
         </profile>
         <!--Use this profile to download the model definition file if you don't 
@@ -145,6 +167,13 @@
                     </plugin>
                 </plugins>
             </build>
+            <dependencies>
+                <dependency>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>3.3.0</version>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>

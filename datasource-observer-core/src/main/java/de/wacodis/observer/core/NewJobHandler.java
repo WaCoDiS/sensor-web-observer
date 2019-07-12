@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import de.wacodis.observer.model.WacodisJobDefinition;
+import java.util.stream.Collectors;
 
 @Component
 public class NewJobHandler implements InitializingBean {
@@ -22,17 +23,12 @@ public class NewJobHandler implements InitializingBean {
 	/**
 	 * accepts new Job Instance from MessageBroker
 	 * @param job - Instance of new Job
-	 * @return corresponding JobFactory to job's inputDefinition
+	 * @return corresponding JobFactories to job's inputDefinition
 	 */
-	public JobFactory receiveJob(WacodisJobDefinition job) {
-		JobFactory candidate = null;
-		for(JobFactory jobFactory : jobFactories) {
-			if(jobFactory.supportsJobDefinition(job)) {
-				candidate = jobFactory;
-				break;										//Abbruch nach erster gef. Factory -> Mehrere Inputs ->> List?
-			}
-		}
-		return candidate;
+	public List<JobFactory> receiveJob(WacodisJobDefinition job) {
+		return jobFactories.stream()
+                        .filter(jf -> jf.supportsJobDefinition(job))
+                        .collect(Collectors.toList());
 	}
 
 	@Override

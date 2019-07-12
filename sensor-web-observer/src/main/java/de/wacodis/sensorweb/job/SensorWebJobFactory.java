@@ -15,11 +15,15 @@ import de.wacodis.observer.model.SensorWebSubsetDefinition;
 import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.config.ExecutionIntervalConfig;
 import de.wacodis.observer.core.JobFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 public class SensorWebJobFactory implements JobFactory {
 
 	private static final Logger log = LoggerFactory.getLogger(SensorWebJobFactory.class);
+        
+        @Autowired
+        private ExecutionIntervalConfig intervalConfig;
 
 	@Override
 	public boolean supportsJobDefinition(WacodisJobDefinition job) {
@@ -40,7 +44,7 @@ public class SensorWebJobFactory implements JobFactory {
 				data.put("offerings", Collections.singletonList(senSubset.getOffering()));
 				data.put("featureIdentifiers", Collections.singletonList(senSubset.getFeatureOfInterest()));
 				data.put("serviceURL", senSubset.getServiceUrl());
-				data.put("executionInterval", ExecutionIntervalConfig.sensorWeb);
+				data.put("executionInterval", intervalConfig.getSensorWeb());
 			}
 		}
 	}

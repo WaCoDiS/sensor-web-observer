@@ -10,6 +10,8 @@ import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.core.NewJobHandler;
 import de.wacodis.observer.quartz.JobScheduler;
+import java.util.List;
+import javax.annotation.PostConstruct;
 
 @EnableBinding(ListenerChannel.class)
 public class MessageListener {
@@ -26,9 +28,32 @@ public class MessageListener {
 	public void receiveNewJob(WacodisJobDefinition newJob) {
 		log.info("New job received:\n{}", newJob);
 		
-		JobFactory factory = newJobHandler.receiveJob(newJob);
+		List<JobFactory> factories = newJobHandler.receiveJob(newJob);
 		
-		jobScheduler.scheduleJob(newJob, factory);
-		
+		factories.forEach(factory -> {
+                    jobScheduler.scheduleJob(newJob, factory);
+                });
 	}
+        
+        @PostConstruct
+        public void init() {
+//            new Thread(() -> {
+//                try {
+//                    Thread.sleep(5000);
+//                } catch (InterruptedException ex) {
+//                    java.util.logging.Logger.getLogger(MessageListener.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                
+//                WacodisJobDefinition j = new WacodisJobDefinition();
+//                j.setId(UUID.randomUUID());
+//                j.setAreaOfInterest(new AbstractDataEnvelopeAreaOfInterest().extent(Arrays.asList(6.9315f, 50.9854f, 7.6071f, 51.3190f)));
+//                CopernicusSubsetDefinition cs = new CopernicusSubsetDefinition();
+//                cs.setMaximumCloudCoverage(20f);
+//                cs.setIdentifier("cs-test");
+//                cs.setSatellite(CopernicusSubsetDefinition.SatelliteEnum._2);
+//                j.setInputs(Collections.singletonList(cs));
+//
+//                receiveNewJob(j);
+//            }).start();
+        }
 }

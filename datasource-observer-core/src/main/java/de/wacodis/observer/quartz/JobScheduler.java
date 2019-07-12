@@ -16,41 +16,48 @@ import de.wacodis.observer.core.JobFactory;
 
 @Component
 public class JobScheduler {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(JobScheduler.class);
 
-	private static final Logger log = LoggerFactory.getLogger(JobScheduler.class);
 
-	@Autowired
-	private QuartzServer scheduler;
-	
-	public JobScheduler() {
-	}
+    @Autowired
+    private QuartzServer wacodisQuartz;
 
-	public void scheduleJob(WacodisJobDefinition job, JobFactory factory) {
-		try {
-			
-			JobDataMap data = new JobDataMap();
-			data.put("areaOfInterest", job.getAreaOfInterest());				
+    public JobScheduler() {
+    }
 
-			factory.initializeParameters(job, data);
-			JobDetail jobDetail = factory.prepareJob(job, data);
+    public void scheduleJob(WacodisJobDefinition job, JobFactory factory) {
+        try {
+            JobDataMap data = new JobDataMap();
+            data.put("areaOfInterest", job.getAreaOfInterest());
 
-			Trigger trigger = prepareTrigger(job, data);
+            JobDetail jobDetail = factory.initializeJob(job, data);
 
-			scheduler.scheduleJob(jobDetail, trigger); 
+            Trigger trigger = prepareTrigger(job, data);
+            
+            wacodisQuartz.scheduleJob(jobDetail, trigger);
+        } catch (SchedulerException e) {
+            LOG.warn(e.getMessage());
+            LOG.debug(e.getMessage(), e);
+        }
+    }
 
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
-	}
+    private Trigger prepareTrigger(WacodisJobDefinition job, JobDataMap data) {
+        /**
+         * set a default execution interval
+         */
+        if (!data.containsKey("executionInterval")) {
+            data.put("executionInterval", 60 * 60);
+        }
+        
+        LOG.info("Build new Trigger with execution interval: {} seconds", data.get("executionInterval"));
 
-	private Trigger prepareTrigger(WacodisJobDefinition job, JobDataMap data) {
-		log.info("Build new Trigger");
-		return TriggerBuilder.newTrigger()
-				.withIdentity(job.getId().toString(), job.getName())
-				.startNow()
-				.withSchedule(SimpleScheduleBuilder
-						.simpleSchedule().repeatForever()
-				.withIntervalInSeconds(data.getInt("executionInterval")))
-				.build();
-	}
+        return TriggerBuilder.newTrigger()
+                .withIdentity(job.getId().toString(), job.getName())
+                .startNow()
+                .withSchedule(SimpleScheduleBuilder
+                        .simpleSchedule().repeatForever()
+                        .withIntervalInSeconds(data.getInt("executionInterval")))
+                .build();
+    }
 }
