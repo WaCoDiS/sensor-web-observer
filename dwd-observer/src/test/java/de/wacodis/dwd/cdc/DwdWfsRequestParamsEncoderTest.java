@@ -1,14 +1,9 @@
 package de.wacodis.dwd.cdc;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.geotools.geometry.DirectPosition2D;
-import org.geotools.geometry.Envelope2D;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -17,8 +12,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import de.wacodis.api.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.api.model.WacodisJobDefinition;
+import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
+import de.wacodis.observer.model.WacodisJobDefinition;
 
 public class DwdWfsRequestParamsEncoderTest {
 
