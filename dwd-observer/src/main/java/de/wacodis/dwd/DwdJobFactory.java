@@ -46,6 +46,7 @@ public class DwdJobFactory implements JobFactory {
             //Put all required request parameters into JobDataMap
             
             //data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
+            // data.put("version", );
             data.put("layerName", def.getLayerName());
             data.put("serviceUrl", def.getServiceUrl());
              
