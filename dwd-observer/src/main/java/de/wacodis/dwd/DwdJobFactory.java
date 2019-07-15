@@ -42,13 +42,20 @@ public class DwdJobFactory implements JobFactory {
         // this should always be the case
         if (defOpt.isPresent()) {
             DwdSubsetDefinition def = (DwdSubsetDefinition) defOpt.get();
-            data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
             
-            //TODO Put all required request parameters into JobDataMap
+            //Put all required request parameters into JobDataMap
             
-            //TODO Set Job execution interval depending on DWD Layer 
-            //(hourly, daily or monthly data providing is possible)
-            //data.put("executionInterval", ???);
+            //data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
+            data.put("layerName", def.getLayerName());
+            data.put("serviceUrl", def.getServiceUrl());
+             
+            
+            // Set Job execution interval depending on DWD Layer
+            
+            
+            // data.put("executionInterval", executionIntervall);
+            data.put("executionTemporalCoverage", job.getTemporalCoverage());
+            data.put("executionArea", job.getAreaOfInterest());
 
         }
         return JobBuilder.newJob(DwdJob.class)
