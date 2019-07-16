@@ -5,8 +5,10 @@
  */
 package de.wacodis.dwd;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -37,14 +39,18 @@ public class DwdJob implements Job {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
 
+	public static final String PREVIOUS_DAYS_KEY = "previousDays";
+
 	@Override
 	public void execute(JobExecutionContext jec) throws JobExecutionException {
 		LOG.info("Start DwdJob's execute()");
 		JobDataMap dataMap = jec.getJobDetail().getJobDataMap();
-		// TODO
+
 		// 1) Get all required request parameters stored in the JobDataMap
+		String version = dataMap.getString("version");
 		String layerName = dataMap.getString(LAYER_NAME_KEY);
 		String serviceUrl = dataMap.getString("serviceUrl");
+
 		WacodisJobDefinitionTemporalCoverage executionTemporalCoverage = (WacodisJobDefinitionTemporalCoverage) dataMap
 				.get("executionTemporalCoverage");
 
@@ -52,18 +58,36 @@ public class DwdJob implements Job {
 				.get("executionArea");
 		List<Float> area = executionArea.getExtent();
 
+		// timeframe
+		DateTime startDate = null;
+		Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
+		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer
+				&& ((int) previousDaysCandidate) > 0) {
+			int previousDays = (int) previousDaysCandidate;
+			startDate = DateTime.now().minusDays(previousDays);
+		} else {
+			// lets default to one week
+			startDate = DateTime.now().minusDays(7);
+		}
+
 		// 2) Create a DwdWfsRequestParams onbject from the restored request parameters
-		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, endDate);
+		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, DateTime.now());
 
 		// - startDate and endDate should be chosen depending on the request interval
 		// and the last request endDate
 		// 3) Request WFS with request paramaters
-		DwdProductsMetadata metadata = DwdWfsRequestor.request(serviceUrl, params);
+		DwdProductsMetadata metadata = null;
+		try {
+			metadata = DwdWfsRequestor.request(serviceUrl, params);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// 4) Decode DwdProductsMetada to DwdDataEnvelope
 		DwdDataEnvelope dataEnvelope = DwdProductsMetadataDecoder.decode(metadata);
 		LOG.info("new dataEnvelope:\n{}", dataEnvelope.toString());
 		// 5) Publish DwdDataEnvelope message
-		PublisherChannel pub;
+		PublisherChannel pub = null;
 		pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
 		LOG.info("DataEnvelope published");
 	}
