@@ -9,7 +9,6 @@ import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.model.AbstractSubsetDefinition;
 import de.wacodis.observer.model.DwdSubsetDefinition;
 import de.wacodis.observer.model.WacodisJobDefinition;
-import de.wacodis.sentinel.SentinelJob;
 
 import java.util.Optional;
 
