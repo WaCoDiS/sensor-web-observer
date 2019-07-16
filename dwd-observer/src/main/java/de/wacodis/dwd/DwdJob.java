@@ -6,7 +6,10 @@
 package de.wacodis.dwd;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.quartz.Job;
@@ -35,11 +38,26 @@ import de.wacodis.observer.publisher.PublisherChannel;
  */
 public class DwdJob implements Job {
 
+	//Enumerations of temporal resolution
+	//{average Temp., precipitation, air pressure, air humidity, cloud coverage}
+	//public enum hourly { TT_TU_MN009, R1_MN008, P0_MN008, RF_TU_MN009, N_MN008 }
+	public Set hourly = new HashSet<> (Arrays.asList( "TT_TU_MN009", "R1_MN008", "P0_MN008", "RF_TU_MN009", "N_MN008" ));
+	//{average Temp., max temp, min temp, precipitation, wind top, air pressure, snow height, fresh snow height, sunshine duration, air humidity, cloud coverage}
+	//public enum daily {TMK_MN004, TXK_MN004, TNK_MN004, RS_MN006, FX_MN003, PM_MN004, SH_TAG_MN006, NSH_TAG_MN006, SDK_MN004, UPM_MN004, NM_MN004}
+	public Set daily = new HashSet<> (Arrays.asList( "TMK_MN004", "TXK_MN004", "TNK_MN004", "RS_MN006", "FX_MN003", "PM_MN004", "SH_TAG_MN006", "NSH_TAG_MN006", "SDK_MN004", "UPM_MN004", "NM_MN004" ));
+	//{average Temp., max temp, min temp, precipitation, air pressure, snow height, fresh snow height, sunshine duration, air humidity, cloud coverage}
+	//public enum monthly { MO_TT_MN004, MO_TX_MN004, MO_TN_MN004, MO_RR_MN006, MO_P0_MN004, MO_SH_S_MN006, MO_NSH_MN006, MO_SD_S_MN004, MO_RF_MN004, MO_N_MN004}
+	public Set monthly = new HashSet<> (Arrays.asList(  "MO_TT_MN004", "MO_TX_MN004", "MO_TN_MN004", "MO_RR_MN006", "MO_P0_MN004", "MO_SH_S_MN006", "MO_NSH_MN006", "MO_SD_S_MN004", "MO_RF_MN004", "MO_N_MN004" ));
+	//{average Temp., max temp, min temp, precipitation, air pressure, snow height, fresh snow height, sunshine duration, air humidity, cloud coverage}
+	//public enum annual { JA_TT_MN004, JA_TX_MN004, JA_TN_MN004, JA_RR_MN006, JA_P0_MN004, JA_SH_S_MN006, JA_NSH_MN006, JA_SD_S_MN004, JA_RF_MN004, JA_N_MN004}
+	public Set annual = new HashSet<> (Arrays.asList( "JA_TT_MN004", "JA_TX_MN004", "JA_TN_MN004", "JA_RR_MN006", "JA_P0_MN004", "JA_SH_S_MN006", "JA_NSH_MN006", "JA_SD_S_MN004", "JA_RF_MN004", "JA_N_MN004"));
+		
 	public static String LAYER_NAME_KEY = "layerName";
 
 	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
 
 	public static final String PREVIOUS_DAYS_KEY = "previousDays";
+	
 
 	@Override
 	public void execute(JobExecutionContext jec) throws JobExecutionException {
@@ -58,17 +76,47 @@ public class DwdJob implements Job {
 				.get("executionArea");
 		List<Float> area = executionArea.getExtent();
 
-		// timeframe
+		// timeframe		
 		DateTime startDate = null;
 		Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
 		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer
 				&& ((int) previousDaysCandidate) > 0) {
 			int previousDays = (int) previousDaysCandidate;
+			
+			
+			if(hourly.contains(layerName)) {
+				
+			}
+			if(daily.contains(layerName)) {
+				
+			}
+			if(monthly.contains(layerName)) {
+				
+			}
+			if(annual.contains(layerName)) {
+				
+			}
+			
 			startDate = DateTime.now().minusDays(previousDays);
+			
+			
 		} else {
 			// lets default to one week
 			startDate = DateTime.now().minusDays(7);
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 		// 2) Create a DwdWfsRequestParams onbject from the restored request parameters
 		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, DateTime.now());
