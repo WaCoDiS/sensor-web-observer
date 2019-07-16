@@ -228,7 +228,7 @@ public class DwdWfsRequestor {
 			hasNext = iterator.hasNext();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			LOGGER.debug("test", e.getMessage());
+			LOGGER.debug("error while deserializing features", e);
 		}
 		
 		return hasNext;
