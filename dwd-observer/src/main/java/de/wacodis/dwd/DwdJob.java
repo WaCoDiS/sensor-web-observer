@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISOPeriodFormat;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -78,38 +82,83 @@ public class DwdJob implements Job {
 
 		// timeframe		
 		DateTime startDate = null;
+		DateTime endDate = null;
+		
+		
 		Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
-		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer
+		
+		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer			//????
 				&& ((int) previousDaysCandidate) > 0) {
 			int previousDays = (int) previousDaysCandidate;
 			
+			//startDate = DateTime.now().minusDays(previousDays);
 			
+			//Doppelt gemoppelt da nicht nur Tage gezählt werden dürfen
+			String durationISO = executionTemporalCoverage.getDuration();
+			ISOPeriodFormat iso = null;
+			Period period = Period.parse(durationISO, iso.standard());
+			double hoursSum = period.getHours()+ period.getDays()*24 + period.getWeeks()*24*7 + period.getMonths()*30.436857*24 + period.getYears()*365.2425*24;
+			
+			
+			
+			Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
 			if(hourly.contains(layerName)) {
-				
+				//duration shorter than one week
+				if(hoursSum <= (24*7)) {
+					startDate = DateTime.now().minusHours((int) hoursSum);
+					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, DateTime.now());
+					envelopeSet.add(dataEnvelope)	;
+				}
+				//duration longer than one week
+				else {
+					int intervall = (int) (hoursSum/(24*7)); 	//splitting duration in week blocks
+					for(int i = 0; i < intervall; i++) {
+						startDate = DateTime.now().minusHours((int) hoursSum);
+						endDate = startDate.plusHours((int) (hoursSum/intervall));
+						DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
+						envelopeSet.add(dataEnvelope);
+					}
+				}
 			}
+			
 			if(daily.contains(layerName)) {
+				//duration shorter than one month
+				if(hoursSum <= (24*7*30)) {
+					startDate = DateTime.now().minusHours((int) hoursSum);
+					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, DateTime.now());
+					envelopeSet.add(dataEnvelope);
+				}
+				//duration longer than one month
+				else {
+					int intervall = (int) (hoursSum/(24*7*30)); 	//splitting duration in month blocks
+					for(int i = 0; i < intervall; i++) {
+						startDate = DateTime.now().minusHours((int) hoursSum);
+						endDate = startDate.plusHours((int) (hoursSum/intervall));
+						DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
+						envelopeSet.add(dataEnvelope);
+					}
+				}
 				
 			}
+			
 			if(monthly.contains(layerName)) {
-				
+				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, DateTime.now());
 			}
+			
 			if(annual.contains(layerName)) {
-				
+				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, DateTime.now());
 			}
-			
-			startDate = DateTime.now().minusDays(previousDays);
-			
 			
 		} else {
+			
+			//kann weg?
+			
 			// lets default to one week
 			startDate = DateTime.now().minusDays(7);
 		}
 		
 		
-		
-		
-		
-		
+			
 		
 		
 		
@@ -118,8 +167,14 @@ public class DwdJob implements Job {
 		
 		
 
+		
+	}
+
+
+	private DwdDataEnvelope createDwdDataEnvelope(String version, String layerName, String serviceUrl, List<Float> area,
+			DateTime startDate, DateTime endDate) {
 		// 2) Create a DwdWfsRequestParams onbject from the restored request parameters
-		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, DateTime.now());
+		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, endDate);
 
 		// - startDate and endDate should be chosen depending on the request interval
 		// and the last request endDate
@@ -138,6 +193,9 @@ public class DwdJob implements Job {
 		PublisherChannel pub = null;
 		pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
 		LOG.info("DataEnvelope published");
+		
+		
+		return dataEnvelope;
 	}
 
 }
