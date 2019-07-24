@@ -51,15 +51,14 @@ public class DwdJobFactory implements JobFactory {
             //Put all required request parameters into JobDataMap
             
             //data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
-            data.put("version", "2.0.0");
-            data.put("layerName", def.getLayerName());
-            data.put("serviceUrl", def.getServiceUrl());
+            data.put(DwdJob.VERSION_KEY, "2.0.0");
+            data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
+            data.put(DwdJob.SERVICE_URL_KEY, def.getServiceUrl());
              
             // Set Job execution interval depending on DWD Layer
             
-            data.put("executionInterval", 60*60*24);
-            data.put("executionTemporalCoverage", job.getTemporalCoverage());
-            data.put("executionArea", job.getAreaOfInterest());
+            data.put(DwdJob.EXECUTION_INTERVAL_KEY, 60*60*24);
+            data.put(DwdJob.EXECUTION_AREA_KEY, job.getAreaOfInterest());
             
             // string temporalcoverage to period
             if (job.getTemporalCoverage() != null && !StringUtils.isEmpty(job.getTemporalCoverage().getDuration())) {

@@ -42,27 +42,41 @@ import de.wacodis.observer.publisher.PublisherChannel;
  */
 public class DwdJob implements Job {
 
-	//Enumerations of temporal resolution
-	//{average Temp., precipitation, air pressure, air humidity, cloud coverage}
-	//public enum hourly { TT_TU_MN009, R1_MN008, P0_MN008, RF_TU_MN009, N_MN008 }
-	public Set hourly = new HashSet<> (Arrays.asList( "TT_TU_MN009", "R1_MN008", "P0_MN008", "RF_TU_MN009", "N_MN008" ));
-	//{average Temp., max temp, min temp, precipitation, wind top, air pressure, snow height, fresh snow height, sunshine duration, air humidity, cloud coverage}
-	//public enum daily {TMK_MN004, TXK_MN004, TNK_MN004, RS_MN006, FX_MN003, PM_MN004, SH_TAG_MN006, NSH_TAG_MN006, SDK_MN004, UPM_MN004, NM_MN004}
-	public Set daily = new HashSet<> (Arrays.asList( "TMK_MN004", "TXK_MN004", "TNK_MN004", "RS_MN006", "FX_MN003", "PM_MN004", "SH_TAG_MN006", "NSH_TAG_MN006", "SDK_MN004", "UPM_MN004", "NM_MN004" ));
-	//{average Temp., max temp, min temp, precipitation, air pressure, snow height, fresh snow height, sunshine duration, air humidity, cloud coverage}
-	//public enum monthly { MO_TT_MN004, MO_TX_MN004, MO_TN_MN004, MO_RR_MN006, MO_P0_MN004, MO_SH_S_MN006, MO_NSH_MN006, MO_SD_S_MN004, MO_RF_MN004, MO_N_MN004}
-	public Set monthly = new HashSet<> (Arrays.asList(  "MO_TT_MN004", "MO_TX_MN004", "MO_TN_MN004", "MO_RR_MN006", "MO_P0_MN004", "MO_SH_S_MN006", "MO_NSH_MN006", "MO_SD_S_MN004", "MO_RF_MN004", "MO_N_MN004" ));
-	//{average Temp., max temp, min temp, precipitation, air pressure, snow height, fresh snow height, sunshine duration, air humidity, cloud coverage}
-	//public enum annual { JA_TT_MN004, JA_TX_MN004, JA_TN_MN004, JA_RR_MN006, JA_P0_MN004, JA_SH_S_MN006, JA_NSH_MN006, JA_SD_S_MN004, JA_RF_MN004, JA_N_MN004}
-	public Set annual = new HashSet<> (Arrays.asList( "JA_TT_MN004", "JA_TX_MN004", "JA_TN_MN004", "JA_RR_MN006", "JA_P0_MN004", "JA_SH_S_MN006", "JA_NSH_MN006", "JA_SD_S_MN004", "JA_RF_MN004", "JA_N_MN004"));
-		
+	// Enumerations of temporal resolution
+	// {average Temp., precipitation, air pressure, air humidity, cloud coverage}
+	// public enum hourly { TT_TU_MN009, R1_MN008, P0_MN008, RF_TU_MN009, N_MN008 }
+	public Set hourly = new HashSet<>(Arrays.asList("TT_TU_MN009", "R1_MN008", "P0_MN008", "RF_TU_MN009", "N_MN008"));
+	// {average Temp., max temp, min temp, precipitation, wind top, air pressure,
+	// snow height, fresh snow height, sunshine duration, air humidity, cloud
+	// coverage}
+	// public enum daily {TMK_MN004, TXK_MN004, TNK_MN004, RS_MN006, FX_MN003,
+	// PM_MN004, SH_TAG_MN006, NSH_TAG_MN006, SDK_MN004, UPM_MN004, NM_MN004}
+	public Set daily = new HashSet<>(Arrays.asList("TMK_MN004", "TXK_MN004", "TNK_MN004", "RS_MN006", "FX_MN003",
+			"PM_MN004", "SH_TAG_MN006", "NSH_TAG_MN006", "SDK_MN004", "UPM_MN004", "NM_MN004"));
+	// {average Temp., max temp, min temp, precipitation, air pressure, snow height,
+	// fresh snow height, sunshine duration, air humidity, cloud coverage}
+	// public enum monthly { MO_TT_MN004, MO_TX_MN004, MO_TN_MN004, MO_RR_MN006,
+	// MO_P0_MN004, MO_SH_S_MN006, MO_NSH_MN006, MO_SD_S_MN004, MO_RF_MN004,
+	// MO_N_MN004}
+	public Set monthly = new HashSet<>(Arrays.asList("MO_TT_MN004", "MO_TX_MN004", "MO_TN_MN004", "MO_RR_MN006",
+			"MO_P0_MN004", "MO_SH_S_MN006", "MO_NSH_MN006", "MO_SD_S_MN004", "MO_RF_MN004", "MO_N_MN004"));
+	// {average Temp., max temp, min temp, precipitation, air pressure, snow height,
+	// fresh snow height, sunshine duration, air humidity, cloud coverage}
+	// public enum annual { JA_TT_MN004, JA_TX_MN004, JA_TN_MN004, JA_RR_MN006,
+	// JA_P0_MN004, JA_SH_S_MN006, JA_NSH_MN006, JA_SD_S_MN004, JA_RF_MN004,
+	// JA_N_MN004}
+	public Set annual = new HashSet<>(Arrays.asList("JA_TT_MN004", "JA_TX_MN004", "JA_TN_MN004", "JA_RR_MN006",
+			"JA_P0_MN004", "JA_SH_S_MN006", "JA_NSH_MN006", "JA_SD_S_MN004", "JA_RF_MN004", "JA_N_MN004"));
+
+	// identifiers
+	public static String VERSION_KEY = "version";
 	public static String LAYER_NAME_KEY = "layerName";
-
-	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
-
+	public static String SERVICE_URL_KEY = "serviceUrl";
+	public static String EXECUTION_INTERVAL_KEY = "executionInterval";
+	public static String EXECUTION_AREA_KEY = "executionArea";
 	public static final String PREVIOUS_DAYS_KEY = "previousDays";
 	
-
+	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
 	@Override
 	public void execute(JobExecutionContext jec) throws JobExecutionException {
 		LOG.info("Start DwdJob's execute()");
@@ -80,96 +94,88 @@ public class DwdJob implements Job {
 				.get("executionArea");
 		List<Float> area = executionArea.getExtent();
 
-		// timeframe		
+		// timeframe
 		DateTime startDate = null;
 		DateTime endDate = null;
-		
-		
+
 		Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
-		
-		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer			//????
+
+		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer // ????
 				&& ((int) previousDaysCandidate) > 0) {
 			int previousDays = (int) previousDaysCandidate;
-			
-			//startDate = DateTime.now().minusDays(previousDays);
-			
-			//Doppelt gemoppelt da nicht nur Tage gezählt werden dürfen
+
+			// startDate = DateTime.now().minusDays(previousDays);
+
+			// Doppelt gemoppelt da nicht nur Tage gezählt werden dürfen
 			String durationISO = executionTemporalCoverage.getDuration();
 			ISOPeriodFormat iso = null;
 			Period period = Period.parse(durationISO, iso.standard());
-			double hoursSum = period.getHours()+ period.getDays()*24 + period.getWeeks()*24*7 + period.getMonths()*30.436857*24 + period.getYears()*365.2425*24;
-			
-			
-			
+			double hoursSum = period.getHours() + period.getDays() * 24 + period.getWeeks() * 24 * 7
+					+ period.getMonths() * 30.436857 * 24 + period.getYears() * 365.2425 * 24;
+
 			Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
-			if(hourly.contains(layerName)) {
-				//duration shorter than one week
-				if(hoursSum <= (24*7)) {
+			if (hourly.contains(layerName)) {
+				// duration shorter than one week
+				if (hoursSum <= (24 * 7)) {
 					startDate = DateTime.now().minusHours((int) hoursSum);
-					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, DateTime.now());
-					envelopeSet.add(dataEnvelope)	;
-				}
-				//duration longer than one week
-				else {
-					int intervall = (int) (hoursSum/(24*7)); 	//splitting duration in week blocks
-					for(int i = 0; i < intervall; i++) {
-						startDate = DateTime.now().minusHours((int) hoursSum);
-						endDate = startDate.plusHours((int) (hoursSum/intervall));
-						DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
-						envelopeSet.add(dataEnvelope);
-					}
-				}
-			}
-			
-			if(daily.contains(layerName)) {
-				//duration shorter than one month
-				if(hoursSum <= (24*7*30)) {
-					startDate = DateTime.now().minusHours((int) hoursSum);
-					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, DateTime.now());
+					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+							startDate, DateTime.now());
 					envelopeSet.add(dataEnvelope);
 				}
-				//duration longer than one month
+				// duration longer than one week
 				else {
-					int intervall = (int) (hoursSum/(24*7*30)); 	//splitting duration in month blocks
-					for(int i = 0; i < intervall; i++) {
+					int intervall = (int) (hoursSum / (24 * 7)); // splitting duration in week blocks
+					for (int i = 0; i < intervall; i++) {
 						startDate = DateTime.now().minusHours((int) hoursSum);
-						endDate = startDate.plusHours((int) (hoursSum/intervall));
-						DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
+						endDate = startDate.plusHours((int) (hoursSum / intervall));
+						DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+								startDate, endDate);
 						envelopeSet.add(dataEnvelope);
 					}
 				}
-				
 			}
-			
-			if(monthly.contains(layerName)) {
-				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, DateTime.now());
+
+			if (daily.contains(layerName)) {
+				// duration shorter than one month
+				if (hoursSum <= (24 * 7 * 30)) {
+					startDate = DateTime.now().minusHours((int) hoursSum);
+					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+							startDate, DateTime.now());
+					envelopeSet.add(dataEnvelope);
+				}
+				// duration longer than one month
+				else {
+					int intervall = (int) (hoursSum / (24 * 7 * 30)); // splitting duration in month blocks
+					for (int i = 0; i < intervall; i++) {
+						startDate = DateTime.now().minusHours((int) hoursSum);
+						endDate = startDate.plusHours((int) (hoursSum / intervall));
+						DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+								startDate, endDate);
+						envelopeSet.add(dataEnvelope);
+					}
+				}
+
 			}
-			
-			if(annual.contains(layerName)) {
-				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, DateTime.now());
+
+			if (monthly.contains(layerName)) {
+				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate,
+						DateTime.now());
 			}
-			
+
+			if (annual.contains(layerName)) {
+				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate,
+						DateTime.now());
+			}
+
 		} else {
-			
-			//kann weg?
-			
+
+			// kann weg?
+
 			// lets default to one week
 			startDate = DateTime.now().minusDays(7);
 		}
-		
-		
-			
-		
-		
-		
-		
-		
-		
-		
 
-		
 	}
-
 
 	private DwdDataEnvelope createDwdDataEnvelope(String version, String layerName, String serviceUrl, List<Float> area,
 			DateTime startDate, DateTime endDate) {
@@ -193,8 +199,7 @@ public class DwdJob implements Job {
 		PublisherChannel pub = null;
 		pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
 		LOG.info("DataEnvelope published");
-		
-		
+
 		return dataEnvelope;
 	}
 
