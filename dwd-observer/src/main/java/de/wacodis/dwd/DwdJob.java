@@ -44,11 +44,11 @@ public class DwdJob implements Job {
 
 	
 	// identifiers
-	public static String VERSION_KEY = "version";
-	public static String LAYER_NAME_KEY = "layerName";
-	public static String SERVICE_URL_KEY = "serviceUrl";
-	public static String EXECUTION_INTERVAL_KEY = "executionInterval";
-	public static String EXECUTION_AREA_KEY = "executionArea";
+	public static final String VERSION_KEY = "version";
+	public static final String LAYER_NAME_KEY = "layerName";
+	public static final String SERVICE_URL_KEY = "serviceUrl";
+	public static final String EXECUTION_INTERVAL_KEY = "executionInterval";
+	public static final String EXECUTION_AREA_KEY = "executionArea";
 	public static final String PREVIOUS_DAYS_KEY = "previousDays";
 	
 	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
