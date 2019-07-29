@@ -47,6 +47,7 @@ public class DwdJob implements Job {
 	public static final String VERSION_KEY = "version";
 	public static final String LAYER_NAME_KEY = "layerName";
 	public static final String SERVICE_URL_KEY = "serviceUrl";
+	public static final String TEMPORAL_COVERAGE_KEY = "temporalCoverage";
 	public static final String EXECUTION_INTERVAL_KEY = "executionInterval";
 	public static final String EXECUTION_AREA_KEY = "executionArea";
 	public static final String PREVIOUS_DAYS_KEY = "previousDays";
@@ -59,16 +60,27 @@ public class DwdJob implements Job {
 		JobDataMap dataMap = jec.getJobDetail().getJobDataMap();
 
 		// 1) Get all required request parameters stored in the JobDataMap
-		String version = dataMap.getString("version");
+		String version = dataMap.getString(VERSION_KEY);
 		String layerName = dataMap.getString(LAYER_NAME_KEY);
-		String serviceUrl = dataMap.getString("serviceUrl");
-
-		WacodisJobDefinitionTemporalCoverage executionTemporalCoverage = (WacodisJobDefinitionTemporalCoverage) dataMap
-				.get("executionTemporalCoverage");
-
-		AbstractDataEnvelopeAreaOfInterest executionArea = (AbstractDataEnvelopeAreaOfInterest) dataMap
-				.get("executionArea");
-		List<Float> area = executionArea.getExtent();
+		String serviceUrl = dataMap.getString(VERSION_KEY);
+		String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY);	// previous days unnecessary?
+		String[] executionAreaJSON = dataMap.getString(EXECUTION_AREA_KEY).split(",");
+		
+		// parse executionAreaJSON into Float list
+		String bottemLeftYStr = executionAreaJSON[0].substring(1, executionAreaJSON[0].indexOf(" ")-1);
+		String bottemLeftXStr = executionAreaJSON[0].substring(executionAreaJSON[0].indexOf(" ")+1, executionAreaJSON[0].indexOf(" ")-1);
+		String upperRightYStr = executionAreaJSON[1].substring(0, executionAreaJSON[0].indexOf(" ")-1);
+		String upperRightXStr = executionAreaJSON[1].substring(executionAreaJSON[0].indexOf(" ")+1, executionAreaJSON[0].length()-1);
+		
+		float bottemLeftY = Float.parseFloat(bottemLeftYStr);
+		float bottemLeftX =  Float.parseFloat(bottemLeftXStr);
+		float upperRightY = Float.parseFloat(upperRightYStr);
+		float upperRightX = Float.parseFloat(upperRightXStr);
+		ArrayList<Float> area = new ArrayList<Float>();
+		area.add(0, bottemLeftY);
+		area.add(1, bottemLeftX);
+		area.add(2, upperRightY);
+		area.add(3, upperRightX);
 
 		// timeframe
 		DateTime startDate = null;
@@ -80,7 +92,6 @@ public class DwdJob implements Job {
 				&& ((int) previousDaysCandidate) > 0) {
 			int previousDays = (int) previousDaysCandidate;
 
-			String durationISO = executionTemporalCoverage.getDuration();
 			ISOPeriodFormat iso = null;
 			Period period = Period.parse(durationISO, iso.standard());
 
