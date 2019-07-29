@@ -6,6 +6,7 @@
 package de.wacodis.dwd;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +43,6 @@ import de.wacodis.observer.publisher.PublisherChannel;
  */
 public class DwdJob implements Job {
 
-	
 	// identifiers
 	public static final String VERSION_KEY = "version";
 	public static final String LAYER_NAME_KEY = "layerName";
@@ -50,8 +50,9 @@ public class DwdJob implements Job {
 	public static final String EXECUTION_INTERVAL_KEY = "executionInterval";
 	public static final String EXECUTION_AREA_KEY = "executionArea";
 	public static final String PREVIOUS_DAYS_KEY = "previousDays";
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
+
 	@Override
 	public void execute(JobExecutionContext jec) throws JobExecutionException {
 		LOG.info("Start DwdJob's execute()");
@@ -75,79 +76,55 @@ public class DwdJob implements Job {
 
 		Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
 
-		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer // ????
+		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer
 				&& ((int) previousDaysCandidate) > 0) {
 			int previousDays = (int) previousDaysCandidate;
 
-			// startDate = DateTime.now().minusDays(previousDays);
-
-			// Doppelt gemoppelt da nicht nur Tage gezählt werden dürfen
 			String durationISO = executionTemporalCoverage.getDuration();
 			ISOPeriodFormat iso = null;
 			Period period = Period.parse(durationISO, iso.standard());
-			double hoursSum = period.getHours() + period.getDays() * 24 + period.getWeeks() * 24 * 7
-					+ period.getMonths() * 30.436857 * 24 + period.getYears() * 365.2425 * 24;
 
 			Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
-			if (hourly.contains(layerName)) {
-				// duration shorter than one week
-				if (hoursSum <= (24 * 7)) {
-					startDate = DateTime.now().minusHours((int) hoursSum);
+
+			// if the resolution is hourly, the request will be splitted into intervalls
+			if (DwdTemporalResolution.isHourly(layerName)) {
+				ArrayList<DateTime> interval = DwdTemporalResolution.calculateStartAndEndDate(period,
+						DwdTemporalResolution.HOURLY_RESOLUTION);
+				for (int i = 0; i < interval.size(); i++) {
 					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-							startDate, DateTime.now());
+							interval.get(i), interval.get(i + 1));
 					envelopeSet.add(dataEnvelope);
-				}
-				// duration longer than one week
-				else {
-					int intervall = (int) (hoursSum / (24 * 7)); // splitting duration in week blocks
-					for (int i = 0; i < intervall; i++) {
-						startDate = DateTime.now().minusHours((int) hoursSum);
-						endDate = startDate.plusHours((int) (hoursSum / intervall));
-						DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-								startDate, endDate);
-						envelopeSet.add(dataEnvelope);
-					}
 				}
 			}
 
-			if (daily.contains(layerName)) {
-				// duration shorter than one month
-				if (hoursSum <= (24 * 7 * 30)) {
-					startDate = DateTime.now().minusHours((int) hoursSum);
-					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-							startDate, DateTime.now());
-					envelopeSet.add(dataEnvelope);
+			// if the resolution is daily, the request will be splitted into intervalls
+			if (DwdTemporalResolution.isDaily(layerName)) {
+				ArrayList<DateTime> interval = DwdTemporalResolution.calculateStartAndEndDate(period,
+						DwdTemporalResolution.HOURLY_RESOLUTION);
+				for (int i = 0; i < interval.size(); i++) {
+				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+						interval.get(i), interval.get(i+1));
+				envelopeSet.add(dataEnvelope);
+				i++;
 				}
-				// duration longer than one month
-				else {
-					int intervall = (int) (hoursSum / (24 * 7 * 30)); // splitting duration in month blocks
-					for (int i = 0; i < intervall; i++) {
-						startDate = DateTime.now().minusHours((int) hoursSum);
-						endDate = startDate.plusHours((int) (hoursSum / intervall));
-						DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-								startDate, endDate);
-						envelopeSet.add(dataEnvelope);
-					}
-				}
-
 			}
 
-			if (monthly.contains(layerName)) {
+			// if the resolution is monthly, the request will be splitted into intervalls
+			if (DwdTemporalResolution.isMonthly(layerName)) {
+				ArrayList<DateTime> interval = DwdTemporalResolution.calculateStartAndEndDate(period,
+						DwdTemporalResolution.MONTHLY_RESOLUTION);
+				for (int i = 0; i < interval.size(); i++) {
+				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+						interval.get(i), interval.get(i+1));
+				envelopeSet.add(dataEnvelope);
+				i++;
+				}
+			}
+			// if the resolution is annual, the request must not be splitted
+			if (DwdTemporalResolution.isAnnual(layerName)) {
 				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate,
 						DateTime.now());
 			}
-
-			if (annual.contains(layerName)) {
-				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate,
-						DateTime.now());
-			}
-
-		} else {
-
-			// kann weg?
-
-			// lets default to one week
-			startDate = DateTime.now().minusDays(7);
 		}
 
 	}
