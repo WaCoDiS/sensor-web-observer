@@ -1,5 +1,6 @@
 package de.wacodis.dwd;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Hours;
 import org.joda.time.Period;
 
 import de.wacodis.observer.model.DwdDataEnvelope;
@@ -60,29 +63,32 @@ public class DwdTemporalResolution {
 			return (int) (hourSum / (24 * 30)); // splitting duration in month blocks
 		}
 		if (resolution == DwdTemporalResolution.MONTHLY_RESOLUTION) {
-			return (int) (hourSum/(24 * 365 * 10)); // splitting duration in 10 years blocks
-		}
-		else {
+			return (int) (hourSum / (24 * 365 * 10)); // splitting duration in 10 years blocks
+		} else {
 			return 1;
 		}
 	}
 
 	public static ArrayList<DateTime> calculateStartAndEndDate(Period period, int resolution) {
+		
 		ArrayList<DateTime> outputList = new ArrayList<DateTime>();
-
-		double hourSum = period.getHours() + period.getDays() * 24 + period.getWeeks() * 24 * 7
-				+ period.getMonths() * 30.436857 * 24 + period.getYears() * 365.2425 * 24;
-		int interval = DwdTemporalResolution.calculateInterval(hourSum, resolution);
-
-		DateTime startDate = DateTime.now().minusHours((int) hourSum);
+		
+		DateTime startDate = DateTime.now().minusHours(period.getHours());
+		startDate = startDate.minusDays(period.getDays());
+		startDate = startDate.minusMonths(period.getMonths());
+		startDate = startDate.minusWeeks(period.getWeeks());
+		startDate = startDate.minusYears(period.getYears());
 		DateTime endDate = DateTime.now();
+		Hours hourSumHours = Hours.hoursBetween(startDate.toLocalDate(), endDate.toLocalDate());
+		int hourSum = hourSumHours.getHours();
+		int interval = DwdTemporalResolution.calculateInterval(hourSum, resolution);
 
 		// duration longer than one week
 		if (interval > 1) {
 
 			for (int i = 0; i < interval; i++) {
-				startDate = DateTime.now().minusHours((int) hourSum);
-				endDate = startDate.plusHours((int) (hourSum / interval));
+				startDate = DateTime.now().minusHours(hourSum);
+				endDate = startDate.plusHours(hourSum / interval);
 			}
 		}
 		outputList.add(startDate);
