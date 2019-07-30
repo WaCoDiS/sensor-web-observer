@@ -63,17 +63,19 @@ public class DwdJob implements Job {
 		String version = dataMap.getString(VERSION_KEY);
 		String layerName = dataMap.getString(LAYER_NAME_KEY);
 		String serviceUrl = dataMap.getString(VERSION_KEY);
-		String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY);	// previous days unnecessary?
+		String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY); // previous days unnecessary?
 		String[] executionAreaJSON = dataMap.getString(EXECUTION_AREA_KEY).split(",");
-		
+
 		// parse executionAreaJSON into Float list
-		String bottemLeftYStr = executionAreaJSON[0].substring(1, executionAreaJSON[0].indexOf(" ")-1);
-		String bottemLeftXStr = executionAreaJSON[0].substring(executionAreaJSON[0].indexOf(" ")+1, executionAreaJSON[0].indexOf(" ")-1);
-		String upperRightYStr = executionAreaJSON[1].substring(0, executionAreaJSON[0].indexOf(" ")-1);
-		String upperRightXStr = executionAreaJSON[1].substring(executionAreaJSON[0].indexOf(" ")+1, executionAreaJSON[0].length()-1);
-		
+		String bottemLeftYStr = executionAreaJSON[0].substring(1, executionAreaJSON[0].indexOf(" ") - 1);
+		String bottemLeftXStr = executionAreaJSON[0].substring(executionAreaJSON[0].indexOf(" ") + 1,
+				executionAreaJSON[0].indexOf(" ") - 1);
+		String upperRightYStr = executionAreaJSON[1].substring(0, executionAreaJSON[0].indexOf(" ") - 1);
+		String upperRightXStr = executionAreaJSON[1].substring(executionAreaJSON[0].indexOf(" ") + 1,
+				executionAreaJSON[0].length() - 1);
+
 		float bottemLeftY = Float.parseFloat(bottemLeftYStr);
-		float bottemLeftX =  Float.parseFloat(bottemLeftXStr);
+		float bottemLeftX = Float.parseFloat(bottemLeftXStr);
 		float upperRightY = Float.parseFloat(upperRightYStr);
 		float upperRightX = Float.parseFloat(upperRightXStr);
 		ArrayList<Float> area = new ArrayList<Float>();
@@ -92,8 +94,7 @@ public class DwdJob implements Job {
 				&& ((int) previousDaysCandidate) > 0) {
 			int previousDays = (int) previousDaysCandidate;
 
-			ISOPeriodFormat iso = null;
-			Period period = Period.parse(durationISO, iso.standard());
+			Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 
 			Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
 
@@ -113,10 +114,10 @@ public class DwdJob implements Job {
 				ArrayList<DateTime> interval = DwdTemporalResolution.calculateStartAndEndDate(period,
 						DwdTemporalResolution.HOURLY_RESOLUTION);
 				for (int i = 0; i < interval.size(); i++) {
-				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-						interval.get(i), interval.get(i+1));
-				envelopeSet.add(dataEnvelope);
-				i++;
+					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+							interval.get(i), interval.get(i + 1));
+					envelopeSet.add(dataEnvelope);
+					i++;
 				}
 			}
 
@@ -125,10 +126,10 @@ public class DwdJob implements Job {
 				ArrayList<DateTime> interval = DwdTemporalResolution.calculateStartAndEndDate(period,
 						DwdTemporalResolution.MONTHLY_RESOLUTION);
 				for (int i = 0; i < interval.size(); i++) {
-				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-						interval.get(i), interval.get(i+1));
-				envelopeSet.add(dataEnvelope);
-				i++;
+					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+							interval.get(i), interval.get(i + 1));
+					envelopeSet.add(dataEnvelope);
+					i++;
 				}
 			}
 			// if the resolution is annual, the request must not be splitted
