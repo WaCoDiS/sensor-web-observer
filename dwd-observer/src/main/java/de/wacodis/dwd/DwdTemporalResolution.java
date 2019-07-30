@@ -6,10 +6,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.joda.time.Hours;
+import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
 import de.wacodis.observer.model.DwdDataEnvelope;
@@ -55,44 +58,62 @@ public class DwdTemporalResolution {
 		return annual.contains(layerName);
 	}
 
-	public static int calculateInterval(double hourSum, int resolution) {
+	public static double calculateInterval(int hourSum, int resolution) {
+		double hourSumD = (double) hourSum;
 		if (resolution == DwdTemporalResolution.HOURLY_RESOLUTION) {
-			return (int) (hourSum / (24 * 7)); // splitting duration in week blocks
+			return (hourSumD / (24 * 7)); // splitting duration in week blocks
 		}
 		if (resolution == DwdTemporalResolution.DAILY_RESOLUTION) {
-			return (int) (hourSum / (24 * 30)); // splitting duration in month blocks
+			return (hourSumD / (24 * 30)); // splitting duration in month blocks
 		}
 		if (resolution == DwdTemporalResolution.MONTHLY_RESOLUTION) {
-			return (int) (hourSum / (24 * 365 * 10)); // splitting duration in 10 years blocks
+			return (hourSumD / (24 * 365 * 10)); // splitting duration in 10 years blocks
 		} else {
 			return 1;
 		}
 	}
 
 	public static ArrayList<DateTime> calculateStartAndEndDate(Period period, int resolution) {
-		
+
 		ArrayList<DateTime> outputList = new ArrayList<DateTime>();
-		
-		DateTime startDate = DateTime.now().minusHours(period.getHours());
+
+		// start- and enddate to calculate the time between them in hours
+		DateTime startDate = new DateTime();
+		startDate = DateTime.now().minusHours(period.getHours());
 		startDate = startDate.minusDays(period.getDays());
 		startDate = startDate.minusMonths(period.getMonths());
 		startDate = startDate.minusWeeks(period.getWeeks());
 		startDate = startDate.minusYears(period.getYears());
 		DateTime endDate = DateTime.now();
-		Hours hourSumHours = Hours.hoursBetween(startDate.toLocalDate(), endDate.toLocalDate());
+
+		Hours hourSumHours = Hours.hoursBetween(startDate, endDate);
 		int hourSum = hourSumHours.getHours();
-		int interval = DwdTemporalResolution.calculateInterval(hourSum, resolution);
 
-		// duration longer than one week
+		double interval = DwdTemporalResolution.calculateInterval(hourSum, resolution);
+		int intervalInMinutes = (int) (hourSum / interval) * 60;
+
+		// calculating the start- and enddate for every einterval
 		if (interval > 1) {
-
-			for (int i = 0; i < interval; i++) {
-				startDate = DateTime.now().minusHours(hourSum);
-				endDate = startDate.plusHours(hourSum / interval);
+			outputList.add(startDate);
+			int endCondition = (int) interval;
+			for (int i = 1; i <= interval; i++) {
+				// every interval except the last one
+				if (i <= endCondition) {
+					endDate = startDate.plusMinutes(intervalInMinutes);
+					outputList.add(endDate);
+					startDate = endDate; // the enddate is the startdate of the pervious interval
+					outputList.add(startDate);
+				}
+				// The last interval, because it is mostly not an integer value
+				if (i == endCondition) {
+					endDate = startDate.plusMinutes((int) (intervalInMinutes * (interval - endCondition)));
+					outputList.add(endDate);
+				}
 			}
+		} else {
+			outputList.add(startDate);
+			outputList.add(endDate);
 		}
-		outputList.add(startDate);
-		outputList.add(endDate);
 		return outputList;
 
 	}
