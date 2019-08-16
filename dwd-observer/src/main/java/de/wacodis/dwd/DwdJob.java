@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
+import org.joda.time.base.AbstractPeriod;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISOPeriodFormat;
@@ -96,49 +97,46 @@ public class DwdJob implements Job {
 
 			Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 
-			Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
-
-			// if the resolution is hourly, the request will be splitted into intervalls
-			if (DwdTemporalResolution.isHourly(layerName)) {
-				ArrayList<DateTime> interval = DwdTemporalResolution.calculateStartAndEndDate(period,
-						DwdTemporalResolution.HOURLY_RESOLUTION);
-				for (int i = 0; i < interval.size(); i++) {
-					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-							interval.get(i), interval.get(i + 1));
-					envelopeSet.add(dataEnvelope);
-				}
-			}
-
-			// if the resolution is daily, the request will be splitted into intervalls
-			if (DwdTemporalResolution.isDaily(layerName)) {
-				ArrayList<DateTime> interval = DwdTemporalResolution.calculateStartAndEndDate(period,
-						DwdTemporalResolution.HOURLY_RESOLUTION);
-				for (int i = 0; i < interval.size(); i++) {
-					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-							interval.get(i), interval.get(i + 1));
-					envelopeSet.add(dataEnvelope);
-					i++;
-				}
-			}
-
-			// if the resolution is monthly, the request will be splitted into intervalls
-			if (DwdTemporalResolution.isMonthly(layerName)) {
-				ArrayList<DateTime> interval = DwdTemporalResolution.calculateStartAndEndDate(period,
-						DwdTemporalResolution.MONTHLY_RESOLUTION);
-				for (int i = 0; i < interval.size(); i++) {
-					DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-							interval.get(i), interval.get(i + 1));
-					envelopeSet.add(dataEnvelope);
-					i++;
-				}
-			}
-			// if the resolution is annual, the request must not be splitted
-			if (DwdTemporalResolution.isAnnual(layerName)) {
-				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate,
-						DateTime.now());
-			}
+			blub(version, layerName, serviceUrl, area, startDate, period);
 		}
 
+	}
+
+	private Set<DwdDataEnvelope> blub(String version, String layerName, String serviceUrl, ArrayList<Float> area,
+			DateTime startDate, Period period) {
+		Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
+		ArrayList<DateTime> interval = new ArrayList<DateTime>();
+
+		// if the resolution is hourly, the request will be splitted into intervalls
+		if (DwdTemporalResolution.isHourly(layerName)) {
+			interval = DwdTemporalResolution.calculateStartAndEndDate(period, DwdTemporalResolution.HOURLY_RESOLUTION);
+
+		}
+
+		// if the resolution is daily, the request will be splitted into intervalls
+		if (DwdTemporalResolution.isDaily(layerName)) {
+			interval = DwdTemporalResolution.calculateStartAndEndDate(period, DwdTemporalResolution.HOURLY_RESOLUTION);
+		}
+
+		// if the resolution is monthly, the request will be splitted into intervalls
+		if (DwdTemporalResolution.isMonthly(layerName)) {
+			interval = DwdTemporalResolution.calculateStartAndEndDate(period, DwdTemporalResolution.MONTHLY_RESOLUTION);
+
+		}
+		// if the resolution is annual, the request must not be splitted
+		if (DwdTemporalResolution.isAnnual(layerName)) {
+			DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate,
+					DateTime.now());
+		}
+		if (interval != null) {
+			for (int i = 0; i < interval.size(); i++) {
+				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
+						interval.get(i), interval.get(i + 1));
+				envelopeSet.add(dataEnvelope);
+				i++;
+			}
+		}
+		return envelopeSet;
 	}
 
 	private DwdDataEnvelope createDwdDataEnvelope(String version, String layerName, String serviceUrl, List<Float> area,
