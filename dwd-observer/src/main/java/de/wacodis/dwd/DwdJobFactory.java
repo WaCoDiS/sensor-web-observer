@@ -62,7 +62,7 @@ public class DwdJobFactory implements JobFactory {
 					+ job.getAreaOfInterest().getExtent().get(1) + "," 
 					+ job.getAreaOfInterest().getExtent().get(2) + " "
 					+ job.getAreaOfInterest().getExtent().get(3);
-			data.put(DwdJob.EXECUTION_AREA_KEY, extent);
+			data.put(DwdJob.EXECUTION_AREA_KEY, extent);	// e.g. "52.0478 6.0124,52.5687 7.1420"
 
 			// string temporalcoverage to period
 			if (job.getTemporalCoverage() != null && !StringUtils.isEmpty(job.getTemporalCoverage().getDuration())) {
