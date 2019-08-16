@@ -68,20 +68,18 @@ public class DwdJob implements Job {
 		String[] executionAreaJSON = dataMap.getString(EXECUTION_AREA_KEY).split(",");
 
 		// parse executionAreaJSON into Float list
-		String bottemLeftYStr = executionAreaJSON[0].substring(1, executionAreaJSON[0].indexOf(" ") - 1);
-		String bottemLeftXStr = executionAreaJSON[0].substring(executionAreaJSON[0].indexOf(" ") + 1,
-				executionAreaJSON[0].indexOf(" ") - 1);
-		String upperRightYStr = executionAreaJSON[1].substring(0, executionAreaJSON[0].indexOf(" ") - 1);
-		String upperRightXStr = executionAreaJSON[1].substring(executionAreaJSON[0].indexOf(" ") + 1,
-				executionAreaJSON[0].length() - 1);
+		String bottomLeftYStr = executionAreaJSON[0].split(" ")[0];
+		String bottomLeftXStr = executionAreaJSON[0].split(" ")[1];
+		String upperRightYStr = executionAreaJSON[1].split(" ")[2];
+		String upperRightXStr = executionAreaJSON[1].split(" ")[3];
 
-		float bottemLeftY = Float.parseFloat(bottemLeftYStr);
-		float bottemLeftX = Float.parseFloat(bottemLeftXStr);
+		float bottomLeftY = Float.parseFloat(bottomLeftYStr);
+		float bottomLeftX = Float.parseFloat(bottomLeftXStr);
 		float upperRightY = Float.parseFloat(upperRightYStr);
 		float upperRightX = Float.parseFloat(upperRightXStr);
 		ArrayList<Float> area = new ArrayList<Float>();
-		area.add(0, bottemLeftY);
-		area.add(1, bottemLeftX);
+		area.add(0, bottomLeftY);
+		area.add(1, bottomLeftX);
 		area.add(2, upperRightY);
 		area.add(3, upperRightX);
 
