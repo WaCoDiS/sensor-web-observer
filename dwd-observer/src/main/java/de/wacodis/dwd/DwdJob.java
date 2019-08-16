@@ -91,41 +91,44 @@ public class DwdJob implements Job {
 
 			Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 			// timeframe
-			DateTime startDate = DateTime.now();
-			startDate.withPeriodAdded(period, -1);
+			
+			
+			DateTime endDate = DateTime.now();
+			DateTime startDate = endDate.withPeriodAdded(period, -1);
+			
 
-			Set<DwdDataEnvelope> FinalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
-					startDate);
+			Set<DwdDataEnvelope> finalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
+					startDate, endDate);
 		}
 
 	}
 
 	private Set<DwdDataEnvelope> createFinalEnvelopeSet(String version, String layerName, String serviceUrl,
-			ArrayList<Float> area, DateTime startDate) {
+			ArrayList<Float> area, DateTime startDate, DateTime endDate) {
 		Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
 		ArrayList<DateTime[]> interval = new ArrayList<DateTime[]>();
 
 		// if the resolution is hourly, the request will be splitted into intervalls
 		if (DwdTemporalResolution.isHourly(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate,
+			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
 					DwdTemporalResolution.HOURLY_RESOLUTION);
 		}
 
 		// if the resolution is daily, the request will be splitted into intervalls
 		if (DwdTemporalResolution.isDaily(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate,
+			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
 					DwdTemporalResolution.HOURLY_RESOLUTION);
 		}
 
 		// if the resolution is monthly, the request will be splitted into intervalls
 		if (DwdTemporalResolution.isMonthly(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate,
+			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
 					DwdTemporalResolution.MONTHLY_RESOLUTION);
 
 		}
 		// if the resolution is annual, the request must not be splitted
 		if (DwdTemporalResolution.isAnnual(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate,
+			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
 					DwdTemporalResolution.ANNUAL_RESOLUTION);
 		}
 		if (interval != null) {

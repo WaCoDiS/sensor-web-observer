@@ -74,11 +74,10 @@ public class DwdTemporalResolution {
 		}
 	}
 
-	public static ArrayList<DateTime[]> calculateStartAndEndDate(DateTime startDate, int resolution) {
+	public static ArrayList<DateTime[]> calculateStartAndEndDate(DateTime startDate, DateTime endDate, int resolution) {
 
 		ArrayList<DateTime[]> outputList = new ArrayList<DateTime[]>();
 
-		DateTime endDate = DateTime.now();
 
 		Hours hourSumHours = Hours.hoursBetween(startDate, endDate);
 		int hourSum = hourSumHours.getHours();
