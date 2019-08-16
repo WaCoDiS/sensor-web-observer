@@ -58,10 +58,10 @@ public class DwdJobFactory implements JobFactory {
 
 			// Set Job execution interval depending on DWD Layer
 			data.put(DwdJob.EXECUTION_INTERVAL_KEY, 60 * 60 * 24);
-			String extent = "\"" + job.getAreaOfInterest().getExtent().get(0) + " "
-					+ job.getAreaOfInterest().getExtent().get(1) + ", " 
+			String extent = job.getAreaOfInterest().getExtent().get(0) + " "
+					+ job.getAreaOfInterest().getExtent().get(1) + "," 
 					+ job.getAreaOfInterest().getExtent().get(2) + " "
-					+ job.getAreaOfInterest().getExtent().get(3) + "\"";
+					+ job.getAreaOfInterest().getExtent().get(3);
 			data.put(DwdJob.EXECUTION_AREA_KEY, extent);
 
 			// string temporalcoverage to period
