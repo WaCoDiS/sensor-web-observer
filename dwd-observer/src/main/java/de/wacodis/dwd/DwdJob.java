@@ -55,6 +55,7 @@ public class DwdJob implements Job {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
 
+	JobDataMap jobDataMap = new JobDataMap();
 	@Override
 	public void execute(JobExecutionContext jec) throws JobExecutionException {
 		LOG.info("Start DwdJob's execute()");
@@ -90,12 +91,15 @@ public class DwdJob implements Job {
 			int previousDays = (int) previousDaysCandidate;
 
 			Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
+			
 			// timeframe
-			
-			
 			DateTime endDate = DateTime.now();
 			DateTime startDate = endDate.withPeriodAdded(period, -1);
-			
+			if(jobDataMap.get("endDate") == null) {
+				jobDataMap.put("endDate", endDate);
+			} else {
+				endDate = (DateTime) jobDataMap.get("endDate");
+			}
 
 			Set<DwdDataEnvelope> finalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
 					startDate, endDate);
