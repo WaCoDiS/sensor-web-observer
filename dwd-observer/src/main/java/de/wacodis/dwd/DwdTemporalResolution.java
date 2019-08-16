@@ -86,15 +86,18 @@ public class DwdTemporalResolution {
 		int intervalInMinutes = (int) (hourSum / interval) * 60;
 
 		
-		DateTime[] eachIntervalDates = {startDate, endDate};	//will be probably overwritten
-		// calculating the start- and enddate for every einterval
+		DateTime[] eachIntervalDates = {startDate, endDate}; //will be probably overwritten
+		// calculating the start- and enddate for every interval
 		if (interval > 1) {
 			int endCondition = (int) interval;
 			for (int i = 1; i <= interval; i++) {
 				// every interval except the last one
 				if (i <= endCondition) {
 					eachIntervalDates[1] = startDate.plusMinutes(intervalInMinutes);
-					outputList.add(eachIntervalDates);
+					DateTime[] copy =  new DateTime[2];
+					copy[0] = eachIntervalDates[0];
+					copy[1] = eachIntervalDates[1];
+					outputList.add(copy);
 					eachIntervalDates[0] = eachIntervalDates[1]; // the enddate is the startdate of the pervious interval
 				}
 				// The last interval, because it is mostly not an integer value
