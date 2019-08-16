@@ -83,10 +83,6 @@ public class DwdJob implements Job {
 		area.add(2, upperRightY);
 		area.add(3, upperRightX);
 
-		// timeframe
-		DateTime startDate = null;
-		DateTime endDate = null;
-
 		Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
 
 		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer
@@ -94,42 +90,48 @@ public class DwdJob implements Job {
 			int previousDays = (int) previousDaysCandidate;
 
 			Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
+			// timeframe
+			DateTime startDate = DateTime.now();
+			startDate.withPeriodAdded(period, -1);
 
-			blub(version, layerName, serviceUrl, area, startDate, period);
+			Set<DwdDataEnvelope> FinalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
+					startDate);
 		}
 
 	}
 
-	private Set<DwdDataEnvelope> blub(String version, String layerName, String serviceUrl, ArrayList<Float> area,
-			DateTime startDate, Period period) {
+	private Set<DwdDataEnvelope> createFinalEnvelopeSet(String version, String layerName, String serviceUrl,
+			ArrayList<Float> area, DateTime startDate) {
 		Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
-		ArrayList<DateTime> interval = new ArrayList<DateTime>();
+		ArrayList<DateTime[]> interval = new ArrayList<DateTime[]>();
 
 		// if the resolution is hourly, the request will be splitted into intervalls
 		if (DwdTemporalResolution.isHourly(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(period, DwdTemporalResolution.HOURLY_RESOLUTION);
-
+			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate,
+					DwdTemporalResolution.HOURLY_RESOLUTION);
 		}
 
 		// if the resolution is daily, the request will be splitted into intervalls
 		if (DwdTemporalResolution.isDaily(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(period, DwdTemporalResolution.HOURLY_RESOLUTION);
+			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate,
+					DwdTemporalResolution.HOURLY_RESOLUTION);
 		}
 
 		// if the resolution is monthly, the request will be splitted into intervalls
 		if (DwdTemporalResolution.isMonthly(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(period, DwdTemporalResolution.MONTHLY_RESOLUTION);
+			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate,
+					DwdTemporalResolution.MONTHLY_RESOLUTION);
 
 		}
 		// if the resolution is annual, the request must not be splitted
 		if (DwdTemporalResolution.isAnnual(layerName)) {
-			DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate,
-					DateTime.now());
+			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate,
+					DwdTemporalResolution.ANNUAL_RESOLUTION);
 		}
 		if (interval != null) {
 			for (int i = 0; i < interval.size(); i++) {
 				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-						interval.get(i), interval.get(i + 1));
+						interval.get(i)[0], interval.get(i)[1]);
 				envelopeSet.add(dataEnvelope);
 				i++;
 			}
