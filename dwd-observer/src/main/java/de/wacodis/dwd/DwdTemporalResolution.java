@@ -41,6 +41,7 @@ public class DwdTemporalResolution {
 	public static final int HOURLY_RESOLUTION = 0;
 	public static final int DAILY_RESOLUTION = 1;
 	public static final int MONTHLY_RESOLUTION = 2;
+	public static final int ANNUAL_RESOLUTION = 3;
 
 	public static boolean isHourly(String layerName) {
 		return hourly.contains(layerName);
@@ -73,17 +74,10 @@ public class DwdTemporalResolution {
 		}
 	}
 
-	public static ArrayList<DateTime[]> calculateStartAndEndDate(Period period, int resolution) {
+	public static ArrayList<DateTime[]> calculateStartAndEndDate(DateTime startDate, int resolution) {
 
 		ArrayList<DateTime[]> outputList = new ArrayList<DateTime[]>();
 
-		// start- and enddate to calculate the time between them in hours
-		DateTime startDate = new DateTime();
-		startDate = DateTime.now().minusHours(period.getHours());
-		startDate = startDate.minusDays(period.getDays());
-		startDate = startDate.minusMonths(period.getMonths());
-		startDate = startDate.minusWeeks(period.getWeeks());
-		startDate = startDate.minusYears(period.getYears());
 		DateTime endDate = DateTime.now();
 
 		Hours hourSumHours = Hours.hoursBetween(startDate, endDate);
