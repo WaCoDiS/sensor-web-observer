@@ -41,6 +41,7 @@ public class DwdTemporalResolution {
 	public static final int HOURLY_RESOLUTION = 0;
 	public static final int DAILY_RESOLUTION = 1;
 	public static final int MONTHLY_RESOLUTION = 2;
+	public static final int ANNUAL_RESOLUTION = 3;
 
 	public static boolean isHourly(String layerName) {
 		return hourly.contains(layerName);
@@ -73,17 +74,10 @@ public class DwdTemporalResolution {
 		}
 	}
 
-	public static ArrayList<DateTime> calculateStartAndEndDate(Period period, int resolution) {
+	public static ArrayList<DateTime[]> calculateStartAndEndDate(DateTime startDate, int resolution) {
 
-		ArrayList<DateTime> outputList = new ArrayList<DateTime>();
+		ArrayList<DateTime[]> outputList = new ArrayList<DateTime[]>();
 
-		// start- and enddate to calculate the time between them in hours
-		DateTime startDate = new DateTime();
-		startDate = DateTime.now().minusHours(period.getHours());
-		startDate = startDate.minusDays(period.getDays());
-		startDate = startDate.minusMonths(period.getMonths());
-		startDate = startDate.minusWeeks(period.getWeeks());
-		startDate = startDate.minusYears(period.getYears());
 		DateTime endDate = DateTime.now();
 
 		Hours hourSumHours = Hours.hoursBetween(startDate, endDate);
@@ -92,27 +86,26 @@ public class DwdTemporalResolution {
 		double interval = DwdTemporalResolution.calculateInterval(hourSum, resolution);
 		int intervalInMinutes = (int) (hourSum / interval) * 60;
 
+		
+		DateTime[] eachIntervalDates = {startDate, endDate};	//will be probably overwritten
 		// calculating the start- and enddate for every einterval
 		if (interval > 1) {
-			outputList.add(startDate);
 			int endCondition = (int) interval;
 			for (int i = 1; i <= interval; i++) {
 				// every interval except the last one
 				if (i <= endCondition) {
-					endDate = startDate.plusMinutes(intervalInMinutes);
-					outputList.add(endDate);
-					startDate = endDate; // the enddate is the startdate of the pervious interval
-					outputList.add(startDate);
+					eachIntervalDates[1] = startDate.plusMinutes(intervalInMinutes);
+					outputList.add(eachIntervalDates);
+					eachIntervalDates[0] = eachIntervalDates[1]; // the enddate is the startdate of the pervious interval
 				}
 				// The last interval, because it is mostly not an integer value
 				if (i == endCondition) {
-					endDate = startDate.plusMinutes((int) (intervalInMinutes * (interval - endCondition)));
-					outputList.add(endDate);
+					eachIntervalDates[1]  = startDate.plusMinutes((int) (intervalInMinutes * (interval - endCondition)));
+					outputList.add(eachIntervalDates);
 				}
 			}
 		} else {
-			outputList.add(startDate);
-			outputList.add(endDate);
+			outputList.add(eachIntervalDates);
 		}
 		return outputList;
 
