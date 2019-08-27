@@ -21,20 +21,20 @@ public class DwdTemporalResolution {
 
 	// Enumerations of temporal resolution
 	// {average Temp., precipitation, air pressure, air humidity, cloud coverage}
-	public static Set hourly = new HashSet<>(
+	private static Set hourly = new HashSet<>(
 			Arrays.asList("TT_TU_MN009", "R1_MN008", "P0_MN008", "RF_TU_MN009", "N_MN008"));
 	// {average Temp., max temp, min temp, precipitation, wind top, air pressure,
 	// snow height, fresh snow height, sunshine duration, air humidity, cloud
 	// coverage}
-	public static Set daily = new HashSet<>(Arrays.asList("TMK_MN004", "TXK_MN004", "TNK_MN004", "RS_MN006", "FX_MN003",
-			"PM_MN004", "SH_TAG_MN006", "NSH_TAG_MN006", "SDK_MN004", "UPM_MN004", "NM_MN004"));
+	private static Set daily = new HashSet<>(Arrays.asList("TMK_MN004", "TXK_MN004", "TNK_MN004", "RS_MN006",
+			"FX_MN003", "PM_MN004", "SH_TAG_MN006", "NSH_TAG_MN006", "SDK_MN004", "UPM_MN004", "NM_MN004"));
 	// {average Temp., max temp, min temp, precipitation, air pressure, snow height,
 	// fresh snow height, sunshine duration, air humidity, cloud coverage}
-	public static Set monthly = new HashSet<>(Arrays.asList("MO_TT_MN004", "MO_TX_MN004", "MO_TN_MN004", "MO_RR_MN006",
+	private static Set monthly = new HashSet<>(Arrays.asList("MO_TT_MN004", "MO_TX_MN004", "MO_TN_MN004", "MO_RR_MN006",
 			"MO_P0_MN004", "MO_SH_S_MN006", "MO_NSH_MN006", "MO_SD_S_MN004", "MO_RF_MN004", "MO_N_MN004"));
 	// {average Temp., max temp, min temp, precipitation, air pressure, snow height,
 	// fresh snow height, sunshine duration, air humidity, cloud coverage}
-	public static Set annual = new HashSet<>(Arrays.asList("JA_TT_MN004", "JA_TX_MN004", "JA_TN_MN004", "JA_RR_MN006",
+	private static Set annual = new HashSet<>(Arrays.asList("JA_TT_MN004", "JA_TX_MN004", "JA_TN_MN004", "JA_RR_MN006",
 			"JA_P0_MN004", "JA_SH_S_MN006", "JA_NSH_MN006", "JA_SD_S_MN004", "JA_RF_MN004", "JA_N_MN004"));
 
 	// constants for interval calculation
@@ -73,11 +73,18 @@ public class DwdTemporalResolution {
 			return 1;
 		}
 	}
-	
+
+	/**
+	 * 
+	 * @param startDate  - startDate in past
+	 * @param endDate    - endDate
+	 * @param resolution - temporal resolution (using constants for interval
+	 *                   calculation)
+	 * @return outputList - consisting of arrays with start- and enddate
+	 */
 	public static List<DateTime[]> calculateStartAndEndDate(DateTime startDate, DateTime endDate, int resolution) {
 
 		List<DateTime[]> outputList = new ArrayList<DateTime[]>();
-
 
 		Hours hourSumHours = Hours.hoursBetween(startDate, endDate);
 		int hourSum = hourSumHours.getHours();
@@ -85,8 +92,7 @@ public class DwdTemporalResolution {
 		double interval = DwdTemporalResolution.calculateInterval(hourSum, resolution);
 		int intervalInMinutes = (int) (hourSum / interval) * 60;
 
-		
-		DateTime[] eachIntervalDates = {startDate, endDate}; //will be probably overwritten
+		DateTime[] eachIntervalDates = { startDate, endDate }; // will be probably overwritten
 		// calculating the start- and enddate for every interval
 		if (interval > 1) {
 			int endCondition = (int) interval;
@@ -94,15 +100,16 @@ public class DwdTemporalResolution {
 				// every interval except the last one
 				if (i <= endCondition) {
 					eachIntervalDates[1] = startDate.plusMinutes(intervalInMinutes);
-					DateTime[] copy =  new DateTime[2];
+					DateTime[] copy = new DateTime[2];
 					copy[0] = eachIntervalDates[0];
 					copy[1] = eachIntervalDates[1];
 					outputList.add(copy);
-					eachIntervalDates[0] = eachIntervalDates[1]; // the enddate is the startdate of the pervious interval
+					eachIntervalDates[0] = eachIntervalDates[1]; // the enddate is the startdate of the pervious
+																	// interval
 				}
 				// The last interval, because it is mostly not an integer value
 				if (i == endCondition) {
-					eachIntervalDates[1]  = startDate.plusMinutes((int) (intervalInMinutes * (interval - endCondition)));
+					eachIntervalDates[1] = startDate.plusMinutes((int) (intervalInMinutes * (interval - endCondition)));
 					outputList.add(eachIntervalDates);
 				}
 			}

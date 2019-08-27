@@ -108,10 +108,20 @@ public class DwdJob implements Job {
 
 	}
 
+	/**
+	 * 
+	 * @param version - version number of WFS - usually 2.0.0
+	 * @param layerName - short designation of layer
+	 * @param serviceUrl - general url of webservice
+	 * @param area - bbox (minLon, minLat, maxLon, maxLat)
+	 * @param startDate
+	 * @param endDate
+	 * @return Set of DwdDataEnvelope by splitting into intervals
+	 */
 	private Set<DwdDataEnvelope> createFinalEnvelopeSet(String version, String layerName, String serviceUrl,
 			ArrayList<Float> area, DateTime startDate, DateTime endDate) {
 		Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
-		ArrayList<DateTime[]> interval = new ArrayList<DateTime[]>();
+		List<DateTime[]> interval = new ArrayList<DateTime[]>();
 
 		// if the resolution is hourly, the request will be splitted into intervalls
 		if (DwdTemporalResolution.isHourly(layerName)) {
@@ -146,7 +156,16 @@ public class DwdJob implements Job {
 		}
 		return envelopeSet;
 	}
-
+	/**
+	 * 
+	 * @param version - version number of WFS - usually 2.0.0
+	 * @param layerName - short designation of layer
+	 * @param serviceUrl - general url of webservice
+	 * @param area - bbox (minLon, minLat, maxLon, maxLat)
+	 * @param startDate
+	 * @param endDate
+	 * @return DwdDataEnvelope
+	 */
 	private DwdDataEnvelope createDwdDataEnvelope(String version, String layerName, String serviceUrl, List<Float> area,
 			DateTime startDate, DateTime endDate) {
 
