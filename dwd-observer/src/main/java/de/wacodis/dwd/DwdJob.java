@@ -72,8 +72,8 @@ public class DwdJob implements Job {
 		// parse executionAreaJSON into Float list
 		String bottomLeftYStr = executionAreaJSON[0].split(" ")[0];
 		String bottomLeftXStr = executionAreaJSON[0].split(" ")[1];
-		String upperRightYStr = executionAreaJSON[1].split(" ")[2];
-		String upperRightXStr = executionAreaJSON[1].split(" ")[3];
+		String upperRightYStr = executionAreaJSON[1].split(" ")[0];
+		String upperRightXStr = executionAreaJSON[1].split(" ")[1];
 
 		float bottomLeftY = Float.parseFloat(bottomLeftYStr);
 		float bottomLeftX = Float.parseFloat(bottomLeftXStr);
