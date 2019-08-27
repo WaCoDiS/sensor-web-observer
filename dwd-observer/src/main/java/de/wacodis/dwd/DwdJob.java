@@ -56,6 +56,7 @@ public class DwdJob implements Job {
 	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
 
 	JobDataMap jobDataMap = new JobDataMap();
+
 	@Override
 	public void execute(JobExecutionContext jec) throws JobExecutionException {
 		LOG.info("Start DwdJob's execute()");
@@ -91,11 +92,11 @@ public class DwdJob implements Job {
 			int previousDays = (int) previousDaysCandidate;
 
 			Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
-			
+
 			// timeframe
 			DateTime endDate = DateTime.now();
 			DateTime startDate = endDate.withPeriodAdded(period, -1);
-			if(jobDataMap.get("endDate") == null) {
+			if (jobDataMap.get("endDate") == null) {
 				jobDataMap.put("endDate", endDate);
 			} else {
 				endDate = (DateTime) jobDataMap.get("endDate");
@@ -121,7 +122,7 @@ public class DwdJob implements Job {
 		// if the resolution is daily, the request will be splitted into intervalls
 		if (DwdTemporalResolution.isDaily(layerName)) {
 			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
-					DwdTemporalResolution.HOURLY_RESOLUTION);
+					DwdTemporalResolution.DAILY_RESOLUTION);
 		}
 
 		// if the resolution is monthly, the request will be splitted into intervalls
@@ -148,11 +149,10 @@ public class DwdJob implements Job {
 
 	private DwdDataEnvelope createDwdDataEnvelope(String version, String layerName, String serviceUrl, List<Float> area,
 			DateTime startDate, DateTime endDate) {
+
 		// 2) Create a DwdWfsRequestParams onbject from the restored request parameters
 		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, endDate);
 
-		// - startDate and endDate should be chosen depending on the request interval
-		// and the last request endDate
 		// 3) Request WFS with request paramaters
 		DwdProductsMetadata metadata = null;
 		try {
@@ -161,9 +161,11 @@ public class DwdJob implements Job {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		// 4) Decode DwdProductsMetada to DwdDataEnvelope
 		DwdDataEnvelope dataEnvelope = DwdProductsMetadataDecoder.decode(metadata);
 		LOG.info("new dataEnvelope:\n{}", dataEnvelope.toString());
+
 		// 5) Publish DwdDataEnvelope message
 		PublisherChannel pub = null;
 		pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
