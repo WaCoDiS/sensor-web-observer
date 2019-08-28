@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -29,7 +30,7 @@ class DwdTemporalResolutionTest {
 		DateTime endDate = DateTime.now();
 		DateTime startDate = endDate.withPeriodAdded(period, -1);
 		DateTime endDate2 = startDate.plusMinutes((int) (24*7*60));
-		ArrayList<DateTime[]> interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate, resolution);
+		List<DateTime[]> interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate, resolution);
 		
 		Assertions.assertEquals(startDate.toLocalDate(), interval.get(0)[0].toLocalDate());
 		Assertions.assertEquals(endDate2.toLocalDate(), interval.get(0)[1].toLocalDate());
