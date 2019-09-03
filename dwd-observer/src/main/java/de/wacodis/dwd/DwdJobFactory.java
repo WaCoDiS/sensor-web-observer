@@ -19,12 +19,14 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
  *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
+@Component
 public class DwdJobFactory implements JobFactory {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DwdJobFactory.class);
@@ -39,7 +41,7 @@ public class DwdJobFactory implements JobFactory {
 
 	@Override
 	public JobDetail initializeJob(WacodisJobDefinition job, JobDataMap data) {
-		LOG.info("Preparing SentinelJob JobDetail");
+		LOG.info("Preparing DwdJob JobDetail");
 
 		Optional<AbstractSubsetDefinition> defOpt = job.getInputs().stream()
 				.filter((i -> i instanceof DwdSubsetDefinition)).findFirst();
@@ -65,6 +67,7 @@ public class DwdJobFactory implements JobFactory {
 			data.put(DwdJob.EXECUTION_AREA_KEY, extent);	// e.g. "52.0478 6.0124,52.5687 7.1420"
 
 			// string temporalcoverage to period
+			/*
 			if (job.getTemporalCoverage() != null && !StringUtils.isEmpty(job.getTemporalCoverage().getDuration())) {
 				Period period = ISOPeriodFormat.standard().parsePeriod(job.getTemporalCoverage().getDuration());
 				int baseDays = period.getDays();
@@ -74,6 +77,7 @@ public class DwdJobFactory implements JobFactory {
 				}
 				data.put(DwdJob.PREVIOUS_DAYS_KEY, baseDays);
 			}
+			*/
 
 		}
 		return JobBuilder.newJob(DwdJob.class).withIdentity(job.getId().toString(), job.getName()).usingJobData(data)

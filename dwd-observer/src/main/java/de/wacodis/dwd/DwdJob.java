@@ -65,7 +65,7 @@ public class DwdJob implements Job {
 		// 1) Get all required request parameters stored in the JobDataMap
 		String version = dataMap.getString(VERSION_KEY);
 		String layerName = dataMap.getString(LAYER_NAME_KEY);
-		String serviceUrl = dataMap.getString(VERSION_KEY);
+		String serviceUrl = dataMap.getString(SERVICE_URL_KEY);
 		String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY); // previous days unnecessary?
 		String[] executionAreaJSON = dataMap.getString(EXECUTION_AREA_KEY).split(",");
 
@@ -85,26 +85,30 @@ public class DwdJob implements Job {
 		area.add(2, upperRightY);
 		area.add(3, upperRightX);
 
-		Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
+		//Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
 
+		/*
 		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer
 				&& ((int) previousDaysCandidate) > 0) {
 			int previousDays = (int) previousDaysCandidate;
-
+*/
 			Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 
 			// timeframe
 			DateTime endDate = DateTime.now();
 			DateTime startDate = endDate.withPeriodAdded(period, -1);
+			LOG.info("Start Test, if there is already an endDate");
 			if (jobDataMap.get("endDate") == null) {
+				LOG.info("New enddate will be set");
 				jobDataMap.put("endDate", endDate);
 			} else {
+				LOG.info("There is already an enddate");
 				endDate = (DateTime) jobDataMap.get("endDate");
 			}
-
+			LOG.info("Start creating DwdEnvelope");
 			Set<DwdDataEnvelope> finalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
 					startDate, endDate);
-		}
+		//}
 
 	}
 
@@ -146,14 +150,17 @@ public class DwdJob implements Job {
 			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
 					DwdTemporalResolution.ANNUAL_RESOLUTION);
 		}
+		LOG.info("Start creating Loop to create DwdDataEnvelopes if the amount of data is too large.");
 		if (interval != null) {
 			for (int i = 0; i < interval.size(); i++) {
 				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
 						interval.get(i)[0], interval.get(i)[1]);
+				LOG.info("Add DwdDataEnvelope Nr. " + i);
 				envelopeSet.add(dataEnvelope);
 				i++;
 			}
 		}
+		LOG.info("Finished creating DwdDataEnvelopeSets");
 		return envelopeSet;
 	}
 	/**
@@ -169,7 +176,7 @@ public class DwdJob implements Job {
 	private DwdDataEnvelope createDwdDataEnvelope(String version, String layerName, String serviceUrl, List<Float> area,
 			DateTime startDate, DateTime endDate) {
 
-		// 2) Create a DwdWfsRequestParams onbject from the restored request parameters
+		// 2) Create a DwdWfsRequestParams object from the restored request parameters
 		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, endDate);
 
 		// 3) Request WFS with request paramaters

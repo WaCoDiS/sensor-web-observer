@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DwdWfsRequestor {
 	
-	final static Logger LOGGER = LoggerFactory.getLogger(DwdWfsRequestor.class);
+	final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
 
 	/**
 	 * Performs a query with the given parameters
@@ -57,7 +57,7 @@ public class DwdWfsRequestor {
 	 * @throws IOException
 	 */
 	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params) throws IOException {
-
+		LOG.info("Start Buildung Connection Parameters for WFS Service");
 		// Connect to WFS
 		String getCapabilities = url + "?REQUEST=GetCapabilities";
 		Map connectionParameters = new HashMap();
@@ -66,9 +66,9 @@ public class DwdWfsRequestor {
 
 		// schema
 		DataStore data = DataStoreFinder.getDataStore(connectionParameters);
-		SimpleFeatureType schema = data.getSchema(params.getTypeName());
+		SimpleFeatureType schema = data.getSchema("CDC:VGSL_"+params.getTypeName());
 		String geomName = schema.getGeometryDescriptor().getLocalName();
-
+		
 		// Filter
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 		BBOX bbox = ff.bbox(ff.property(geomName), params.getBbox());
@@ -80,19 +80,22 @@ public class DwdWfsRequestor {
 
 		// Query
 		Query query = new Query();
-		query.setTypeName(params.getTypeName());
+		query.setTypeName("CDC:VGSL_"+params.getTypeName());
 		query.setFilter(conjunction);
 
+		LOG.info("Requesting WFS Service?");
 		// Request
-		FeatureSource<SimpleFeatureType, SimpleFeature> source = data.getFeatureSource(params.getTypeName());
+		FeatureSource<SimpleFeatureType, SimpleFeature> source = data.getFeatureSource("CDC:VGSL_"+params.getTypeName());
 
 		// create DwdProductsMetaData
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
 
+		LOG.info("Calculating the actual timeFrame and BoundingBox");
 		// set parameters		
 		SpatioTemporalExtent timeAndBbox = generateSpatioTemporalExtent(source,query);
 		
 		
+		LOG.info("Building DwdProductsMetaData Object");
 		// bbox		
 		ArrayList<Float> extent = timeAndBbox.getbBox();
 		metadata.setExtent(extent.get(0), extent.get(1),  extent.get(2), extent.get(3));
@@ -109,6 +112,7 @@ public class DwdWfsRequestor {
 		
 		// serviceurl
 		metadata.setServiceUrl(url);
+		LOG.info("End of request()-Method - Return DwdProductsMetaData Object");
 		return metadata;
 	}
 
@@ -116,7 +120,7 @@ public class DwdWfsRequestor {
 		
 		// 
 		SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
-		
+		LOG.info("Connecting WFS Service");
 		// Build Iterator
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);
 		FeatureIterator<SimpleFeature> iterator = features.features();
@@ -227,8 +231,8 @@ public class DwdWfsRequestor {
 		try {
 			hasNext = iterator.hasNext();
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-			LOGGER.debug("error while deserializing features", e);
+			LOG.error(e.getMessage());
+			LOG.debug("error while deserializing features", e);
 		}
 		
 		return hasNext;
