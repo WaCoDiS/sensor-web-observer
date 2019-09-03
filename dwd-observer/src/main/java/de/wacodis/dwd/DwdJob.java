@@ -24,6 +24,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 
 import com.esotericsoftware.minlog.Log;
@@ -57,6 +58,9 @@ public class DwdJob implements Job {
 
 	JobDataMap jobDataMap = new JobDataMap();
 
+    @Autowired
+    private PublisherChannel pub;
+	
 	@Override
 	public void execute(JobExecutionContext jec) throws JobExecutionException {
 		LOG.info("Start DwdJob's execute()");
@@ -180,7 +184,7 @@ public class DwdJob implements Job {
 		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, endDate);
 
 		// 3) Request WFS with request paramaters
-		DwdProductsMetadata metadata = null;
+		DwdProductsMetadata metadata = new DwdProductsMetadata();
 		try {
 			metadata = DwdWfsRequestor.request(serviceUrl, params);
 		} catch (IOException e) {
@@ -193,10 +197,9 @@ public class DwdJob implements Job {
 		LOG.info("new dataEnvelope:\n{}", dataEnvelope.toString());
 
 		// 5) Publish DwdDataEnvelope message
-		PublisherChannel pub = null;
 		pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
 		LOG.info("DataEnvelope published");
-
+		
 		return dataEnvelope;
 	}
 
