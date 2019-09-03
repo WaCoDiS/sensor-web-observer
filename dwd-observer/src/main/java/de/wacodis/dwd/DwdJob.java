@@ -107,7 +107,7 @@ public class DwdJob implements Job {
 				jobDataMap.put("endDate", endDate);
 			} else {
 				LOG.info("There is already an enddate");
-				endDate = (DateTime) jobDataMap.get("endDate");
+				startDate = (DateTime) jobDataMap.get("endDate");
 			}
 			LOG.info("Start creating DwdEnvelope");
 			Set<DwdDataEnvelope> finalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
@@ -161,7 +161,7 @@ public class DwdJob implements Job {
 						interval.get(i)[0], interval.get(i)[1]);
 				LOG.info("Add DwdDataEnvelope Nr. " + i);
 				envelopeSet.add(dataEnvelope);
-				i++;
+				//i++;
 			}
 		}
 		LOG.info("Finished creating DwdDataEnvelopeSets");

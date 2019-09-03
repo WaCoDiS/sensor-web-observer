@@ -65,7 +65,7 @@ public class DwdTemporalResolution {
 			return (hourSumD / (24 * 7)); // splitting duration in week blocks
 		}
 		if (resolution == DwdTemporalResolution.DAILY_RESOLUTION) {
-			return (hourSumD / (24 * 30)); // splitting duration in month blocks
+			return (hourSumD / (24 * 10)); // splitting duration in month blocks
 		}
 		if (resolution == DwdTemporalResolution.MONTHLY_RESOLUTION) {
 			return (hourSumD / (24 * 365 * 10)); // splitting duration in 10 years blocks
@@ -92,24 +92,25 @@ public class DwdTemporalResolution {
 		double interval = DwdTemporalResolution.calculateInterval(hourSum, resolution);
 		int intervalInMinutes = (int) (hourSum / interval) * 60;
 
-		DateTime[] eachIntervalDates = { startDate, endDate }; // will be probably overwritten
+		//Start interval
+		DateTime[] eachIntervalDates = { startDate, startDate.plusMinutes(intervalInMinutes) }; // will be probably overwritten
 		// calculating the start- and enddate for every interval
 		if (interval > 1) {
 			int endCondition = (int) interval;
 			for (int i = 1; i <= interval; i++) {
+				double modulo = interval % endCondition;
 				// every interval except the last one
-				if (i <= endCondition) {
-					eachIntervalDates[1] = startDate.plusMinutes(intervalInMinutes);
+				if (i < endCondition || modulo == 0) {
 					DateTime[] copy = new DateTime[2];
 					copy[0] = eachIntervalDates[0];
-					copy[1] = eachIntervalDates[1];
+					copy[1] = eachIntervalDates[0].plusMinutes(intervalInMinutes);
 					outputList.add(copy);
 					eachIntervalDates[0] = eachIntervalDates[1]; // the enddate is the startdate of the pervious
 																	// interval
-				}
+				}				
 				// The last interval, because it is mostly not an integer value
-				if (i == endCondition) {
-					eachIntervalDates[1] = startDate.plusMinutes((int) (intervalInMinutes * (interval - endCondition)));
+				if (i == endCondition && modulo != 0) {
+					eachIntervalDates[1] = eachIntervalDates[0].plusMinutes((int) (intervalInMinutes * (interval - endCondition)));
 					outputList.add(eachIntervalDates);
 				}
 			}
