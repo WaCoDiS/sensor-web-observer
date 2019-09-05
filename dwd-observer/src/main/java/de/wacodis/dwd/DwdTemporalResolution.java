@@ -100,12 +100,12 @@ public class DwdTemporalResolution {
 			for (int i = 1; i <= interval; i++) {
 				double modulo = interval % endCondition;
 				// every interval except the last one
-				if (i < endCondition || modulo == 0) {
+				if (i <= endCondition || modulo == 0) {
 					DateTime[] copy = new DateTime[2];
 					copy[0] = eachIntervalDates[0];
 					copy[1] = eachIntervalDates[0].plusMinutes(intervalInMinutes);
 					outputList.add(copy);
-					eachIntervalDates[0] = eachIntervalDates[1]; // the enddate is the startdate of the pervious
+					eachIntervalDates[0] = copy[1]; // the enddate is the startdate of the pervious
 																	// interval
 				}				
 				// The last interval, because it is mostly not an integer value
