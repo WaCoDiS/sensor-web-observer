@@ -42,6 +42,10 @@ public class DwdTemporalResolution {
 	public static final int DAILY_RESOLUTION = 1;
 	public static final int MONTHLY_RESOLUTION = 2;
 	public static final int ANNUAL_RESOLUTION = 3;
+	
+	public static final int THREE_DAYS_INTERVAL = 24*3;
+	public static final int ONE_MONTH_INTERVAL = 24*30;
+	public static final int TEN_YEARS_INTERVAL = 24*365*10;
 
 	public static boolean isHourly(String layerName) {
 		return hourly.contains(layerName);
@@ -62,13 +66,13 @@ public class DwdTemporalResolution {
 	public static double calculateInterval(int hourSum, int resolution) {
 		double hourSumD = (double) hourSum;
 		if (resolution == DwdTemporalResolution.HOURLY_RESOLUTION) {
-			return (hourSumD / (24 * 7)); // splitting duration in week blocks
+			return (hourSumD / DwdTemporalResolution.THREE_DAYS_INTERVAL); // splitting duration in three days blocks
 		}
 		if (resolution == DwdTemporalResolution.DAILY_RESOLUTION) {
-			return (hourSumD / (24 * 30)); // splitting duration in month blocks
+			return (hourSumD / DwdTemporalResolution.ONE_MONTH_INTERVAL); // splitting duration in month blocks
 		}
 		if (resolution == DwdTemporalResolution.MONTHLY_RESOLUTION) {
-			return (hourSumD / (24 * 365 * 10)); // splitting duration in 10 years blocks
+			return (hourSumD / DwdTemporalResolution.TEN_YEARS_INTERVAL); // splitting duration in 10 years blocks
 		} else {
 			return 1;
 		}
@@ -92,30 +96,22 @@ public class DwdTemporalResolution {
 		double interval = DwdTemporalResolution.calculateInterval(hourSum, resolution);
 		int intervalInMinutes = (int) (hourSum / interval) * 60;
 
-		//Start interval
+		// Start interval
 		DateTime[] eachIntervalDates = { startDate, startDate.plusMinutes(intervalInMinutes) }; // will be probably overwritten
+		outputList.add(eachIntervalDates); // put first value into list
+		
+		int endCondition = (int) interval;
 		// calculating the start- and enddate for every interval
-		if (interval > 1) {
-			int endCondition = (int) interval;
-			for (int i = 1; i <= interval; i++) {
-				double modulo = interval % endCondition;
-				// every interval except the last one
-				if (i <= endCondition || modulo == 0) {
-					DateTime[] copy = new DateTime[2];
-					copy[0] = eachIntervalDates[0];
-					copy[1] = eachIntervalDates[0].plusMinutes(intervalInMinutes);
-					outputList.add(copy);
-					eachIntervalDates[0] = copy[1]; // the enddate is the startdate of the pervious
-																	// interval
-				}				
-				// The last interval, because it is mostly not an integer value
-				if (i == endCondition && modulo != 0) {
-					eachIntervalDates[1] = eachIntervalDates[0].plusMinutes((int) (intervalInMinutes * (interval - endCondition)));
-					outputList.add(eachIntervalDates);
-				}
+		for (int i = 1; i <= interval; i++) {
+			double modulo = interval % endCondition;
+			// every interval
+			if (i <= endCondition || modulo == 0) {
+				eachIntervalDates = new DateTime[2];
+				eachIntervalDates[0] = outputList.get(i-1)[1];	// startdate is the enddate of the previous interval
+				eachIntervalDates[1] = eachIntervalDates[0].plusMinutes(intervalInMinutes); // enddate
+				outputList.add(eachIntervalDates);
 			}
-		} else {
-			outputList.add(eachIntervalDates);
+	
 		}
 		return outputList;
 
