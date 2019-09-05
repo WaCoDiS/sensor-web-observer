@@ -65,7 +65,7 @@ public class DwdTemporalResolution {
 			return (hourSumD / (24 * 7)); // splitting duration in week blocks
 		}
 		if (resolution == DwdTemporalResolution.DAILY_RESOLUTION) {
-			return (hourSumD / (24 * 10)); // splitting duration in month blocks
+			return (hourSumD / (24 * 30)); // splitting duration in month blocks
 		}
 		if (resolution == DwdTemporalResolution.MONTHLY_RESOLUTION) {
 			return (hourSumD / (24 * 365 * 10)); // splitting duration in 10 years blocks
