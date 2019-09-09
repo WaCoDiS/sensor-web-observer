@@ -1,10 +1,15 @@
 package de.wacodis.dwd.cdc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -28,7 +33,7 @@ public class DwdHtmlReader {
 			+ "xmlns:CDC=\"https://cdc.dwd.de\" "
 			+ "xsi:schemaLocation=\"http://www.opengis.net/wfs/2.0 https://cdc.dwd.de:443/geoserver/schemas/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd\" "
 			+ "updateS-equence=\"727\" " + "xmlns:ogc=\"http://www.opengis.net/ogc\">";
-
+	public static final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	// example GETurl:
 	String propUrl;// https://cdc.dwd.de/geoserver/CDC/wfs?service=WFS&request=GetFeature
 	String version;// &version=2.0.0
@@ -36,43 +41,60 @@ public class DwdHtmlReader {
 	List<String> bbox;// &bbox=51.200,6.700,51.500,7.300
 	DateTime startDate;
 	DateTime endDate;
-	DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	String outputFormat;// &outputformat=application%2Fjson
 
 	// constructor
-	public DwdHtmlReader(String propUrl) {
+	public DwdHtmlReader(String propUrl, String version, String typeName, List<String> bbox, DateTime startDate,
+			DateTime endDate, String outputFormat) {
 		this.propUrl = propUrl;
+		this.version = version;
+		this.typeName = typeName;
+		this.bbox = bbox;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.outputFormat = outputFormat;
 	}
 
-	public InputStream createWfsRequestPost() throws ClientProtocolException, IOException {
+	public String createWfsRequestPost() throws ClientProtocolException, IOException {
 
 		// contact http-client
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost();
-		
+		/*CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(this.propUrl);
+		httpPost.addHeader("content-type", "application/xml");
 		// create PostMessage
 		String postRequest = createXmlPostMessage();
 		StringEntity entity = new StringEntity(postRequest);
 		httpPost.setEntity(entity);
-		CloseableHttpResponse response = httpclient.execute(httpPost);
-		
+		HttpResponse response = httpclient.execute(httpPost);
+
 		HttpEntity responseEntity = response.getEntity(); // fill http-Object (status, parameters, content)
 		InputStream httpcontent = responseEntity.getContent(); // ask for content
-		return httpcontent;
+		System.out.println(httpcontent.toString());
+		InputStreamReader inputStream = new InputStreamReader(httpcontent);
+		BufferedReader buffReader = new BufferedReader(inputStream);
+*/
+		
+		PostMethod post = new PostMethod(this.propUrl);
+		String postRequest = createXmlPostMessage();
+		post.setRequestBody(postRequest);
+		HttpClient client = new HttpClient();
+		client.executeMethod(post);
+		String response = post.getResponseBodyAsString();
+		return response;
 	}
 
 	private String createXmlPostMessage() {
 		StringBuffer wfsRequest = new StringBuffer();
 		// GetFeature-tag
-		wfsRequest.append("<wfs:GetFeature service=\"WFS\" version=\"" + version + "\" outputFormat=\"" + outputFormat);
+		wfsRequest.append("<wfs:GetFeature service=\"WFS\" version=\"" + version + "\" outputFormat=\"" + outputFormat + "\" ");
 		wfsRequest.append(xmlns);
 		// Query-tag
-		wfsRequest.append("<wfs:Query typeNames=\"CDC:VGSL_TT_TU_MN009\">");
+		wfsRequest.append("<wfs:Query typeNames=\""+ typeName + "\">");
 		wfsRequest.append("<fes:Filter><fes:And>"); // Filter
 		wfsRequest.append("<fes:BBOX>" + "                <fes:ValueReference>CDC:GEOM</fes:ValueReference>"
 				+ "                <gml:Envelope srsName=\"urn:ogc:def:crs:EPSG::4326\">"
-				+ "                    <gml:lowerCorner>" + bbox.get(1) + " " + bbox.get(0) + "</gml:lowerCorner>"
-				+ "                    <gml:upperCorner>" + bbox.get(3) + " " + bbox.get(2) + "</gml:upperCorner>"
+				+ "                    <gml:lowerCorner>" + bbox.get(0) + " " + bbox.get(1) + "</gml:lowerCorner>"
+				+ "                    <gml:upperCorner>" + bbox.get(2) + " " + bbox.get(3) + "</gml:upperCorner>"
 				+ "                </gml:Envelope>" + "            </fes:BBOX>"); // BBOX
 		wfsRequest.append(
 				" <fes:PropertyIsBetween>" + "            	<fes:ValueReference>CDC:ZEITSTEMPEL</fes:ValueReference>"
@@ -80,7 +102,8 @@ public class DwdHtmlReader {
 						"            	<fes:Literal>" + formatter.print(endDate) + "</fes:Literal>" + // 2019-06-02T10:00:00Z
 						"            </fes:PropertyIsBetween>"); // timeFrame
 		wfsRequest.append(" </fes:And></fes:Filter></wfs:Query>"); // end query
-		
+		wfsRequest.append("</wfs:GetFeature>");	// end getFeature
+
 		return wfsRequest.toString();
 	}
 
