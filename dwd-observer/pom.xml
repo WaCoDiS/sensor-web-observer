@@ -17,6 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<geotools.version>21.2</geotools.version>
 		<junit.jupiter.version>5.5.0-M1</junit.jupiter.version>
+		<apache.httpcomponents.version>4.5.9</apache.httpcomponents.version>
 	</properties>
 
 	<dependencies>
@@ -93,6 +94,12 @@
 			<version>${junit.jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${apache.httpcomponents.version}</version>
+			</dependency>
 
 	</dependencies>
 
