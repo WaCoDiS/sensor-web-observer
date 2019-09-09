@@ -43,7 +43,7 @@ public class DwdTemporalResolution {
 	public static final int MONTHLY_RESOLUTION = 2;
 	public static final int ANNUAL_RESOLUTION = 3;
 	
-	public static final int THREE_DAYS_INTERVAL = 24*3;
+	public static final int ONE_WEEK_INTERVAL = 24*7;
 	public static final int ONE_MONTH_INTERVAL = 24*30;
 	public static final int TEN_YEARS_INTERVAL = 24*365*10;
 
@@ -66,7 +66,7 @@ public class DwdTemporalResolution {
 	public static double calculateInterval(int hourSum, int resolution) {
 		double hourSumD = (double) hourSum;
 		if (resolution == DwdTemporalResolution.HOURLY_RESOLUTION) {
-			return (hourSumD / DwdTemporalResolution.THREE_DAYS_INTERVAL); // splitting duration in three days blocks
+			return (hourSumD / DwdTemporalResolution.ONE_WEEK_INTERVAL); // splitting duration in three days blocks
 		}
 		if (resolution == DwdTemporalResolution.DAILY_RESOLUTION) {
 			return (hourSumD / DwdTemporalResolution.ONE_MONTH_INTERVAL); // splitting duration in month blocks
