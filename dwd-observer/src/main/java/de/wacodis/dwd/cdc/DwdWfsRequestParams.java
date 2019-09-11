@@ -6,6 +6,7 @@
 package de.wacodis.dwd.cdc;
 
 import java.util.Date;
+import java.util.List;
 
 import org.geotools.geometry.Envelope2D;
 import org.joda.time.DateTime;
@@ -21,7 +22,7 @@ public class DwdWfsRequestParams {
 
 	String version;
 	String typeName;
-	Envelope2D bbox;
+	List<Float> bbox;
 	DateTime startDate;
 	DateTime endDate;
 	String outputFormat;
@@ -31,7 +32,7 @@ public class DwdWfsRequestParams {
 
 	}
 
-	public DwdWfsRequestParams(String version, String typeName, Envelope2D bbox, DateTime startDate, DateTime endDate, String outputFormat) {
+	public DwdWfsRequestParams(String version, String typeName, List<Float> bbox, DateTime startDate, DateTime endDate, String outputFormat) {
 		super();
 		this.version = version;
 		this.typeName = typeName;
@@ -67,11 +68,11 @@ public class DwdWfsRequestParams {
 		this.typeName = typeName;
 	}
 
-	public Envelope2D getBbox() {
+	public List<Float> getBbox() {
 		return bbox;
 	}
 
-	public void setBbox(Envelope2D bounds) {
+	public void setBbox(List<Float> bounds) {
 		this.bbox = bounds;
 	}
 

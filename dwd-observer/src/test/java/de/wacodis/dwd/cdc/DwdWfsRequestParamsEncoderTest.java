@@ -49,10 +49,10 @@ public class DwdWfsRequestParamsEncoderTest {
 		Assertions.assertEquals(typeName, params.getTypeName());
 		Assertions.assertEquals(startDate, params.getStartDate());
 		Assertions.assertEquals(endDate, params.getEndDate());
-		Assertions.assertEquals((double) extent.get(0), params.getBbox().getMinY());
-		Assertions.assertEquals((double) extent.get(1), params.getBbox().getMinX());
-		Assertions.assertEquals((double) extent.get(2), params.getBbox().getMaxY());
-		Assertions.assertEquals((double) extent.get(3), params.getBbox().getMaxX());
+		Assertions.assertEquals(extent.get(0), params.getBbox().get(0));
+		Assertions.assertEquals(extent.get(1), params.getBbox().get(1));
+		Assertions.assertEquals(extent.get(2), params.getBbox().get(2));
+		Assertions.assertEquals(extent.get(3), params.getBbox().get(3));
 	}
 
 
