@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -21,7 +22,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class DwdHtmlReader {
+public class DwdWfsRequestorBuilder {
 	// attributes
 	private static String xmlns = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
 			+ "xmlns=\"http://www.opengis.net/wfs/2.0\" " + "xmlns:wfs=\"http://www.opengis.net/wfs/2.0\" "
@@ -35,26 +36,27 @@ public class DwdHtmlReader {
 			+ "updateS-equence=\"727\" " + "xmlns:ogc=\"http://www.opengis.net/ogc\">";
 	public static final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	// example GETurl:
-	String propUrl;// https://cdc.dwd.de/geoserver/CDC/wfs?service=WFS&request=GetFeature
+	//String propUrl;// https://cdc.dwd.de/geoserver/CDC/wfs?service=WFS&request=GetFeature
 	String version;// &version=2.0.0
 	String typeName;// &typeName=CDC%3AVGSL_FX_MN003
-	List<String> bbox;// &bbox=51.200,6.700,51.500,7.300
+	List<String> bbox = new ArrayList<String>();// &bbox=51.200,6.700,51.500,7.300
 	DateTime startDate;
 	DateTime endDate;
 	String outputFormat;// &outputformat=application%2Fjson
 
 	// constructor
-	public DwdHtmlReader(String propUrl, String version, String typeName, List<String> bbox, DateTime startDate,
-			DateTime endDate, String outputFormat) {
-		this.propUrl = propUrl;
-		this.version = version;
-		this.typeName = typeName;
-		this.bbox = bbox;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.outputFormat = outputFormat;
+	public DwdWfsRequestorBuilder(DwdWfsRequestParams params) {
+		this.version = params.getVersion();
+		this.typeName = params.getTypeName();
+		this.bbox.add(0, Double.toString(params.getBbox().getMinY()));
+		this.bbox.add(1, Double.toString(params.getBbox().getMinX()));
+		this.bbox.add(2, Double.toString(params.getBbox().getMaxY()));
+		this.bbox.add(3, Double.toString(params.getBbox().getMaxX()));
+		this.startDate = params.getStartDate();
+		this.endDate = params.getEndDate();
+		this.outputFormat = params.getOutputFormat();
 	}
-
+/*
 	public InputStream createWfsRequestPost() throws ClientProtocolException, IOException {
 
 		// contact http-client
@@ -72,8 +74,8 @@ public class DwdHtmlReader {
 		return httpContent;
 
 	}
-
-	private String createXmlPostMessage() {
+	*/
+	public String createXmlPostMessage() {
 		StringBuffer wfsRequest = new StringBuffer();
 		// GetFeature-tag
 		wfsRequest.append("<wfs:GetFeature service=\"WFS\" version=\"" + version + "\" outputFormat=\"" + outputFormat + "\" ");
