@@ -55,10 +55,10 @@ public class DwdHtmlReader {
 		this.outputFormat = outputFormat;
 	}
 
-	public String createWfsRequestPost() throws ClientProtocolException, IOException {
+	public InputStream createWfsRequestPost() throws ClientProtocolException, IOException {
 
 		// contact http-client
-		/*CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost(this.propUrl);
 		httpPost.addHeader("content-type", "application/xml");
 		// create PostMessage
@@ -68,19 +68,9 @@ public class DwdHtmlReader {
 		HttpResponse response = httpclient.execute(httpPost);
 
 		HttpEntity responseEntity = response.getEntity(); // fill http-Object (status, parameters, content)
-		InputStream httpcontent = responseEntity.getContent(); // ask for content
-		System.out.println(httpcontent.toString());
-		InputStreamReader inputStream = new InputStreamReader(httpcontent);
-		BufferedReader buffReader = new BufferedReader(inputStream);
-*/
-		
-		PostMethod post = new PostMethod(this.propUrl);
-		String postRequest = createXmlPostMessage();
-		post.setRequestBody(postRequest);
-		HttpClient client = new HttpClient();
-		client.executeMethod(post);
-		String response = post.getResponseBodyAsString();
-		return response;
+		InputStream httpContent = responseEntity.getContent(); // ask for content
+		return httpContent;
+
 	}
 
 	private String createXmlPostMessage() {

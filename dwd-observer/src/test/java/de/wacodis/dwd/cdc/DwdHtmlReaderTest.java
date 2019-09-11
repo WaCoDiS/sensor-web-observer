@@ -40,18 +40,20 @@ class DwdHtmlReaderTest {
 		String outputFormat = "json";
 
 		reader = new DwdHtmlReader(propUrl, version, typeName, bbox, startDate, endDate, outputFormat);
-
 	}
 
 	@Test
 	void test() throws ClientProtocolException, IOException {
-		String result = reader.createWfsRequestPost();
+		InputStream result = reader.createWfsRequestPost();
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> jsonMap = mapper.readValue(result, Map.class);
 		ArrayList<LinkedHashMap<String, String>> resultList = (ArrayList<LinkedHashMap<String, String>>) jsonMap.get("features");
 		LinkedHashMap<String, String> firstFeature =  resultList.get(0);
 		String id = firstFeature.get("id");
+		// LinkedHashMap<String, String> geomType = new LinkedHashMap<String, String>();
+		// geomType.put("geometry", firstFeature.get("geometry"));
 		Assertions.assertEquals("VGSL_FX_MN003.194212664429445290741059517461184742984", id);
+		//Assertions.assertEquals(expected, actual);
 	}
 
 }
