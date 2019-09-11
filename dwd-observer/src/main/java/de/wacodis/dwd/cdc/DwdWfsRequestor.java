@@ -6,11 +6,20 @@
 package de.wacodis.dwd.cdc;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
@@ -58,6 +67,25 @@ public class DwdWfsRequestor {
 	 */
 	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params) throws IOException {
 		LOG.info("Start Buildung Connection Parameters for WFS Service");
+		
+		
+		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
+		String postRequest = wfsRequest.createXmlPostMessage();
+		InputStream httpcontent = sendWfsRequest(url, postRequest);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		// Connect to WFS
 		String getCapabilities = url + "?REQUEST=GetCapabilities";
 		Map connectionParameters = new HashMap();
@@ -114,6 +142,22 @@ public class DwdWfsRequestor {
 		metadata.setServiceUrl(url);
 		LOG.info("End of request()-Method - Return DwdProductsMetaData Object");
 		return metadata;
+	}
+
+	public static InputStream sendWfsRequest(String url, String postRequest)
+			throws UnsupportedEncodingException, IOException, ClientProtocolException {
+		// contact http-client
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.addHeader("content-type", "application/xml");
+		// create PostMessage
+		StringEntity entity = new StringEntity(postRequest);
+		httpPost.setEntity(entity);
+		HttpResponse response = httpclient.execute(httpPost);
+
+		HttpEntity responseEntity = response.getEntity(); // fill http-Object (status, parameters, content)
+		InputStream httpContent = responseEntity.getContent(); // ask for content
+		return httpContent;
 	}
 
 	private static SpatioTemporalExtent generateSpatioTemporalExtent(FeatureSource<SimpleFeatureType, SimpleFeature> source, Query query ) throws IOException {
