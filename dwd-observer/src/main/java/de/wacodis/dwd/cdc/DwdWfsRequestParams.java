@@ -24,22 +24,32 @@ public class DwdWfsRequestParams {
 	Envelope2D bbox;
 	DateTime startDate;
 	DateTime endDate;
+	String outputFormat;
 
 	// Konstruktor
 	public DwdWfsRequestParams() {
 
 	}
 
-	public DwdWfsRequestParams(String version, String typeName, Envelope2D bbox, DateTime startDate, DateTime endDate) {
+	public DwdWfsRequestParams(String version, String typeName, Envelope2D bbox, DateTime startDate, DateTime endDate, String outputFormat) {
 		super();
 		this.version = version;
 		this.typeName = typeName;
 		this.bbox = bbox;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.outputFormat = outputFormat;
 	}
 
 	// Getters and Setters
+
+	public String getOutputFormat() {
+		return outputFormat;
+	}
+
+	public void setOutputFormat(String outputFormat) {
+		this.outputFormat = outputFormat;
+	}
 
 	public String getVersion() {
 		return version;
