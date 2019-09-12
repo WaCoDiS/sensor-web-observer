@@ -100,8 +100,7 @@ public class DwdWfsRequestor {
 
 		LOG.info("Calculating the actual timeFrame and BoundingBox");
 		// set parameters
-		SpatioTemporalExtent timeAndBbox = null;
-		generateSpatioTemporalExtent(collection);
+		SpatioTemporalExtent timeAndBbox = generateSpatioTemporalExtent(collection);
 
 		LOG.info("Building DwdProductsMetaData Object");
 		// bbox
@@ -150,30 +149,28 @@ public class DwdWfsRequestor {
 		// FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);
 		FeatureIterator<SimpleFeature> iterator = collection.features();
 
+		
 		// TimeFrame Parameter
 		DateTime startDate = new DateTime();
 		DateTime endDate = new DateTime();
 		ArrayList<DateTime> timeFrame = new ArrayList<DateTime>();
 
 		// BBOX Parameter
-		float xMin = Float.NaN;
-		float yMin = Float.NaN;
-		float xMax = Float.NaN;
-		float yMax = Float.NaN;
 		ArrayList<Float> extent = new ArrayList<Float>();
+		extent.add(0, (float) collection.getBounds().getMinX());
+		extent.add(1, (float) collection.getBounds().getMinY());
+		extent.add(2, (float) collection.getBounds().getMaxX());
+		extent.add(3, (float) collection.getBounds().getMaxY());
 
 		try {
 			for (int i = 1; hasNextNew(iterator); i++) {
 				SimpleFeature feature = (SimpleFeature) iterator.next();
 
 				// Request time attribute
-				DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd' 'HH:mm:ss.S");
+				DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 				// DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 				// String wert = feature.getAttribute("ZEITSTEMPEL").toString();
 				DateTime temp = DateTime.parse(feature.getAttribute("ZEITSTEMPEL").toString(), df);
-
-				// Request BBOX
-				BoundingBox bBox = feature.getBounds();
 
 				// Set start Values
 				if (i == 1) {
@@ -183,18 +180,6 @@ public class DwdWfsRequestor {
 					endDate = temp;
 					timeFrame.add(0, startDate);
 					timeFrame.add(1, endDate);
-
-					// BBOX - First values
-					xMin = (float) bBox.getMinX();
-					yMin = (float) bBox.getMinY();
-					xMax = (float) bBox.getMaxX();
-					yMax = (float) bBox.getMaxY();
-
-					extent.add(0, xMin);
-					extent.add(1, yMin);
-					extent.add(2, xMax);
-					extent.add(3, yMax);
-
 				}
 
 				// Set StartDate or EndDate
@@ -209,33 +194,6 @@ public class DwdWfsRequestor {
 					timeFrame.remove(1);
 					timeFrame.add(1, endDate);
 				}
-
-				// BBOX - Determine BBox values
-				if (xMin > bBox.getMinX()) {
-					xMin = (float) bBox.getMinX();
-					extent.remove(0);
-					extent.add(0, xMin);
-				}
-
-				if (yMin > bBox.getMinY()) {
-					yMin = (float) bBox.getMinY();
-					extent.remove(1);
-					extent.add(1, yMin);
-
-				}
-				if (xMax < bBox.getMaxX()) {
-					xMax = (float) bBox.getMaxX();
-					extent.remove(2);
-					extent.add(2, xMax);
-				}
-
-				if (yMax < bBox.getMaxY()) {
-					yMax = (float) bBox.getMaxY();
-					extent.remove(3);
-					extent.add(3, yMax);
-
-				}
-
 			}
 		} finally {
 			iterator.close();
