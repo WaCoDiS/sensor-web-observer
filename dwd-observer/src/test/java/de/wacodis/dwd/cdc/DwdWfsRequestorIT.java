@@ -35,16 +35,19 @@ public class DwdWfsRequestorIT {
 		params = new DwdWfsRequestParams();
 		params.setVersion("2.0.0");
 		params.setTypeName("CDC:VGSL_FX_MN003");
+		params.setOutputFormat("json");
 		// params.setTypeName("CDC:VGSL_TT_TU_MN009");
 
-		DirectPosition2D linksUnten = new DirectPosition2D(51.0000, 6.6000);
-		DirectPosition2D rechtsOben = new DirectPosition2D(51.5000, 7.3000);
-		Envelope2D bounds = new Envelope2D(linksUnten, rechtsOben);
+		List<Float> bounds = new ArrayList<Float>();
+		bounds.add(0, 51.0000f);
+		bounds.add(1, 6.6000f);
+		bounds.add(2, 51.5000f);
+		bounds.add(3, 7.3000f);
 		params.setBbox(bounds);
 
 		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		DateTime startDate = DateTime.parse("2019-04-24T01:00:00:00Z", df);
-		DateTime endDate = DateTime.parse("2019-04-25T10:00:00:00Z", df);
+		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", df);
+		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", df);
 
 //		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 //		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", df);

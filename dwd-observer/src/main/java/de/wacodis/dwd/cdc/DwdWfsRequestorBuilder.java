@@ -48,33 +48,15 @@ public class DwdWfsRequestorBuilder {
 	public DwdWfsRequestorBuilder(DwdWfsRequestParams params) {
 		this.version = params.getVersion();
 		this.typeName = params.getTypeName();
-		this.bbox.add(0, Double.toString(params.getBbox().getMinY()));
-		this.bbox.add(1, Double.toString(params.getBbox().getMinX()));
-		this.bbox.add(2, Double.toString(params.getBbox().getMaxY()));
-		this.bbox.add(3, Double.toString(params.getBbox().getMaxX()));
+		this.bbox.add(0, Double.toString(params.getBbox().get(0)));
+		this.bbox.add(1, Double.toString(params.getBbox().get(1)));
+		this.bbox.add(2, Double.toString(params.getBbox().get(2)));
+		this.bbox.add(3, Double.toString(params.getBbox().get(3)));
 		this.startDate = params.getStartDate();
 		this.endDate = params.getEndDate();
 		this.outputFormat = params.getOutputFormat();
 	}
-/*
-	public InputStream createWfsRequestPost() throws ClientProtocolException, IOException {
 
-		// contact http-client
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost(this.propUrl);
-		httpPost.addHeader("content-type", "application/xml");
-		// create PostMessage
-		String postRequest = createXmlPostMessage();
-		StringEntity entity = new StringEntity(postRequest);
-		httpPost.setEntity(entity);
-		HttpResponse response = httpclient.execute(httpPost);
-
-		HttpEntity responseEntity = response.getEntity(); // fill http-Object (status, parameters, content)
-		InputStream httpContent = responseEntity.getContent(); // ask for content
-		return httpContent;
-
-	}
-	*/
 	public String createXmlPostMessage() {
 		StringBuffer wfsRequest = new StringBuffer();
 		// GetFeature-tag

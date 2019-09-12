@@ -5,14 +5,18 @@
  */
 package de.wacodis.dwd.cdc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -27,6 +31,7 @@ import org.geotools.data.Query;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.util.factory.GeoTools;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -54,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
 public class DwdWfsRequestor {
-	
+
 	final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
 
 	/**
@@ -67,25 +72,15 @@ public class DwdWfsRequestor {
 	 */
 	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params) throws IOException {
 		LOG.info("Start Buildung Connection Parameters for WFS Service");
-		
-		
+
 		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
 		String postRequest = wfsRequest.createXmlPostMessage();
-		InputStream httpcontent = sendWfsRequest(url, postRequest);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		InputStream httpContent = sendWfsRequest(url, postRequest);
+		String text = IOUtils.toString(httpContent, StandardCharsets.UTF_8.name());
+		FeatureJSON featureJson = new FeatureJSON();
+		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = featureJson.readFeatureCollection(text);
+				//FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureJSON.
+				
 		// Connect to WFS
 		String getCapabilities = url + "?REQUEST=GetCapabilities";
 		Map connectionParameters = new HashMap();
@@ -94,50 +89,35 @@ public class DwdWfsRequestor {
 
 		// schema
 		DataStore data = DataStoreFinder.getDataStore(connectionParameters);
-		SimpleFeatureType schema = data.getSchema("CDC:VGSL_"+params.getTypeName());
-		String geomName = schema.getGeometryDescriptor().getLocalName();
-		
-		// Filter
-		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
-		BBOX bbox = ff.bbox(ff.property(geomName), params.getBbox());
-				
-		PropertyIsBetween timeFilter = ff.between(
-				ff.property("CDC:ZEITSTEMPEL"), ff.literal(params.getStartDate().toDate()), ff.literal(params.getEndDate().toDate()));
-		
-		And conjunction = ff.and(timeFilter, bbox);
-
-		// Query
-		Query query = new Query();
-		query.setTypeName("CDC:VGSL_"+params.getTypeName());
-		query.setFilter(conjunction);
 
 		LOG.info("Requesting WFS Service?");
 		// Request
-		FeatureSource<SimpleFeatureType, SimpleFeature> source = data.getFeatureSource("CDC:VGSL_"+params.getTypeName());
+		FeatureSource<SimpleFeatureType, SimpleFeature> source = data
+				.getFeatureSource("CDC:VGSL_" + params.getTypeName());
 
 		// create DwdProductsMetaData
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
 
 		LOG.info("Calculating the actual timeFrame and BoundingBox");
-		// set parameters		
-		SpatioTemporalExtent timeAndBbox = generateSpatioTemporalExtent(source,query);
-		
-		
+		// set parameters
+		SpatioTemporalExtent timeAndBbox = null;
+		generateSpatioTemporalExtent(collection);
+
 		LOG.info("Building DwdProductsMetaData Object");
-		// bbox		
+		// bbox
 		ArrayList<Float> extent = timeAndBbox.getbBox();
-		metadata.setExtent(extent.get(0), extent.get(1),  extent.get(2), extent.get(3));
-		
+		metadata.setExtent(extent.get(0), extent.get(1), extent.get(2), extent.get(3));
+
 		// timeframe
 		ArrayList<DateTime> timeFrame = timeAndBbox.getTimeFrame();
 		metadata.setStartDate(timeFrame.get(0));
 		metadata.setEndDate(timeFrame.get(1));
-				
+
 		// name
 		metadata.setLayername(source.getInfo().getName());
 		// clearname
 		metadata.setParameter(source.getInfo().getTitle());
-		
+
 		// serviceurl
 		metadata.setServiceUrl(url);
 		LOG.info("End of request()-Method - Return DwdProductsMetaData Object");
@@ -160,116 +140,113 @@ public class DwdWfsRequestor {
 		return httpContent;
 	}
 
-	private static SpatioTemporalExtent generateSpatioTemporalExtent(FeatureSource<SimpleFeatureType, SimpleFeature> source, Query query ) throws IOException {
-		
-		// 
+	private static SpatioTemporalExtent generateSpatioTemporalExtent(
+			FeatureCollection<SimpleFeatureType, SimpleFeature> collection) throws IOException {
+
+		//
 		SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
 		LOG.info("Connecting WFS Service");
 		// Build Iterator
-		FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);
-		FeatureIterator<SimpleFeature> iterator = features.features();
+		// FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);
+		FeatureIterator<SimpleFeature> iterator = collection.features();
 
-		//TimeFrame Parameter
+		// TimeFrame Parameter
 		DateTime startDate = new DateTime();
-		DateTime endDate= new DateTime();
+		DateTime endDate = new DateTime();
 		ArrayList<DateTime> timeFrame = new ArrayList<DateTime>();
-		
-		//BBOX Parameter
+
+		// BBOX Parameter
 		float xMin = Float.NaN;
 		float yMin = Float.NaN;
 		float xMax = Float.NaN;
 		float yMax = Float.NaN;
 		ArrayList<Float> extent = new ArrayList<Float>();
-		
-		
+
 		try {
-			for(int i=1;hasNextNew(iterator); i++){
+			for (int i = 1; hasNextNew(iterator); i++) {
 				SimpleFeature feature = (SimpleFeature) iterator.next();
-				
+
 				// Request time attribute
 				DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd' 'HH:mm:ss.S");
-				//DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-				//String wert = feature.getAttribute("ZEITSTEMPEL").toString();
+				// DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				// String wert = feature.getAttribute("ZEITSTEMPEL").toString();
 				DateTime temp = DateTime.parse(feature.getAttribute("ZEITSTEMPEL").toString(), df);
-				
+
 				// Request BBOX
 				BoundingBox bBox = feature.getBounds();
-				
+
 				// Set start Values
-				if(i==1) {
-					
+				if (i == 1) {
+
 					// Time Frame - First values
 					startDate = temp;
 					endDate = temp;
 					timeFrame.add(0, startDate);
 					timeFrame.add(1, endDate);
-					
+
 					// BBOX - First values
 					xMin = (float) bBox.getMinX();
 					yMin = (float) bBox.getMinY();
 					xMax = (float) bBox.getMaxX();
 					yMax = (float) bBox.getMaxY();
-					
+
 					extent.add(0, xMin);
 					extent.add(1, yMin);
 					extent.add(2, xMax);
 					extent.add(3, yMax);
-					
+
 				}
-				
+
 				// Set StartDate or EndDate
-				if(temp.isBefore(startDate)) {
+				if (temp.isBefore(startDate)) {
 					startDate = temp;
 					timeFrame.remove(0);
 					timeFrame.add(0, startDate);
-				}	
-				
-				if(temp.isAfter(endDate)) {
+				}
+
+				if (temp.isAfter(endDate)) {
 					endDate = temp;
 					timeFrame.remove(1);
 					timeFrame.add(1, endDate);
 				}
-				
-				
+
 				// BBOX - Determine BBox values
-				if(xMin > bBox.getMinX()) {
+				if (xMin > bBox.getMinX()) {
 					xMin = (float) bBox.getMinX();
 					extent.remove(0);
 					extent.add(0, xMin);
-				}	
-				
-				if(yMin > bBox.getMinY()) {
+				}
+
+				if (yMin > bBox.getMinY()) {
 					yMin = (float) bBox.getMinY();
 					extent.remove(1);
 					extent.add(1, yMin);
-			
+
 				}
-				if(xMax < bBox.getMaxX()) {
+				if (xMax < bBox.getMaxX()) {
 					xMax = (float) bBox.getMaxX();
 					extent.remove(2);
 					extent.add(2, xMax);
-				}	
-				
-				if(yMax < bBox.getMaxY()) {
+				}
+
+				if (yMax < bBox.getMaxY()) {
 					yMax = (float) bBox.getMaxY();
 					extent.remove(3);
 					extent.add(3, yMax);
-			
+
 				}
-				
+
 			}
 		} finally {
 			iterator.close();
 		}
-		
+
 		timeAndBbox.setbBox(extent);
 		timeAndBbox.setTimeFrame(timeFrame);
-		
-		
+
 		return timeAndBbox;
 	}
-	
-	
+
 	private static boolean hasNextNew(FeatureIterator<SimpleFeature> iterator) {
 		boolean hasNext = false;
 		try {
@@ -278,9 +255,9 @@ public class DwdWfsRequestor {
 			LOG.error(e.getMessage());
 			LOG.debug("error while deserializing features", e);
 		}
-		
+
 		return hasNext;
-		
+
 	}
 
 }
