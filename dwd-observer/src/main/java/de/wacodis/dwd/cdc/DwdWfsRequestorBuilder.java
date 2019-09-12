@@ -63,7 +63,7 @@ public class DwdWfsRequestorBuilder {
 		wfsRequest.append("<wfs:GetFeature service=\"WFS\" version=\"" + version + "\" outputFormat=\"" + outputFormat + "\" ");
 		wfsRequest.append(xmlns);
 		// Query-tag
-		wfsRequest.append("<wfs:Query typeNames=\""+ typeName + "\">");
+		wfsRequest.append("<wfs:Query typeNames=\""+ "CDC:VGSL_" + typeName + "\">");
 		wfsRequest.append("<fes:Filter><fes:And>"); // Filter
 		wfsRequest.append("<fes:BBOX>" + "                <fes:ValueReference>CDC:GEOM</fes:ValueReference>"
 				+ "                <gml:Envelope srsName=\"urn:ogc:def:crs:EPSG::4326\">"
