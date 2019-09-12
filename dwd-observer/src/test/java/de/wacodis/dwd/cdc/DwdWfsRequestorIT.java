@@ -34,7 +34,7 @@ public class DwdWfsRequestorIT {
 		serviceurl = "https://cdc.dwd.de:443/geoserver/CDC/wfs?";
 		params = new DwdWfsRequestParams();
 		params.setVersion("2.0.0");
-		params.setTypeName("CDC:VGSL_FX_MN003");
+		params.setTypeName("FX_MN003");
 		params.setOutputFormat("json");
 		// params.setTypeName("CDC:VGSL_TT_TU_MN009");
 
@@ -48,11 +48,7 @@ public class DwdWfsRequestorIT {
 		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", df);
 		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", df);
-
-//		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-//		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", df);
-//		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", df);
-//		
+	
 		params.setStartDate(startDate);
 		params.setEndDate(endDate);
 
@@ -73,10 +69,11 @@ public class DwdWfsRequestorIT {
 
 		ArrayList<Float> extent = new ArrayList<Float>();
 
-		extent.add(51.2531f);
-		extent.add(6.7686f);
-		extent.add(51.4041f);
-		extent.add(7.2156f);
+		
+		extent.add(0, 6.7686f);
+		extent.add(1, 51.2531f);
+		extent.add(2, 7.2156f);
+		extent.add(3, 51.4041f);
 		metadata.setExtent(extent);
 
 		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
@@ -95,8 +92,15 @@ public class DwdWfsRequestorIT {
 		// bbox
 		Assertions.assertEquals(metadata.getExtent(), result.getExtent());
 		// time
-		Assertions.assertEquals(metadata.getStartDate(), result.getStartDate());
-		Assertions.assertEquals(metadata.getEndDate(), result.getEndDate());
+		// is the startDate of the feature timeframe between the query startDate and endDate
+		int biggerThanStartDate = result.getStartDate().compareTo(metadata.getStartDate());
+		int lowerThanEndDate = result.getStartDate().compareTo(metadata.getEndDate());
+		Assertions.assertTrue( biggerThanStartDate >= 0 &&  lowerThanEndDate <= 0 );
+		// is the endDate of the feature timeframe between the query startDate and endDate
+		biggerThanStartDate = result.getEndDate().compareTo(metadata.getStartDate());
+		lowerThanEndDate = result.getEndDate().compareTo(metadata.getEndDate());
+		Assertions.assertTrue( biggerThanStartDate >= 0 &&  lowerThanEndDate <= 0 );
+
 
 	}
 
