@@ -48,10 +48,9 @@ public class DwdWfsRequestorBuilder {
 	public DwdWfsRequestorBuilder(DwdWfsRequestParams params) {
 		this.version = params.getVersion();
 		this.typeName = params.getTypeName();
-		this.bbox.add(0, Double.toString(params.getBbox().get(0)));
-		this.bbox.add(1, Double.toString(params.getBbox().get(1)));
-		this.bbox.add(2, Double.toString(params.getBbox().get(2)));
-		this.bbox.add(3, Double.toString(params.getBbox().get(3)));
+		for(int i=0; i<params.getBbox().size(); i++) {
+			bbox.add(i, Float.toString(params.getBbox().get(i)));
+		}
 		this.startDate = params.getStartDate();
 		this.endDate = params.getEndDate();
 		this.outputFormat = params.getOutputFormat();

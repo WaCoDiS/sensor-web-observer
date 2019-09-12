@@ -8,8 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.http.client.ClientProtocolException;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
 import org.joda.time.DateTime;
@@ -20,6 +23,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
@@ -28,6 +33,8 @@ public class DwdWfsRequestorIT {
 
 	private static DwdWfsRequestParams params;
 	private static String serviceurl;
+	static DwdWfsRequestorBuilder reader;
+	static String propUrl = "https://cdc.dwd.de/geoserver/CDC/wfs";
 
 	@BeforeAll
 	static void setup() throws ParseException {
@@ -45,12 +52,14 @@ public class DwdWfsRequestorIT {
 		bounds.add(3, 7.3000f);
 		params.setBbox(bounds);
 
-		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", df);
-		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", df);
-	
+		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", DwdWfsRequestorBuilder.formatter);
+		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", DwdWfsRequestorBuilder.formatter);
+
 		params.setStartDate(startDate);
 		params.setEndDate(endDate);
+		params.setOutputFormat("json");
+
+		reader = new DwdWfsRequestorBuilder(params);
 
 	}
 
@@ -69,7 +78,6 @@ public class DwdWfsRequestorIT {
 
 		ArrayList<Float> extent = new ArrayList<Float>();
 
-		
 		extent.add(0, 6.7686f);
 		extent.add(1, 51.2531f);
 		extent.add(2, 7.2156f);
@@ -92,15 +100,16 @@ public class DwdWfsRequestorIT {
 		// bbox
 		Assertions.assertEquals(metadata.getExtent(), result.getExtent());
 		// time
-		// is the startDate of the feature timeframe between the query startDate and endDate
+		// is the startDate of the feature timeframe between the query startDate and
+		// endDate
 		int biggerThanStartDate = result.getStartDate().compareTo(metadata.getStartDate());
 		int lowerThanEndDate = result.getStartDate().compareTo(metadata.getEndDate());
-		Assertions.assertTrue( biggerThanStartDate >= 0 &&  lowerThanEndDate <= 0 );
-		// is the endDate of the feature timeframe between the query startDate and endDate
+		Assertions.assertTrue(biggerThanStartDate >= 0 && lowerThanEndDate <= 0);
+		// is the endDate of the feature timeframe between the query startDate and
+		// endDate
 		biggerThanStartDate = result.getEndDate().compareTo(metadata.getStartDate());
 		lowerThanEndDate = result.getEndDate().compareTo(metadata.getEndDate());
-		Assertions.assertTrue( biggerThanStartDate >= 0 &&  lowerThanEndDate <= 0 );
-
+		Assertions.assertTrue(biggerThanStartDate >= 0 && lowerThanEndDate <= 0);
 
 	}
 
@@ -112,6 +121,24 @@ public class DwdWfsRequestorIT {
 			DwdWfsRequestor.request(serviceurl, params);
 		});
 
+	}
+
+	@Test
+	void test() throws ClientProtocolException, IOException {
+		String message = reader.createXmlPostMessage();
+		InputStream result = DwdWfsRequestor.sendWfsRequest(propUrl, message);
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> jsonMap = mapper.readValue(result, Map.class);
+		ArrayList<LinkedHashMap<String, String>> resultList = (ArrayList<LinkedHashMap<String, String>>) jsonMap
+				.get("features");
+		LinkedHashMap<String, String> firstFeature = resultList.get(0);
+		String id = firstFeature.get("id");
+		// LinkedHashMap<String, String> geomType = new LinkedHashMap<String, String>();
+		// geomType.put("geometry", firstFeature.get("geometry"));
+		Assertions.assertDoesNotThrow(() -> {
+			DwdWfsRequestor.sendWfsRequest(propUrl, message);
+		});
+		// Assertions.assertEquals(expected, actual);
 	}
 
 }
