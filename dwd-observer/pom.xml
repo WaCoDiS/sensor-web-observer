@@ -18,7 +18,6 @@
 		<geotools.version>21.2</geotools.version>
 		<junit.jupiter.version>5.5.0-M1</junit.jupiter.version>
 		<apache.httpcomponents.version>4.5.9</apache.httpcomponents.version>
-		<xml.bind.version>2.4.0-b180830.0359</xml.bind.version>
 		<n52.sensorweb.version>2.6.1</n52.sensorweb.version>
 	</properties>
 
