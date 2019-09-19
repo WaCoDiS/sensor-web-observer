@@ -19,6 +19,7 @@
 		<junit.jupiter.version>5.5.0-M1</junit.jupiter.version>
 		<apache.httpcomponents.version>4.5.9</apache.httpcomponents.version>
 		<xml.bind.version>2.4.0-b180830.0359</xml.bind.version>
+		<n52.sensorweb.version>2.6.1</n52.sensorweb.version>
 	</properties>
 
 	<dependencies>
@@ -107,13 +108,11 @@
 			<version>${apache.httpcomponents.version}</version>
 		</dependency>
 
-		
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>${xml.bind.version}</version>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>52n-xml-wfs-v20</artifactId>
+			<version>${n52.sensorweb.version}</version>
 		</dependency>
-
 
 	</dependencies>
 
@@ -144,6 +143,24 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M3</version>
+			</plugin>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.14.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<schemaDirectory>${project.basedir}/src/main</schemaDirectory>
+					<schemaIncludes>
+						<include>*.xsd</include>
+					</schemaIncludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
