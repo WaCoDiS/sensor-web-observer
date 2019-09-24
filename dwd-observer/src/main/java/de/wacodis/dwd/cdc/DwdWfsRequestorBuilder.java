@@ -1,26 +1,26 @@
 package de.wacodis.dwd.cdc;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.geotools.geometry.Envelope2D;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.opengis.filter.PropertyIsBetween;
+
+import net.opengis.fes.x20.BinaryLogicOpType;
+import net.opengis.fes.x20.ComparisonOpsType;
+import net.opengis.fes.x20.FilterDocument;
+import net.opengis.fes.x20.FilterType;
+import net.opengis.fes.x20.FunctionType;
+import net.opengis.fes.x20.LogicOpsDocument;
+import net.opengis.fes.x20.LogicOpsType;
+import net.opengis.wfs.x20.GetFeatureDocument;
+import net.opengis.wfs.x20.GetFeatureType;
+import net.opengis.wfs.x20.PropertyNameDocument;
+import net.opengis.wfs.x20.PropertyNameDocument.PropertyName;
+import net.opengis.wfs.x20.QueryDocument;
+import net.opengis.wfs.x20.QueryType;
 
 public class DwdWfsRequestorBuilder {
 	
@@ -58,6 +58,43 @@ public class DwdWfsRequestorBuilder {
 	}
 
 	public String createXmlPostMessage() {
+		
+		
+		GetFeatureDocument getFeatureDoc = GetFeatureDocument.Factory.newInstance();
+        GetFeatureType getFeature = getFeatureDoc.addNewGetFeature();
+        getFeature.setService("WFS");
+        getFeature.setVersion(this.version);
+        getFeature.setOutputFormat(this.outputFormat);
+        
+
+        QueryDocument queryDoc = QueryDocument.Factory.newInstance();
+        QueryType query = queryDoc.addNewQuery();
+        ArrayList<String> typeList = new ArrayList<String>();
+        typeList.add("layer_01");
+                
+        PropertyNameDocument propertyNameDoc = PropertyNameDocument.Factory.newInstance();
+        PropertyName propertyName = propertyNameDoc.addNewPropertyName();
+        propertyName.setStringValue("TestAttributeValue");
+        
+        FilterDocument filterDocument = FilterDocument.Factory.newInstance();
+        FilterType filter = filterDocument.addNewFilter();
+       
+        
+        LogicOpsDocument logicOpsDocument = LogicOpsDocument.Factory.newInstance();
+        //LogicOpsType andOperation = logicOpsDocument.addNewLogicOps(); 
+        BinaryLogicOpType andOperation = BinaryLogicOpType.Factory.newInstance();
+        filter.set(andOperation);
+        
+        query.set(propertyNameDoc);
+        query.setTypeNames(typeList);     
+        query.set(filterDocument);
+        getFeature.set(queryDoc);
+
+        System.out.println(getFeatureDoc.xmlText());
+
+        
+        
+		
 		StringBuffer wfsRequest = new StringBuffer();
 		// GetFeature-tag
 		wfsRequest.append("<wfs:GetFeature service=\"WFS\" version=\"" + version + "\" outputFormat=\"" + outputFormat + "\" ");
