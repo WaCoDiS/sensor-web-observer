@@ -5,11 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.expression.Literal;
 
+import net.opengis.fes.x20.AndDocument;
 import net.opengis.fes.x20.BBOXDocument;
 import net.opengis.fes.x20.BBOXType;
 import net.opengis.fes.x20.BinaryLogicOpType;
@@ -17,8 +21,14 @@ import net.opengis.fes.x20.ComparisonOpsType;
 import net.opengis.fes.x20.FilterDocument;
 import net.opengis.fes.x20.FilterType;
 import net.opengis.fes.x20.FunctionType;
+import net.opengis.fes.x20.LiteralType;
 import net.opengis.fes.x20.LogicOpsDocument;
 import net.opengis.fes.x20.LogicOpsType;
+import net.opengis.fes.x20.LowerBoundaryType;
+import net.opengis.fes.x20.PropertyIsBetweenDocument;
+import net.opengis.fes.x20.PropertyIsBetweenType;
+import net.opengis.fes.x20.SpatialOpsType;
+import net.opengis.fes.x20.UpperBoundaryType;
 import net.opengis.fes.x20.ValueReferenceDocument;
 import net.opengis.wfs.x20.GetFeatureDocument;
 import net.opengis.wfs.x20.GetFeatureType;
@@ -63,7 +73,7 @@ public class DwdWfsRequestorBuilder {
 		this.outputFormat = params.getOutputFormat();
 	}
 
-	public String createXmlPostMessage() {
+	public String createXmlPostMessage(){
 
 		ArrayList<String[]> namespaces = new ArrayList<String[]>();
 		namespaces.add(new String[] { "xsi", "http://www.w3.org/2001/XMLSchema-instance" });
@@ -86,10 +96,42 @@ public class DwdWfsRequestorBuilder {
 
 		GetFeatureDocument getFeatureDoc = GetFeatureDocument.Factory.newInstance();
 		GetFeatureType getFeature = getFeatureDoc.addNewGetFeature();
-		getFeature.setService("WFS");
-		getFeature.setVersion(this.version);
-		getFeature.setOutputFormat(this.outputFormat);
 
+		QueryDocument queryDoc = QueryDocument.Factory.newInstance();
+		QueryType query = queryDoc.addNewQuery();
+		
+		ArrayList<String> typeList = new ArrayList<String>();
+		typeList.add("layer_01");
+		
+		FilterDocument filterDocument = FilterDocument.Factory.newInstance();
+		FilterType filter = filterDocument.addNewFilter();
+		
+		
+		AndDocument andDocument = AndDocument.Factory.newInstance();
+		BinaryLogicOpType andType =  andDocument.addNewAnd();
+		
+		BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
+		BBOXType bboxType = bboxDocument.addNewBBOX();
+		
+		
+		
+		ValueReferenceDocument valueRefDocument = ValueReferenceDocument.Factory.newInstance();
+		valueRefDocument.setValueReference("CDC:GEOM");
+		bboxType.set(valueRefDocument);
+		andType.set(bboxDocument);
+		PropertyIsBetweenDocument propBetweenDocument = PropertyIsBetweenDocument.Factory.newInstance();
+		propBetweenDocument.addNewPropertyIsBetween();
+		//andType.set(propBetweenDocument);
+		
+//		PropertyNameDocument propertyNameDoc = PropertyNameDocument.Factory.newInstance();
+//		PropertyName propertyName = propertyNameDoc.addNewPropertyName();
+//		propertyName.setStringValue("TestAttributeValue");
+		
+		
+		filter.set(andDocument);
+		query.set(filterDocument);
+		query.setTypeNames(typeList);
+		getFeature.set(queryDoc);
 		// namespaces
 		XmlCursor cursor = getFeature.newCursor();
 		cursor.toNextToken();
@@ -99,33 +141,10 @@ public class DwdWfsRequestorBuilder {
 		cursor.insertAttributeWithValue(attributes.get(0)[1], attributes.get(0)[0], attributes.get(0)[2]);
 
 		cursor.dispose();
-
-		QueryDocument queryDoc = QueryDocument.Factory.newInstance();
-		QueryType query = queryDoc.addNewQuery();
-		ArrayList<String> typeList = new ArrayList<String>();
-		typeList.add("layer_01");
-
-		PropertyNameDocument propertyNameDoc = PropertyNameDocument.Factory.newInstance();
-		PropertyName propertyName = propertyNameDoc.addNewPropertyName();
-		propertyName.setStringValue("TestAttributeValue");
-
-		FilterDocument filterDocument = FilterDocument.Factory.newInstance();
-		FilterType filter = filterDocument.addNewFilter();
-		filter.addNewLogicOps();
-
-		BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
-		BBOXType bbox2 = bboxDocument.addNewBBOX();
-
-		ValueReferenceDocument geomColumnDocument = ValueReferenceDocument.Factory.newInstance();
-		geomColumnDocument.setValueReference("CDC:GEOM");
-		bbox2.set(geomColumnDocument);
-
-		filter.set(bboxDocument);
-
-		query.set(propertyNameDoc);
-		query.setTypeNames(typeList);
-		query.set(filterDocument);
-		getFeature.set(queryDoc);
+		
+		getFeature.setService("WFS");
+		getFeature.setVersion(this.version);
+		getFeature.setOutputFormat(this.outputFormat);
 
 		System.out.println(getFeatureDoc.xmlText());
 
