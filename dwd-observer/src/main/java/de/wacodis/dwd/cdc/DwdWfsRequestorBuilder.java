@@ -13,6 +13,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.expression.Literal;
 
+import net.opengis.fes.x20.AbstractSelectionClauseType;
 import net.opengis.fes.x20.AndDocument;
 import net.opengis.fes.x20.BBOXDocument;
 import net.opengis.fes.x20.BBOXType;
@@ -94,44 +95,58 @@ public class DwdWfsRequestorBuilder {
 				"http://www.opengis.net/wfs/2.0 https://cdc.dwd.de:443/geoserver/schemas/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd" });
 		// attributes.add(new String[] {"updateS-equence", "727"});
 
+		// <GetFeature>
 		GetFeatureDocument getFeatureDoc = GetFeatureDocument.Factory.newInstance();
 		GetFeatureType getFeature = getFeatureDoc.addNewGetFeature();
-
+		
+		// <Query>
 		QueryDocument queryDoc = QueryDocument.Factory.newInstance();
 		QueryType query = queryDoc.addNewQuery();
 		
 		ArrayList<String> typeList = new ArrayList<String>();
 		typeList.add("layer_01");
-		
+		// <Filter>
 		FilterDocument filterDocument = FilterDocument.Factory.newInstance();
 		FilterType filter = filterDocument.addNewFilter();
 		
-		
+		// <And>
 		AndDocument andDocument = AndDocument.Factory.newInstance();
 		BinaryLogicOpType andType =  andDocument.addNewAnd();
-		
+		// <BBOX>
 		BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
 		BBOXType bboxType = bboxDocument.addNewBBOX();
 		
-		
-		
+		// <ValueReference>
 		ValueReferenceDocument valueRefDocument = ValueReferenceDocument.Factory.newInstance();
 		valueRefDocument.setValueReference("CDC:GEOM");
+		// </ValueReference>
 		bboxType.set(valueRefDocument);
+		// </BBOX>
 		andType.set(bboxDocument);
+		// <PropertyIsBetween>
 		PropertyIsBetweenDocument propBetweenDocument = PropertyIsBetweenDocument.Factory.newInstance();
-		propBetweenDocument.addNewPropertyIsBetween();
-		//andType.set(propBetweenDocument);
+		PropertyIsBetweenType propBetweenType = propBetweenDocument.addNewPropertyIsBetween();
+		
+		//XmlObject[] andTags = {bboxType, propBetweenType};
+		// </PropertyIsBetween>
+		//andType.setLogicOpsArray(andTags);
+		andType.set(propBetweenDocument);
 		
 //		PropertyNameDocument propertyNameDoc = PropertyNameDocument.Factory.newInstance();
 //		PropertyName propertyName = propertyNameDoc.addNewPropertyName();
 //		propertyName.setStringValue("TestAttributeValue");
 		
-		
+		// </And>
 		filter.set(andDocument);
+		// </Filter>
 		query.set(filterDocument);
+		// </Query>
 		query.setTypeNames(typeList);
+		// </GetFeature>
 		getFeature.set(queryDoc);
+		
+		
+		// Attributes for <GetFeature>
 		// namespaces
 		XmlCursor cursor = getFeature.newCursor();
 		cursor.toNextToken();
