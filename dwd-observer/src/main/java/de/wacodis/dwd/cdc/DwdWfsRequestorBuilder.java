@@ -9,6 +9,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.xml.stream.XMLInputStream;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -163,25 +164,20 @@ public class DwdWfsRequestorBuilder {
 		// <Literal>
 		LiteralDocument litDoc = LiteralDocument.Factory.newInstance();
 		LiteralType litType1 = litDoc.addNewLiteral();
-		//</Literal>
+		XmlString xmlString = XmlString.Factory.newValue(formatter.print(startDate));
+		litType1.set(xmlString);
 		propBetweenType.set(litDoc);
 		
 		// <Literal>
 		LiteralDocument litDoc2 = LiteralDocument.Factory.newInstance();
 		LiteralType litType2 = litDoc2.addNewLiteral();
-		/*
-		try {
-			litType2.set(XmlObject.Factory.parse(formatter.print(endDate)));
-		} catch (XmlException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
+		XmlString xmlString2 = XmlString.Factory.newValue(formatter.print(endDate));
+		litType2.set(xmlString2);
 		//</Literal>
 		propBetweenType.set(litDoc2);
 		
 		//</PropertyIsBetween>
-		//andType.set(propBetweenDocument);
+		andType.set(propBetweenDocument);
 		
 		
 
