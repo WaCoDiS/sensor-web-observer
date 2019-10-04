@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.xml.stream.XMLInputStream;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.expression.Literal;
+import org.opengis.geometry.Envelope;
+import org.w3c.dom.Node;
 
 import net.opengis.fes.x20.AbstractSelectionClauseType;
 import net.opengis.fes.x20.AndDocument;
@@ -19,9 +24,11 @@ import net.opengis.fes.x20.BBOXDocument;
 import net.opengis.fes.x20.BBOXType;
 import net.opengis.fes.x20.BinaryLogicOpType;
 import net.opengis.fes.x20.ComparisonOpsType;
+import net.opengis.fes.x20.DWithinDocument;
 import net.opengis.fes.x20.FilterDocument;
 import net.opengis.fes.x20.FilterType;
 import net.opengis.fes.x20.FunctionType;
+import net.opengis.fes.x20.LiteralDocument;
 import net.opengis.fes.x20.LiteralType;
 import net.opengis.fes.x20.LogicOpsDocument;
 import net.opengis.fes.x20.LogicOpsType;
@@ -31,6 +38,10 @@ import net.opengis.fes.x20.PropertyIsBetweenType;
 import net.opengis.fes.x20.SpatialOpsType;
 import net.opengis.fes.x20.UpperBoundaryType;
 import net.opengis.fes.x20.ValueReferenceDocument;
+import net.opengis.gml.x32.DirectPositionType;
+import net.opengis.gml.x32.EnvelopeDocument;
+import net.opengis.gml.x32.EnvelopeType;
+import net.opengis.wfs.x20.AdditionalObjectsDocument;
 import net.opengis.wfs.x20.GetFeatureDocument;
 import net.opengis.wfs.x20.GetFeatureType;
 import net.opengis.wfs.x20.PropertyNameDocument;
@@ -104,7 +115,7 @@ public class DwdWfsRequestorBuilder {
 		QueryType query = queryDoc.addNewQuery();
 		
 		ArrayList<String> typeList = new ArrayList<String>();
-		typeList.add("layer_01");
+		typeList.add("CDC:VGSL_" + typeName);
 		// <Filter>
 		FilterDocument filterDocument = FilterDocument.Factory.newInstance();
 		FilterType filter = filterDocument.addNewFilter();
@@ -112,30 +123,69 @@ public class DwdWfsRequestorBuilder {
 		// <And>
 		AndDocument andDocument = AndDocument.Factory.newInstance();
 		BinaryLogicOpType andType =  andDocument.addNewAnd();
+		
+
 		// <BBOX>
 		BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
 		BBOXType bboxType = bboxDocument.addNewBBOX();
+		
 		
 		// <ValueReference>
 		ValueReferenceDocument valueRefDocument = ValueReferenceDocument.Factory.newInstance();
 		valueRefDocument.setValueReference("CDC:GEOM");
 		// </ValueReference>
 		bboxType.set(valueRefDocument);
+		
+		//<Envelope>
+		EnvelopeDocument envDoc = EnvelopeDocument.Factory.newInstance();
+		EnvelopeType envType = envDoc.addNewEnvelope();
+		envType.setSrsName("urn:ogc:def:crs:EPSG::4326");
+		DirectPositionType lowerCorner = envType.addNewLowerCorner();
+		lowerCorner.setStringValue(bbox.get(0) + " " + bbox.get(1));
+		DirectPositionType upperCorner = envType.addNewUpperCorner();
+		upperCorner.setStringValue(bbox.get(2) + " " + bbox.get(3));
+
+		//</Envelope>
+		bboxType.set(envDoc);
+	
 		// </BBOX>
 		andType.set(bboxDocument);
+
 		// <PropertyIsBetween>
 		PropertyIsBetweenDocument propBetweenDocument = PropertyIsBetweenDocument.Factory.newInstance();
 		PropertyIsBetweenType propBetweenType = propBetweenDocument.addNewPropertyIsBetween();
+		// <ValueReference>
+		ValueReferenceDocument valueRefDocument2 = ValueReferenceDocument.Factory.newInstance();
+		valueRefDocument.setValueReference("CDC:ZEITSTEMPEL");
+		// </ValueReference>
+		propBetweenType.set(valueRefDocument2);
 		
-		//XmlObject[] andTags = {bboxType, propBetweenType};
-		// </PropertyIsBetween>
-		//andType.setLogicOpsArray(andTags);
-		andType.set(propBetweenDocument);
+		// <Literal>
+		LiteralDocument litDoc = LiteralDocument.Factory.newInstance();
+		LiteralType litType1 = litDoc.addNewLiteral();
+		//</Literal>
+		propBetweenType.set(litDoc);
 		
-//		PropertyNameDocument propertyNameDoc = PropertyNameDocument.Factory.newInstance();
-//		PropertyName propertyName = propertyNameDoc.addNewPropertyName();
-//		propertyName.setStringValue("TestAttributeValue");
+		// <Literal>
+		LiteralDocument litDoc2 = LiteralDocument.Factory.newInstance();
+		LiteralType litType2 = litDoc2.addNewLiteral();
+		/*
+		try {
+			litType2.set(XmlObject.Factory.parse(formatter.print(endDate)));
+		} catch (XmlException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+		//</Literal>
+		propBetweenType.set(litDoc2);
 		
+		//</PropertyIsBetween>
+		//andType.set(propBetweenDocument);
+		
+		
+
+
 		// </And>
 		filter.set(andDocument);
 		// </Filter>
