@@ -19,6 +19,7 @@
 		<junit.jupiter.version>5.5.0-M1</junit.jupiter.version>
 		<apache.httpcomponents.version>4.5.9</apache.httpcomponents.version>
 		<n52.sensorweb.version>2.6.1</n52.sensorweb.version>
+		<n52.sensorweb2.version>2.2.0</n52.sensorweb2.version>
 	</properties>
 
 	<dependencies>
@@ -119,9 +120,23 @@
 			<version>${n52.sensorweb.version}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.n52.sensorweb/52n-oxf-xmlbeans -->
+
+
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>52n-oxf-xmlbeans</artifactId>
+			<version>${n52.sensorweb2.version}</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<repositories>
+		<repository>
+			<id>52north</id>
+			<url>https://52north.org/maven/repo/releases/</url>
+		</repository>
 		<repository>
 			<id>maven2-repository.dev.java.net</id>
 			<name>Java.net repository</name>
