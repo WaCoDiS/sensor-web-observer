@@ -1,59 +1,33 @@
 package de.wacodis.dwd.cdc;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.apache.xmlbeans.xml.stream.XMLInputStream;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.n52.oxf.xmlbeans.tools.XmlUtil;
-import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.expression.Literal;
-import org.opengis.geometry.Envelope;
-import org.w3c.dom.Node;
 
-import net.opengis.fes.x20.AbstractSelectionClauseType;
 import net.opengis.fes.x20.AndDocument;
 import net.opengis.fes.x20.BBOXDocument;
 import net.opengis.fes.x20.BBOXType;
 import net.opengis.fes.x20.BinaryLogicOpType;
-import net.opengis.fes.x20.ComparisonOpsDocument;
-import net.opengis.fes.x20.ComparisonOpsType;
-import net.opengis.fes.x20.DWithinDocument;
 import net.opengis.fes.x20.FilterDocument;
 import net.opengis.fes.x20.FilterType;
-import net.opengis.fes.x20.FunctionType;
 import net.opengis.fes.x20.LiteralDocument;
 import net.opengis.fes.x20.LiteralType;
-import net.opengis.fes.x20.LogicOpsDocument;
-import net.opengis.fes.x20.LogicOpsType;
-import net.opengis.fes.x20.LowerBoundaryType;
 import net.opengis.fes.x20.PropertyIsBetweenDocument;
 import net.opengis.fes.x20.PropertyIsBetweenType;
-import net.opengis.fes.x20.SortPropertyType;
-import net.opengis.fes.x20.SpatialOpsType;
-import net.opengis.fes.x20.UpperBoundaryType;
 import net.opengis.fes.x20.ValueReferenceDocument;
 import net.opengis.gml.x32.DirectPositionType;
 import net.opengis.gml.x32.EnvelopeDocument;
 import net.opengis.gml.x32.EnvelopeType;
-import net.opengis.wfs.x20.AdditionalObjectsDocument;
 import net.opengis.wfs.x20.GetFeatureDocument;
 import net.opengis.wfs.x20.GetFeatureType;
-import net.opengis.wfs.x20.PropertyNameDocument;
-import net.opengis.wfs.x20.PropertyNameDocument.PropertyName;
 import net.opengis.wfs.x20.QueryDocument;
 import net.opengis.wfs.x20.QueryType;
-import net.opengis.wfs20.ValueReferenceType;
 
 public class DwdWfsRequestorBuilder {
 
