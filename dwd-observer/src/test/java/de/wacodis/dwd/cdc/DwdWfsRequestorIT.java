@@ -32,13 +32,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DwdWfsRequestorIT {
 
 	private static DwdWfsRequestParams params;
-	private static String serviceurl;
-	static DwdWfsRequestorBuilder reader;
-	static String propUrl = "https://cdc.dwd.de/geoserver/CDC/wfs";
+	private static DwdWfsRequestorBuilder reader;
+	private static String serviceUrl = "https://cdc.dwd.de:443/geoserver/CDC/wfs?";
 
 	@BeforeAll
 	static void setup() throws ParseException {
-		serviceurl = "https://cdc.dwd.de:443/geoserver/CDC/wfs?";
+		
 		params = new DwdWfsRequestParams();
 		params.setVersion("2.0.0");
 		params.setTypeName("FX_MN003");
@@ -67,12 +66,12 @@ public class DwdWfsRequestorIT {
 	@Test
 	void testRequest() throws IOException {
 		DwdProductsMetadata result = new DwdProductsMetadata();
-		result = DwdWfsRequestor.request(serviceurl, params);
+		result = DwdWfsRequestor.request(serviceUrl, params);
 
 		// object of comparison
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
 
-		metadata.setServiceUrl(serviceurl);
+		metadata.setServiceUrl(serviceUrl);
 		metadata.setLayername("CDC:VGSL_FX_MN003");
 		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
 
@@ -118,7 +117,7 @@ public class DwdWfsRequestorIT {
 	void testExceptions() {
 		// request
 		Assertions.assertDoesNotThrow(() -> {
-			DwdWfsRequestor.request(serviceurl, params);
+			DwdWfsRequestor.request(serviceUrl, params);
 		});
 
 	}
@@ -126,7 +125,7 @@ public class DwdWfsRequestorIT {
 	@Test
 	void test() throws ClientProtocolException, IOException {
 		String message = reader.createXmlPostMessage();
-		InputStream result = DwdWfsRequestor.sendWfsRequest(propUrl, message);
+		InputStream result = DwdWfsRequestor.sendWfsRequest(serviceUrl, message);
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> jsonMap = mapper.readValue(result, Map.class);
 		ArrayList<LinkedHashMap<String, String>> resultList = (ArrayList<LinkedHashMap<String, String>>) jsonMap
@@ -136,7 +135,7 @@ public class DwdWfsRequestorIT {
 		// LinkedHashMap<String, String> geomType = new LinkedHashMap<String, String>();
 		// geomType.put("geometry", firstFeature.get("geometry"));
 		Assertions.assertDoesNotThrow(() -> {
-			DwdWfsRequestor.sendWfsRequest(propUrl, message);
+			DwdWfsRequestor.sendWfsRequest(serviceUrl, message);
 		});
 		// Assertions.assertEquals(expected, actual);
 	}
