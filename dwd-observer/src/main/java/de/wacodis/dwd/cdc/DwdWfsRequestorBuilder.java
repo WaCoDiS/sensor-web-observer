@@ -61,7 +61,7 @@ public class DwdWfsRequestorBuilder {
 		this.outputFormat = params.getOutputFormat();
 	}
 
-	public String createXmlPostMessage() {
+	public GetFeatureDocument createXmlPostMessage() {
 
 		createXmlAttributesList();
 
@@ -105,7 +105,7 @@ public class DwdWfsRequestorBuilder {
 		// Attributes for <GetFeature>
 		// namespaces
 		addAttributesToElement(getFeature);
-		return getFeatureDoc.xmlText();
+		return getFeatureDoc;
 	}
 
 	private void addAttributesToElement(GetFeatureType getFeature) {
@@ -121,7 +121,7 @@ public class DwdWfsRequestorBuilder {
 	}
 
 	private PropertyIsBetweenType createPropertyIsBetweenElement() {
-		// <PropertyIsBetween>
+
 		PropertyIsBetweenDocument propBetweenDocument = PropertyIsBetweenDocument.Factory.newInstance();
 		PropertyIsBetweenType propBetweenType = propBetweenDocument.addNewPropertyIsBetween();
 
@@ -152,7 +152,7 @@ public class DwdWfsRequestorBuilder {
 	}
 
 	private BBOXType createBboxElement() {
-		// <BBOX>
+
 		BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
 		BBOXType bboxType = bboxDocument.addNewBBOX();
 

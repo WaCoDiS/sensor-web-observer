@@ -74,7 +74,7 @@ public class DwdWfsRequestor {
 		LOG.info("Start Buildung Connection Parameters for WFS Service");
 
 		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
-		String postRequest = wfsRequest.createXmlPostMessage();
+		String postRequest = wfsRequest.createXmlPostMessage().xmlText();
 		InputStream httpContent = sendWfsRequest(url, postRequest);
 		String text = IOUtils.toString(httpContent, StandardCharsets.UTF_8.name());
 		FeatureJSON featureJson = new FeatureJSON();

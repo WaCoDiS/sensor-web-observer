@@ -124,7 +124,7 @@ public class DwdWfsRequestorIT {
 
 	@Test
 	void test() throws ClientProtocolException, IOException {
-		String message = reader.createXmlPostMessage();
+		String message = reader.createXmlPostMessage().xmlText();
 		InputStream result = DwdWfsRequestor.sendWfsRequest(serviceUrl, message);
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> jsonMap = mapper.readValue(result, Map.class);
