@@ -7,16 +7,12 @@ package de.wacodis.dwd;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
-import org.joda.time.base.AbstractPeriod;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISOPeriodFormat;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -27,16 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 
-import com.esotericsoftware.minlog.Log;
-
 import de.wacodis.dwd.cdc.DwdProductsMetadata;
 import de.wacodis.dwd.cdc.DwdProductsMetadataDecoder;
 import de.wacodis.dwd.cdc.DwdRequestParamsEncoder;
 import de.wacodis.dwd.cdc.DwdWfsRequestParams;
 import de.wacodis.dwd.cdc.DwdWfsRequestor;
-import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.observer.model.DwdDataEnvelope;
-import de.wacodis.observer.model.WacodisJobDefinitionTemporalCoverage;
 import de.wacodis.observer.publisher.PublisherChannel;
 
 /**

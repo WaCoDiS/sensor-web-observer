@@ -1,21 +1,13 @@
 package de.wacodis.dwd;
 
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Days;
 import org.joda.time.Hours;
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
-
-import de.wacodis.observer.model.DwdDataEnvelope;
 
 public class DwdTemporalResolution {
 

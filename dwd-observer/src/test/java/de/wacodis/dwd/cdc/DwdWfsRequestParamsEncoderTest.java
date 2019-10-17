@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.observer.model.WacodisJobDefinition;
 
 public class DwdWfsRequestParamsEncoderTest {
 

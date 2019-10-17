@@ -5,22 +5,19 @@
  */
 package de.wacodis.dwd;
 
-import de.wacodis.observer.core.JobFactory;
-import de.wacodis.observer.model.AbstractSubsetDefinition;
-import de.wacodis.observer.model.DwdSubsetDefinition;
-import de.wacodis.observer.model.WacodisJobDefinition;
-
 import java.util.Optional;
 
-import org.joda.time.Period;
-import org.joda.time.format.ISOPeriodFormat;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
+import de.wacodis.observer.core.JobFactory;
+import de.wacodis.observer.model.AbstractSubsetDefinition;
+import de.wacodis.observer.model.DwdSubsetDefinition;
+import de.wacodis.observer.model.WacodisJobDefinition;
 
 /**
  *

@@ -1,46 +1,24 @@
 package de.wacodis.dwd.cdc;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.awt.geom.Rectangle2D;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.xmlbeans.SimpleValue;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.geotools.geometry.Envelope2D;
 import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.opengis.geometry.BoundingBox;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import net.opengis.wfs.x20.GetFeatureDocument;
-import net.opengis.wfs.x20.GetFeatureType;
 
 class DwdWfsRequestorBuilderTest {
 

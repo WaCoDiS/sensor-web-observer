@@ -5,10 +5,8 @@
  */
 package de.wacodis.dwd.cdc;
 
-import java.util.Date;
 import java.util.List;
 
-import org.geotools.geometry.Envelope2D;
 import org.joda.time.DateTime;
 
 /**
