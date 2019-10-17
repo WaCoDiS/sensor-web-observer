@@ -82,15 +82,14 @@ class DwdWfsRequestorBuilderTest {
 
 		GetFeatureDocument result = reader.createXmlPostMessage();
 
-		File file = new File("../../../../../resources/postmessage-test.xml");
+		InputStream postMessage = this.getClass().getResourceAsStream("/postmessage-test.xml");
+		GetFeatureDocument gfdoc = GetFeatureDocument.Factory.parse(postMessage);
 
-		GetFeatureDocument gfdoc = GetFeatureDocument.Factory.parse(file);
-		
 		iterateNodes(gfdoc.getGetFeature().getDomNode(), valuesFile);
 		iterateNodes(result.getGetFeature().getDomNode(), valuesCalculated);
 
 		Assertions.assertTrue(valuesFile.size() == valuesCalculated.size());
-		for(int i=0; i< valuesFile.size(); i++) {
+		for (int i = 0; i < valuesFile.size(); i++) {
 			Assertions.assertEquals(valuesFile.get(i), valuesCalculated.get(i));
 		}
 	}
