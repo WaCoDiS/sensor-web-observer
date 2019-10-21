@@ -5,13 +5,23 @@
  */
 package de.wacodis.dwd.cdc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -21,6 +31,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
@@ -30,10 +42,19 @@ import org.geotools.geojson.feature.FeatureJSON;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import net.opengis.wfs.x20.GetCapabilitiesDocument;
 
 /**
  * This class is responsible for requesting DWD FeatureServices for stationary
@@ -52,8 +73,10 @@ public class DwdWfsRequestor {
 	 * @param params Paramaters for the FeatureService URL
 	 * @return metadata for the found stationary weather data
 	 * @throws IOException
+	 * @throws ParserConfigurationException 
+	 * @throws SAXException 
 	 */
-	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params) throws IOException {
+	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params) throws IOException, ParserConfigurationException, SAXException {
 		LOG.info("Start Buildung Connection Parameters for WFS Service");
 
 		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
@@ -62,24 +85,36 @@ public class DwdWfsRequestor {
 		String text = IOUtils.toString(httpContent, StandardCharsets.UTF_8.name());
 		FeatureJSON featureJson = new FeatureJSON();
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = featureJson.readFeatureCollection(text);
-				//FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureJSON.
-				
+		// FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureJSON.
+
 		// Connect to WFS
-		String getCapabilities = url + "?REQUEST=GetCapabilities";
-		Map connectionParameters = new HashMap();
-		connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
-		connectionParameters.put("WFSDataStoreFactory:TIMEOUT", 5000000);
-
-		// schema
-		DataStore data = DataStoreFinder.getDataStore(connectionParameters);
-
-		LOG.info("Requesting WFS Service?");
-		// Request
-		FeatureSource<SimpleFeatureType, SimpleFeature> source = data
-				.getFeatureSource("CDC:VGSL_" + params.getTypeName());
+		String capPostBody = wfsRequest.createCapabilitiesPost().xmlText();
+		InputStream capResponse = sendWfsRequest(url, capPostBody);
 
 		// create DwdProductsMetaData
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
+		
+		// typname and clearname
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+		Document doc = docBuilder.parse(capResponse);
+		
+		NodeList nodes = doc.getElementsByTagName("FeatureType");
+		for(int i = 0; i < nodes.getLength(); i++) {
+			Element featureType = (Element) nodes.item(i);
+			NodeList childNodes = featureType.getChildNodes();
+			Element name = (Element) childNodes.item(0);
+			
+			String typename = DwdWfsRequestorBuilder.typeNamePrefix + params.getTypeName();
+			if(name.getTextContent().equals(typename)) {
+				// name
+				metadata.setLayername(name.getTextContent());
+				// clearname
+				Element title = (Element) childNodes.item(1);
+				metadata.setParameter(title.getTextContent());
+			}
+
+		}
 
 		LOG.info("Calculating the actual timeFrame and BoundingBox");
 		// set parameters
@@ -94,11 +129,6 @@ public class DwdWfsRequestor {
 		ArrayList<DateTime> timeFrame = timeAndBbox.getTimeFrame();
 		metadata.setStartDate(timeFrame.get(0));
 		metadata.setEndDate(timeFrame.get(1));
-
-		// name
-		metadata.setLayername(source.getInfo().getName());
-		// clearname
-		metadata.setParameter(source.getInfo().getTitle());
 
 		// serviceurl
 		metadata.setServiceUrl(url);
@@ -129,10 +159,10 @@ public class DwdWfsRequestor {
 		SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
 		LOG.info("Connecting WFS Service");
 		// Build Iterator
-		// FeatureCollection<SimpleFeatureType, SimpleFeature> features = source.getFeatures(query);
+		// FeatureCollection<SimpleFeatureType, SimpleFeature> features =
+		// source.getFeatures(query);
 		FeatureIterator<SimpleFeature> iterator = collection.features();
 
-		
 		// TimeFrame Parameter
 		DateTime startDate = new DateTime();
 		DateTime endDate = new DateTime();
