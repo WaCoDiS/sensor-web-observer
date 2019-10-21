@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.http.client.ClientProtocolException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -58,7 +61,7 @@ public class DwdWfsRequestorIT {
 
 	@DisplayName("Test request Method")
 	@Test
-	void testRequest() throws IOException {
+	void testRequest() throws IOException, ParserConfigurationException, SAXException {
 		DwdProductsMetadata result = new DwdProductsMetadata();
 		result = DwdWfsRequestor.request(serviceUrl, params);
 

@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
@@ -22,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
+import org.xml.sax.SAXException;
 
 import de.wacodis.dwd.cdc.DwdProductsMetadata;
 import de.wacodis.dwd.cdc.DwdProductsMetadataDecoder;
@@ -102,8 +105,16 @@ public class DwdJob implements Job {
 				startDate = (DateTime) jobDataMap.get("endDate");
 			}
 			LOG.info("Start creating DwdEnvelope");
-			Set<DwdDataEnvelope> finalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
-					startDate, endDate);
+			try {
+				Set<DwdDataEnvelope> finalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
+						startDate, endDate);
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		//}
 
 	}
@@ -117,9 +128,11 @@ public class DwdJob implements Job {
 	 * @param startDate
 	 * @param endDate
 	 * @return Set of DwdDataEnvelope by splitting into intervals
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 */
 	private Set<DwdDataEnvelope> createFinalEnvelopeSet(String version, String layerName, String serviceUrl,
-			ArrayList<Float> area, DateTime startDate, DateTime endDate) {
+			ArrayList<Float> area, DateTime startDate, DateTime endDate) throws ParserConfigurationException, SAXException {
 		Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
 		List<DateTime[]> interval = new ArrayList<DateTime[]>();
 
@@ -168,9 +181,11 @@ public class DwdJob implements Job {
 	 * @param startDate
 	 * @param endDate
 	 * @return DwdDataEnvelope
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 */
 	private DwdDataEnvelope createDwdDataEnvelope(String version, String layerName, String serviceUrl, List<Float> area,
-			DateTime startDate, DateTime endDate) {
+			DateTime startDate, DateTime endDate) throws ParserConfigurationException, SAXException {
 
 		// 2) Create a DwdWfsRequestParams object from the restored request parameters
 		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, endDate);

@@ -24,6 +24,8 @@ import net.opengis.fes.x20.ValueReferenceDocument;
 import net.opengis.gml.x32.DirectPositionType;
 import net.opengis.gml.x32.EnvelopeDocument;
 import net.opengis.gml.x32.EnvelopeType;
+import net.opengis.wfs.x20.GetCapabilitiesDocument;
+import net.opengis.wfs.x20.GetCapabilitiesType;
 import net.opengis.wfs.x20.GetFeatureDocument;
 import net.opengis.wfs.x20.GetFeatureType;
 import net.opengis.wfs.x20.QueryDocument;
@@ -207,5 +209,13 @@ public class DwdWfsRequestorBuilder {
 		attributes.add(new String[] { "", "service", serviceAttribute });
 		attributes.add(new String[] { "", "version", this.version });
 		attributes.add(new String[] { "", "outputFormat", this.outputFormat });
+	}
+
+	public GetCapabilitiesDocument createCapabilitiesPost() {
+		GetCapabilitiesDocument getCapDoc = GetCapabilitiesDocument.Factory.newInstance();
+		GetCapabilitiesType getCapType = getCapDoc.addNewGetCapabilities();
+		getCapType.setService(serviceAttribute);
+
+		return getCapDoc;
 	}
 }
