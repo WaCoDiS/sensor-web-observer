@@ -5,23 +5,15 @@
  */
 package de.wacodis.dwd.cdc;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -31,30 +23,20 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
-import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.n52.oxf.xmlbeans.tools.XmlUtil;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import net.opengis.wfs.x20.GetCapabilitiesDocument;
 
 /**
  * This class is responsible for requesting DWD FeatureServices for stationary
@@ -73,48 +55,33 @@ public class DwdWfsRequestor {
 	 * @param params Paramaters for the FeatureService URL
 	 * @return metadata for the found stationary weather data
 	 * @throws IOException
-	 * @throws ParserConfigurationException 
-	 * @throws SAXException 
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
 	 */
-	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params) throws IOException, ParserConfigurationException, SAXException {
+	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params)
+			throws IOException, ParserConfigurationException, SAXException {
 		LOG.info("Start Buildung Connection Parameters for WFS Service");
 
 		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
-		String postRequest = wfsRequest.createXmlPostMessage().xmlText();
-		InputStream httpContent = sendWfsRequest(url, postRequest);
+		LOG.info("Start getFeature request");
+		String getPostBody = wfsRequest.createXmlPostMessage().xmlText();
+		InputStream httpContent = sendWfsRequest(url, getPostBody);
 		String text = IOUtils.toString(httpContent, StandardCharsets.UTF_8.name());
 		FeatureJSON featureJson = new FeatureJSON();
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = featureJson.readFeatureCollection(text);
-		// FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureJSON.
 
 		// Connect to WFS
+		LOG.info("Start getCapabilities request");
 		String capPostBody = wfsRequest.createCapabilitiesPost().xmlText();
 		InputStream capResponse = sendWfsRequest(url, capPostBody);
 
 		// create DwdProductsMetaData
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		
-		// typname and clearname
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-		Document doc = docBuilder.parse(capResponse);
-		
-		NodeList nodes = doc.getElementsByTagName("FeatureType");
-		for(int i = 0; i < nodes.getLength(); i++) {
-			Element featureType = (Element) nodes.item(i);
-			NodeList childNodes = featureType.getChildNodes();
-			Element name = (Element) childNodes.item(0);
-			
-			String typename = DwdWfsRequestorBuilder.typeNamePrefix + params.getTypeName();
-			if(name.getTextContent().equals(typename)) {
-				// name
-				metadata.setLayername(name.getTextContent());
-				// clearname
-				Element title = (Element) childNodes.item(1);
-				metadata.setParameter(title.getTextContent());
-			}
 
-		}
+		// typename and clearname
+		String[] featureClearName = requestTypeName(params, capResponse);
+		metadata.setLayername(featureClearName[0]);
+		metadata.setParameter(featureClearName[1]);
 
 		LOG.info("Calculating the actual timeFrame and BoundingBox");
 		// set parameters
@@ -136,7 +103,58 @@ public class DwdWfsRequestor {
 		return metadata;
 	}
 
-	public static InputStream sendWfsRequest(String url, String postRequest)
+	/**
+	 * Delivers a String Array consisting of <name>- and <title> values
+	 * 
+	 * @param params      Paramaters for the FeatureService URL
+	 * @param capResponse getCapabilities document
+	 * @return featureTypeName <name> and <title> of the denoted feature
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	private static String[] requestTypeName(DwdWfsRequestParams params, InputStream capResponse)
+			throws ParserConfigurationException, SAXException, IOException {
+		// create Document to search for the correct Elements
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+		Document doc = docBuilder.parse(capResponse);
+		// initialize return attribute
+		String[] featureTypeName = new String[2];
+
+		// search all FeatureType elements
+		NodeList nodes = doc.getElementsByTagName("FeatureType");
+		for (int i = 0; i < nodes.getLength(); i++) {
+			// check content of childnodes <name> and <title> of every <FeatureType>
+			Element featureType = (Element) nodes.item(i);
+			NodeList childNodes = featureType.getChildNodes();
+			Element name = (Element) childNodes.item(0);
+
+			String typename = DwdWfsRequestorBuilder.typeNamePrefix + params.getTypeName();
+			// search for the correct typeName
+			if (name.getTextContent().equals(typename)) {
+				Element title = (Element) childNodes.item(1);
+
+				// fill return attribute
+				featureTypeName[0] = name.getTextContent(); // <name>
+				featureTypeName[1] = title.getTextContent(); // <title>
+			}
+
+		}
+		return featureTypeName;
+	}
+
+	/**
+	 * Delivers the post response depending on the outputformat (e.g. xml, json)
+	 * 
+	 * @param url         serviceURL
+	 * @param postRequest post message (xml)
+	 * @return httpContent post response
+	 * @throws UnsupportedEncodingException
+	 * @throws IOException
+	 * @throws ClientProtocolException
+	 */
+	protected static InputStream sendWfsRequest(String url, String postRequest)
 			throws UnsupportedEncodingException, IOException, ClientProtocolException {
 		// contact http-client
 		CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -152,15 +170,19 @@ public class DwdWfsRequestor {
 		return httpContent;
 	}
 
+	/**
+	 * Determines the spatial and temporal extentn of the denoted feature
+	 * 
+	 * @param collection FeatureCollection from GeoJSON
+	 * @return timeAndBbox spatial and temporal extent
+	 * @throws IOException
+	 */
 	private static SpatioTemporalExtent generateSpatioTemporalExtent(
 			FeatureCollection<SimpleFeatureType, SimpleFeature> collection) throws IOException {
 
-		//
+		// initialize necessary attributes
 		SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
 		LOG.info("Connecting WFS Service");
-		// Build Iterator
-		// FeatureCollection<SimpleFeatureType, SimpleFeature> features =
-		// source.getFeatures(query);
 		FeatureIterator<SimpleFeature> iterator = collection.features();
 
 		// TimeFrame Parameter
@@ -218,6 +240,12 @@ public class DwdWfsRequestor {
 		return timeAndBbox;
 	}
 
+	/**
+	 * Checks, if the iterator has a next element
+	 * 
+	 * @param iterator features of the collection
+	 * @return hasNext return boolean
+	 */
 	private static boolean hasNextNew(FeatureIterator<SimpleFeature> iterator) {
 		boolean hasNext = false;
 		try {
@@ -228,7 +256,6 @@ public class DwdWfsRequestor {
 		}
 
 		return hasNext;
-
 	}
 
 }

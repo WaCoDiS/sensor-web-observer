@@ -55,6 +55,7 @@ public class DwdWfsRequestorBuilder {
 	public DwdWfsRequestorBuilder(DwdWfsRequestParams params) {
 		this.version = params.getVersion();
 		this.typeName = params.getTypeName();
+		// convert bbox from Float to String
 		for (int i = 0; i < params.getBbox().size(); i++) {
 			bbox.add(i, Float.toString(params.getBbox().get(i)));
 		}
@@ -62,7 +63,11 @@ public class DwdWfsRequestorBuilder {
 		this.endDate = params.getEndDate();
 		this.outputFormat = params.getOutputFormat();
 	}
-
+/**
+ * Creates the HTTP post message by assembling the single xml-elements
+ * 
+ * @return getFeatureDoc	post body
+ */
 	public GetFeatureDocument createXmlPostMessage() {
 
 		createXmlAttributesList();
@@ -110,18 +115,29 @@ public class DwdWfsRequestorBuilder {
 		return getFeatureDoc;
 	}
 
+	/**
+	 * Add attributes and namespaces to the getFeature-Element
+	 * 
+	 * @param getFeature	getFeature-Element
+	 */
 	private void addAttributesToElement(GetFeatureType getFeature) {
 		XmlCursor cursor = getFeature.newCursor();
 		cursor.toNextToken();
+		// insert namespaces (prefix, url)
 		for (int i = 0; i < namespaces.size(); i++) {
 			cursor.insertNamespace(namespaces.get(i)[0], namespaces.get(i)[1]);
 		}
+		// insert attributes (prefix, attributename, attributevalue)
 		for (int i = 0; i < attributes.size(); i++) {
 			cursor.insertAttributeWithValue(attributes.get(i)[1], attributes.get(i)[0], attributes.get(i)[2]);
 		}
 		cursor.dispose();
 	}
-
+/**
+ * Creates the PropertyIsBetween-element between start- and enddate
+ * 
+ * @return propBetweenType	PropertyIsBetween-Element
+ */
 	private PropertyIsBetweenType createPropertyIsBetweenElement() {
 
 		PropertyIsBetweenDocument propBetweenDocument = PropertyIsBetweenDocument.Factory.newInstance();
@@ -152,7 +168,11 @@ public class DwdWfsRequestorBuilder {
 		addXSAnyElement(propBetweenType, valueRefDocument2.getExpression());
 		return propBetweenType;
 	}
-
+/**
+ * Creates the BBOX-element 
+ * 
+ * @return BBOXType		BBOX-Element
+ */
 	private BBOXType createBboxElement() {
 
 		BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
@@ -176,7 +196,12 @@ public class DwdWfsRequestorBuilder {
 		addXSAnyElement(bboxType, valueRefDocument.getExpression());
 		return bboxType;
 	}
-
+/**
+ * Adds childelements to a target element
+ * 
+ * @param target	where the children have to be added
+ * @param newChild	what has to be added
+ */
 	protected void addXSAnyElement(XmlObject target, XmlObject newChild) {
 		XmlCursor childCur = newChild.newCursor();
 
@@ -189,6 +214,9 @@ public class DwdWfsRequestorBuilder {
 		targetCur.dispose();
 	}
 
+	/**
+	 * Creates lists for the namespaces and attributes
+	 */
 	private void createXmlAttributesList() {
 		// namespaces
 		namespaces.add(new String[] { "xsi", "http://www.w3.org/2001/XMLSchema-instance" });
@@ -210,7 +238,11 @@ public class DwdWfsRequestorBuilder {
 		attributes.add(new String[] { "", "version", this.version });
 		attributes.add(new String[] { "", "outputFormat", this.outputFormat });
 	}
-
+/**
+ * Creates GetCapabilities post-message
+ * 
+ * @return getCapDoc
+ */
 	public GetCapabilitiesDocument createCapabilitiesPost() {
 		GetCapabilitiesDocument getCapDoc = GetCapabilitiesDocument.Factory.newInstance();
 		GetCapabilitiesType getCapType = getCapDoc.addNewGetCapabilities();
