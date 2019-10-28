@@ -112,12 +112,13 @@ public class DwdResponseResolver {
 		NodeList upperNodes = doc.getElementsByTagName(upperCornerTag);
 		String upperCornerBBox = upperNodes.item(0).getTextContent();
 		
-		// BBOX Parameter
+		// BBOX Parameter 
+		//Schema is [minLon, minLat, maxLon, maxLat]
 		ArrayList<Float> extent = new ArrayList<Float>();
-		extent.add(0, Float.parseFloat(lowerCornerBBox.split(" ")[0]));
-		extent.add(1, Float.parseFloat(lowerCornerBBox.split(" ")[1]));
-		extent.add(2, Float.parseFloat(upperCornerBBox.split(" ")[0]));
-		extent.add(3, Float.parseFloat(upperCornerBBox.split(" ")[1]));
+		extent.add(0, Float.parseFloat(lowerCornerBBox.split(" ")[1]));
+		extent.add(1, Float.parseFloat(lowerCornerBBox.split(" ")[0]));
+		extent.add(2, Float.parseFloat(upperCornerBBox.split(" ")[1]));
+		extent.add(3, Float.parseFloat(upperCornerBBox.split(" ")[0]));
 		
 		// TimeFrame Parameter
 		DateTime startDate = new DateTime();
