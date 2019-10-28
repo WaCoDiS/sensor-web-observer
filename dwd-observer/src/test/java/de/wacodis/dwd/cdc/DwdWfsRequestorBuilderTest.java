@@ -33,7 +33,6 @@ class DwdWfsRequestorBuilderTest {
 		params = new DwdWfsRequestParams();
 		params.setVersion("2.0.0");
 		params.setTypeName("FX_MN003");
-		params.setOutputFormat("json");
 		// params.setTypeName("CDC:VGSL_TT_TU_MN009");
 
 		List<Float> bounds = new ArrayList<Float>();
@@ -48,7 +47,6 @@ class DwdWfsRequestorBuilderTest {
 
 		params.setStartDate(startDate);
 		params.setEndDate(endDate);
-		params.setOutputFormat("json");
 
 		reader = new DwdWfsRequestorBuilder(params);
 
