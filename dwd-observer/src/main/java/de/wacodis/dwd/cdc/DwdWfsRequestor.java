@@ -127,17 +127,19 @@ public class DwdWfsRequestor {
 		for (int i = 0; i < nodes.getLength(); i++) {
 			// check content of childnodes <name> and <title> of every <FeatureType>
 			Element featureType = (Element) nodes.item(i);
-			NodeList childNodes = featureType.getChildNodes();
-			Element name = (Element) childNodes.item(0);
+			
+			NodeList titleNodes = featureType.getElementsByTagName("Title");
+			String title = titleNodes.item(0).getTextContent();
 
+			NodeList NameNodes = featureType.getElementsByTagName("Name");
+			String name = NameNodes.item(0).getTextContent();
+				
 			String typename = DwdWfsRequestorBuilder.typeNamePrefix + params.getTypeName();
 			// search for the correct typeName
-			if (name.getTextContent().equals(typename)) {
-				Element title = (Element) childNodes.item(1);
-
+			if (name.equals(typename)) {
 				// fill return attribute
-				featureTypeName[0] = name.getTextContent(); // <name>
-				featureTypeName[1] = title.getTextContent(); // <title>
+				featureTypeName[0] = name; // <name>
+				featureTypeName[1] = title; // <title>
 			}
 
 		}
