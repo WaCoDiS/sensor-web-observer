@@ -63,11 +63,11 @@ public class DwdWfsRequestorBuilder {
 		this.endDate = params.getEndDate();
 	}
 /**
- * Creates the HTTP post message by assembling the single xml-elements
+ * Creates the HTTP post message for the getFeatureDocument by assembling the single xml-elements
  * 
  * @return getFeatureDoc	post body
  */
-	public GetFeatureDocument createXmlPostMessage() {
+	public GetFeatureDocument createGetFeaturePost() {
 
 		createXmlAttributesList();
 
@@ -242,7 +242,7 @@ public class DwdWfsRequestorBuilder {
  * 
  * @return getCapDoc
  */
-	public GetCapabilitiesDocument createCapabilitiesPost() {
+	public GetCapabilitiesDocument createGetCapabilitiesPost() {
 		GetCapabilitiesDocument getCapDoc = GetCapabilitiesDocument.Factory.newInstance();
 		GetCapabilitiesType getCapType = getCapDoc.addNewGetCapabilities();
 		getCapType.setService(serviceAttribute);

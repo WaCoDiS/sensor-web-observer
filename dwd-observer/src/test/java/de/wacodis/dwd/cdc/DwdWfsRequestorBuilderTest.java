@@ -58,7 +58,7 @@ class DwdWfsRequestorBuilderTest {
 	@Test
 	void testBuilder() throws JDOMException, IOException, XmlException, ParserConfigurationException, SAXException {
 
-		GetFeatureDocument result = reader.createXmlPostMessage();
+		GetFeatureDocument result = reader.createGetFeaturePost();
 
 		InputStream postMessage = this.getClass().getResourceAsStream("/postmessage-test.xml");
 		GetFeatureDocument gfdoc = GetFeatureDocument.Factory.parse(postMessage);

@@ -50,14 +50,14 @@ public class DwdWfsRequestor {
 
 		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
 		LOG.info("Start getFeature request");
-		String getPostBody = wfsRequest.createXmlPostMessage().xmlText();
+		String getPostBody = wfsRequest.createGetFeaturePost().xmlText();
 		InputStream getFeatureResponse = sendWfsRequest(url, getPostBody);
 	
 		DwdResponseResolver resolver = new DwdResponseResolver(params);
 		SpatioTemporalExtent timeAndBbox = resolver.generateSpatioTemporalExtent(getFeatureResponse);
 
 		LOG.info("Start getCapabilities request");
-		String capPostBody = wfsRequest.createCapabilitiesPost().xmlText();
+		String capPostBody = wfsRequest.createGetCapabilitiesPost().xmlText();
 		InputStream capResponse = sendWfsRequest(url, capPostBody);
 		
 		// typename and clearname
@@ -84,7 +84,7 @@ public class DwdWfsRequestor {
 	}
 
 	/**
-	 * Delivers the post response depending on the outputformat (e.g. xml, json)
+	 * Delivers the post response depending on the outputformat (xml)
 	 * 
 	 * @param url         serviceURL
 	 * @param postRequest post message (xml)

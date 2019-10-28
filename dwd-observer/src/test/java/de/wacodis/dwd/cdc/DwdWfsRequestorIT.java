@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.client.ClientProtocolException;
@@ -18,9 +18,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  *
@@ -120,17 +119,24 @@ public class DwdWfsRequestorIT {
 	}
 
 	@Test
-	void test() throws ClientProtocolException, IOException {
-		String message = reader.createXmlPostMessage().xmlText();
-		InputStream result = DwdWfsRequestor.sendWfsRequest(serviceUrl, message);
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> jsonMap = mapper.readValue(result, Map.class);
-		ArrayList<LinkedHashMap<String, String>> resultList = (ArrayList<LinkedHashMap<String, String>>) jsonMap
-				.get("features");
-		LinkedHashMap<String, String> firstFeature = resultList.get(0);
-		String id = firstFeature.get("id");
-		// LinkedHashMap<String, String> geomType = new LinkedHashMap<String, String>();
-		// geomType.put("geometry", firstFeature.get("geometry"));
+	void test() throws ClientProtocolException, IOException, ParserConfigurationException, SAXException {
+		String message = reader.createGetFeaturePost().xmlText();
+//		InputStream indexResult = this.getClass().getResourceAsStream("/getFeatureResult-test.xml");
+//		InputStream result = DwdWfsRequestor.sendWfsRequest(serviceUrl, message);
+//		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+//		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+//		Document doc = docBuilder.parse(result);
+//		String doString = doc.toString();
+//		int sumIndexResult = indexResult.read();
+//		int sumResult = result.read();
+//		
+//		while(result.read()!=-1) {
+//			sumIndexResult += indexResult.read();
+//			sumResult += result.read();
+//			System.out.println(sumResult);
+//		}	
+//		Assertions.assertEquals(sumIndexResult, sumResult);
+		
 		Assertions.assertDoesNotThrow(() -> {
 			DwdWfsRequestor.sendWfsRequest(serviceUrl, message);
 		});
