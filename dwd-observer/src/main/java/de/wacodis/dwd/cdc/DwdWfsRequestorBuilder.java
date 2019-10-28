@@ -40,6 +40,7 @@ public class DwdWfsRequestorBuilder {
 	public static final String timestampAttribute = "CDC:ZEITSTEMPEL";
 	public static final String epsgUrn = "urn:ogc:def:crs:EPSG::4326";
 	public static final String serviceAttribute = "WFS";
+	public static final String outputFormat = "application/gml+xml; version=3.2";
 
 	// attributes
 	String version;// &version=2.0.0
@@ -47,7 +48,6 @@ public class DwdWfsRequestorBuilder {
 	List<String> bbox = new ArrayList<String>();// &bbox=51.200,6.700,51.500,7.300
 	DateTime startDate;
 	DateTime endDate;
-	String outputFormat;// &outputformat=application%2Fjson
 	ArrayList<String[]> namespaces = new ArrayList<String[]>();
 	ArrayList<String[]> attributes = new ArrayList<String[]>();
 
@@ -61,7 +61,6 @@ public class DwdWfsRequestorBuilder {
 		}
 		this.startDate = params.getStartDate();
 		this.endDate = params.getEndDate();
-		this.outputFormat = params.getOutputFormat();
 	}
 /**
  * Creates the HTTP post message by assembling the single xml-elements
@@ -236,7 +235,7 @@ public class DwdWfsRequestorBuilder {
 				"http://www.opengis.net/wfs/2.0 https://cdc.dwd.de:443/geoserver/schemas/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd" });
 		attributes.add(new String[] { "", "service", serviceAttribute });
 		attributes.add(new String[] { "", "version", this.version });
-		attributes.add(new String[] { "", "outputFormat", this.outputFormat });
+		attributes.add(new String[] { "", "outputFormat",outputFormat});
 	}
 /**
  * Creates GetCapabilities post-message
