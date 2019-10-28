@@ -1,13 +1,10 @@
 package de.wacodis.dwd.cdc;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.client.ClientProtocolException;
@@ -18,7 +15,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,7 +33,6 @@ public class DwdWfsRequestorIT {
 		params = new DwdWfsRequestParams();
 		params.setVersion("2.0.0");
 		params.setTypeName("FX_MN003");
-		params.setOutputFormat("json");
 		// params.setTypeName("CDC:VGSL_TT_TU_MN009");
 
 		List<Float> bounds = new ArrayList<Float>();
@@ -52,7 +47,6 @@ public class DwdWfsRequestorIT {
 
 		params.setStartDate(startDate);
 		params.setEndDate(endDate);
-		params.setOutputFormat("json");
 
 		reader = new DwdWfsRequestorBuilder(params);
 
