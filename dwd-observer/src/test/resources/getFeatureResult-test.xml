@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:CDC="https://cdc.dwd.de" xmlns:wfs="http://www.opengis.net/wfs/2.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" numberMatched="3" numberReturned="3" timeStamp="2019-10-29T09:03:52.160Z" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 https://cdc.dwd.de/geoserver/schemas/wfs/2.0/wfs.xsd https://cdc.dwd.de https://cdc.dwd.de/geoserver/CDC/wfs?service=WFS&amp;version=2.0.0&amp;request=DescribeFeatureType&amp;typeName=CDC%3AVGSL_FX_MN003 http://www.opengis.net/gml/3.2 https://cdc.dwd.de/geoserver/schemas/gml/3.2.1/gml.xsd">
+    <wfs:boundedBy>
+        <gml:Envelope>
+            <gml:lowerCorner>51.2531 6.7686</gml:lowerCorner>
+            <gml:upperCorner>51.4041 7.2156</gml:upperCorner>
+        </gml:Envelope>
+    </wfs:boundedBy>
+    <wfs:member>
+        <CDC:VGSL_FX_MN003 gml:id="VGSL_FX_MN003.199434617699606669751059261694510228809">
+            <gml:boundedBy>
+                <gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326" srsDimension="2">
+                    <gml:lowerCorner>51.2531 7.2156</gml:lowerCorner>
+                    <gml:upperCorner>51.2531 7.2156</gml:upperCorner>
+                </gml:Envelope>
+            </gml:boundedBy>
+            <CDC:GEOM>
+                <gml:Point srsName="urn:ogc:def:crs:EPSG::4326" srsDimension="3" gml:id="VGSL_FX_MN003.199434617699606669751059261694510228809.GEOM">
+                    <gml:pos>51.2531 7.2156 327</gml:pos>
+                </gml:Point>
+            </CDC:GEOM>
+            <CDC:SDO_GUID>812301012357</CDC:SDO_GUID>
+            <CDC:STATION_ID>15200</CDC:STATION_ID>
+            <CDC:STATION_NAME>Wuppertal</CDC:STATION_NAME>
+            <CDC:ZEITSTEMPEL>2019-04-25T00:00:00Z</CDC:ZEITSTEMPEL>
+            <CDC:ZEITINTERVALL>P1D</CDC:ZEITINTERVALL>
+            <CDC:WERT>17.6</CDC:WERT>
+            <CDC:EINHEIT>m/s</CDC:EINHEIT>
+            <CDC:QUALITAET_BYTE>4</CDC:QUALITAET_BYTE>
+            <CDC:QUALITAET_NIVEAU>10</CDC:QUALITAET_NIVEAU>
+        </CDC:VGSL_FX_MN003>
+    </wfs:member>
+    <wfs:member>
+        <CDC:VGSL_FX_MN003 gml:id="VGSL_FX_MN003.199434617661703218528681793179947492681">
+            <gml:boundedBy>
+                <gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326" srsDimension="2">
+                    <gml:lowerCorner>51.296 6.7686</gml:lowerCorner>
+                    <gml:upperCorner>51.296 6.7686</gml:upperCorner>
+                </gml:Envelope>
+            </gml:boundedBy>
+            <CDC:GEOM>
+                <gml:Point srsName="urn:ogc:def:crs:EPSG::4326" srsDimension="3" gml:id="VGSL_FX_MN003.199434617661703218528681793179947492681.GEOM">
+                    <gml:pos>51.296 6.7686 36.6</gml:pos>
+                </gml:Point>
+            </CDC:GEOM>
+            <CDC:SDO_GUID>812300283303</CDC:SDO_GUID>
+            <CDC:STATION_ID>1078</CDC:STATION_ID>
+            <CDC:STATION_NAME>Düsseldorf</CDC:STATION_NAME>
+            <CDC:ZEITSTEMPEL>2019-04-25T00:00:00Z</CDC:ZEITSTEMPEL>
+            <CDC:ZEITINTERVALL>P1D</CDC:ZEITINTERVALL>
+            <CDC:WERT>15.1</CDC:WERT>
+            <CDC:EINHEIT>m/s</CDC:EINHEIT>
+            <CDC:QUALITAET_BYTE>4</CDC:QUALITAET_BYTE>
+            <CDC:QUALITAET_NIVEAU>10</CDC:QUALITAET_NIVEAU>
+        </CDC:VGSL_FX_MN003>
+    </wfs:member>
+    <wfs:member>
+        <CDC:VGSL_FX_MN003 gml:id="VGSL_FX_MN003.199434617699919781538339450650759128393">
+            <gml:boundedBy>
+                <gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326" srsDimension="2">
+                    <gml:lowerCorner>51.4041 6.9677</gml:lowerCorner>
+                    <gml:upperCorner>51.4041 6.9677</gml:upperCorner>
+                </gml:Envelope>
+            </gml:boundedBy>
+            <CDC:GEOM>
+                <gml:Point srsName="urn:ogc:def:crs:EPSG::4326" srsDimension="3" gml:id="VGSL_FX_MN003.199434617699919781538339450650759128393.GEOM">
+                    <gml:pos>51.4041 6.9677 150</gml:pos>
+                </gml:Point>
+            </CDC:GEOM>
+            <CDC:SDO_GUID>812300695655</CDC:SDO_GUID>
+            <CDC:STATION_ID>1303</CDC:STATION_ID>
+            <CDC:STATION_NAME>Essen-Bredeney</CDC:STATION_NAME>
+            <CDC:ZEITSTEMPEL>2019-04-25T00:00:00Z</CDC:ZEITSTEMPEL>
+            <CDC:ZEITINTERVALL>P1D</CDC:ZEITINTERVALL>
+            <CDC:WERT>14.4</CDC:WERT>
+            <CDC:EINHEIT>m/s</CDC:EINHEIT>
+            <CDC:QUALITAET_BYTE>4</CDC:QUALITAET_BYTE>
+            <CDC:QUALITAET_NIVEAU>10</CDC:QUALITAET_NIVEAU>
+        </CDC:VGSL_FX_MN003>
+    </wfs:member>
+</wfs:FeatureCollection>
