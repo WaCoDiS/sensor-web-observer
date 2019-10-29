@@ -42,8 +42,8 @@ class DwdWfsRequestorBuilderTest {
 		bounds.add(3, 7.3000f);
 		params.setBbox(bounds);
 
-		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", DwdWfsRequestorBuilder.formatter);
-		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", DwdWfsRequestorBuilder.formatter);
+		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
+		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
 
 		params.setStartDate(startDate);
 		params.setEndDate(endDate);

@@ -34,13 +34,13 @@ import net.opengis.wfs.x20.QueryType;
 public class DwdWfsRequestorBuilder {
 
 	// class attributes
-	public static final DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	public static final String typeNamePrefix = "CDC:VGSL_";
-	public static final String geometryAttribute = "CDC:GEOM";
-	public static final String timestampAttribute = "CDC:ZEITSTEMPEL";
-	public static final String epsgUrn = "urn:ogc:def:crs:EPSG::4326";
-	public static final String serviceAttribute = "WFS";
-	public static final String outputFormat = "application/gml+xml; version=3.2";
+	public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	public static final String TYPE_NAME_PREFIX = "CDC:VGSL_";
+	public static final String GEOMETRY_ATTRIBUTE = "CDC:GEOM";
+	public static final String TIMESTAMP_ATTRIBUTE = "CDC:ZEITSTEMPEL";
+	public static final String EPSG_URN = "urn:ogc:def:crs:EPSG::4326";
+	public static final String SERVICE_ATTRIBUTE = "WFS";
+	public static final String OUTPUT_FORMAT = "application/gml+xml; version=3.2";
 
 	// attributes
 	String version;// &version=2.0.0
@@ -79,7 +79,7 @@ public class DwdWfsRequestorBuilder {
 		QueryDocument queryDoc = QueryDocument.Factory.newInstance();
 		QueryType query = queryDoc.addNewQuery();
 		ArrayList<String> typeList = new ArrayList<String>();
-		typeList.add(typeNamePrefix + typeName);
+		typeList.add(TYPE_NAME_PREFIX + typeName);
 
 		// <Filter>
 		FilterDocument filterDocument = FilterDocument.Factory.newInstance();
@@ -144,20 +144,20 @@ public class DwdWfsRequestorBuilder {
 
 		// <ValueReference>
 		ValueReferenceDocument valueRefDocument2 = ValueReferenceDocument.Factory.newInstance();
-		valueRefDocument2.setValueReference(timestampAttribute);
+		valueRefDocument2.setValueReference(TIMESTAMP_ATTRIBUTE);
 		// </ValueReference>
 
 		// <Literal>
 		LiteralDocument litDoc = LiteralDocument.Factory.newInstance();
 		LiteralType litType1 = litDoc.addNewLiteral();
-		XmlString xmlString = XmlString.Factory.newValue(formatter.print(startDate));
+		XmlString xmlString = XmlString.Factory.newValue(FORMATTER.print(startDate));
 		litType1.set(xmlString);
 		// </Literal>
 
 		// <Literal>
 		LiteralDocument litDoc2 = LiteralDocument.Factory.newInstance();
 		LiteralType litType2 = litDoc2.addNewLiteral();
-		XmlString xmlString2 = XmlString.Factory.newValue(formatter.print(endDate));
+		XmlString xmlString2 = XmlString.Factory.newValue(FORMATTER.print(endDate));
 		litType2.set(xmlString2);
 		// </Literal>
 
@@ -179,13 +179,13 @@ public class DwdWfsRequestorBuilder {
 
 		// <ValueReference>
 		ValueReferenceDocument valueRefDocument = ValueReferenceDocument.Factory.newInstance();
-		valueRefDocument.setValueReference(geometryAttribute);
+		valueRefDocument.setValueReference(GEOMETRY_ATTRIBUTE);
 		// </ValueReference>
 
 		// <Envelope>
 		EnvelopeDocument envDoc = EnvelopeDocument.Factory.newInstance();
 		EnvelopeType envType = envDoc.addNewEnvelope();
-		envType.setSrsName(epsgUrn);
+		envType.setSrsName(EPSG_URN);
 		DirectPositionType lowerCorner = envType.addNewLowerCorner();
 		lowerCorner.setStringValue(bbox.get(0) + " " + bbox.get(1));
 		DirectPositionType upperCorner = envType.addNewUpperCorner();
@@ -233,9 +233,9 @@ public class DwdWfsRequestorBuilder {
 		// attributes
 		attributes.add(new String[] { "xsi", "schemaLocation",
 				"http://www.opengis.net/wfs/2.0 https://cdc.dwd.de:443/geoserver/schemas/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd" });
-		attributes.add(new String[] { "", "service", serviceAttribute });
+		attributes.add(new String[] { "", "service", SERVICE_ATTRIBUTE });
 		attributes.add(new String[] { "", "version", this.version });
-		attributes.add(new String[] { "", "outputFormat",outputFormat});
+		attributes.add(new String[] { "", "outputFormat",OUTPUT_FORMAT});
 	}
 /**
  * Creates GetCapabilities post-message
@@ -245,7 +245,7 @@ public class DwdWfsRequestorBuilder {
 	public GetCapabilitiesDocument createGetCapabilitiesPost() {
 		GetCapabilitiesDocument getCapDoc = GetCapabilitiesDocument.Factory.newInstance();
 		GetCapabilitiesType getCapType = getCapDoc.addNewGetCapabilities();
-		getCapType.setService(serviceAttribute);
+		getCapType.setService(SERVICE_ATTRIBUTE);
 
 		return getCapDoc;
 	}

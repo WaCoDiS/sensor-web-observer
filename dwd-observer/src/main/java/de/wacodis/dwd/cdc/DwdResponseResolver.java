@@ -21,13 +21,13 @@ import org.xml.sax.SAXException;
 public class DwdResponseResolver {
 
 	final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
-	public static final String featureTypeTag = "FeatureType";
-	public static final String titleTag = "Title";
-	public static final String nameTag = "Name";
-	public static final String timeAttribute = "CDC:ZEITSTEMPEL";
-	public static final String timeFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-	public static final String lowerCornerTag = "gml:lowerCorner";
-	public static final String upperCornerTag = "gml:upperCorner";
+	public static final String FEATURE_TYPE_TAG = "FeatureType";
+	public static final String TITLE_TAG = "Title";
+	public static final String NAME_TAG = "Name";
+	//public static final String TIME_ATTRIBUTE = "CDC:ZEITSTEMPEL";
+	//public static final String timeFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	public static final String LOWER_CORNER_TAG = "gml:lowerCorner";
+	public static final String UPPER_CORNER_TAG = "gml:upperCorner";
 	
 	
 	DwdWfsRequestParams params;
@@ -36,7 +36,7 @@ public class DwdResponseResolver {
 	public DwdResponseResolver(DwdWfsRequestParams params) {
 		super();
 		this.params = params;
-		this.typename = DwdWfsRequestorBuilder.typeNamePrefix + params.getTypeName();
+		this.typename = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + params.getTypeName();
 		
 	}
 
@@ -64,15 +64,15 @@ public class DwdResponseResolver {
 		String[] featureTypeName = new String[2];
 
 		// search all FeatureType elements
-		NodeList nodes = doc.getElementsByTagName(featureTypeTag);
+		NodeList nodes = doc.getElementsByTagName(FEATURE_TYPE_TAG);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			// check content of childnodes <name> and <title> of every <FeatureType>
 			Element featureType = (Element) nodes.item(i);
 			
-			NodeList titleNodes = featureType.getElementsByTagName(titleTag);
+			NodeList titleNodes = featureType.getElementsByTagName(TITLE_TAG);
 			String title = titleNodes.item(0).getTextContent();
 
-			NodeList NameNodes = featureType.getElementsByTagName(nameTag);
+			NodeList NameNodes = featureType.getElementsByTagName(NAME_TAG);
 			String name = NameNodes.item(0).getTextContent();
 				
 			// search for the correct typeName
@@ -107,9 +107,9 @@ public class DwdResponseResolver {
 		Document doc = docBuilder.parse(getFeatureResponse);
 
 		// BBOX 
-		NodeList lowerNodes = doc.getElementsByTagName(lowerCornerTag);
+		NodeList lowerNodes = doc.getElementsByTagName(LOWER_CORNER_TAG);
 		String lowerCornerBBox = lowerNodes.item(0).getTextContent();
-		NodeList upperNodes = doc.getElementsByTagName(upperCornerTag);
+		NodeList upperNodes = doc.getElementsByTagName(UPPER_CORNER_TAG);
 		String upperCornerBBox = upperNodes.item(0).getTextContent();
 		
 		// BBOX Parameter 
@@ -123,17 +123,15 @@ public class DwdResponseResolver {
 		// TimeFrame Parameter
 		DateTime startDate = new DateTime();
 		DateTime endDate = new DateTime();
-		ArrayList<DateTime> timeFrame = new ArrayList<DateTime>();
-		
-		DateTimeFormatter df = DateTimeFormat.forPattern(timeFormat);	
+		ArrayList<DateTime> timeFrame = new ArrayList<DateTime>();	
 		
 		NodeList featureNodes = doc.getElementsByTagName(typename);
 		for (int i = 0; i < featureNodes.getLength(); i++) {
 			Element feature = (Element) featureNodes.item(i);
-			NodeList timeStampNodes = feature.getElementsByTagName(timeAttribute);
+			NodeList timeStampNodes = feature.getElementsByTagName(DwdWfsRequestorBuilder.TIMESTAMP_ATTRIBUTE);
 			String timeStamp = timeStampNodes.item(0).getTextContent();
 			
-			DateTime temp = DateTime.parse(timeStamp, df);
+			DateTime temp = DateTime.parse(timeStamp, DwdWfsRequestorBuilder.FORMATTER);
 			// Set start Values
 			if (i == 0) {
 

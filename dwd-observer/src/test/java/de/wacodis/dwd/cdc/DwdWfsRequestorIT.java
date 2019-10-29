@@ -25,7 +25,8 @@ public class DwdWfsRequestorIT {
 
 	private static DwdWfsRequestParams params;
 	private static DwdWfsRequestorBuilder reader;
-	private static String serviceUrl = "https://cdc.dwd.de:443/geoserver/CDC/wfs?";
+	private static String SERVICE_URL = "https://cdc.dwd.de:443/geoserver/CDC/wfs?";
+	
 
 	@BeforeAll
 	static void setup() throws ParseException {
@@ -42,8 +43,8 @@ public class DwdWfsRequestorIT {
 		bounds.add(3, 7.3000f);
 		params.setBbox(bounds);
 
-		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", DwdWfsRequestorBuilder.formatter);
-		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", DwdWfsRequestorBuilder.formatter);
+		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
+		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
 
 		params.setStartDate(startDate);
 		params.setEndDate(endDate);
@@ -56,12 +57,12 @@ public class DwdWfsRequestorIT {
 	@Test
 	void testRequest() throws IOException, ParserConfigurationException, SAXException {
 		DwdProductsMetadata result = new DwdProductsMetadata();
-		result = DwdWfsRequestor.request(serviceUrl, params);
+		result = DwdWfsRequestor.request(SERVICE_URL, params);
 
 		// object of comparison
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
 
-		metadata.setServiceUrl(serviceUrl);
+		metadata.setServiceUrl(SERVICE_URL);
 		metadata.setLayername("CDC:VGSL_FX_MN003");
 		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
 
@@ -73,9 +74,8 @@ public class DwdWfsRequestorIT {
 		extent.add(3, 51.4041f);
 		metadata.setExtent(extent);
 
-		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
-		DateTime startDate = DateTime.parse("2010-04-24T02:00:00:00Z", df);
-		DateTime endDate = DateTime.parse("2019-04-25T02:00:00:00Z", df);
+		DateTime startDate = DateTime.parse("2010-04-24T02:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
+		DateTime endDate = DateTime.parse("2019-04-25T02:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
 		metadata.setStartDate(startDate);
 		metadata.setEndDate(endDate);
 
@@ -107,7 +107,7 @@ public class DwdWfsRequestorIT {
 	void testExceptions() {
 		// request
 		Assertions.assertDoesNotThrow(() -> {
-			DwdWfsRequestor.request(serviceUrl, params);
+			DwdWfsRequestor.request(SERVICE_URL, params);
 		});
 
 	}
@@ -132,7 +132,7 @@ public class DwdWfsRequestorIT {
 //		Assertions.assertEquals(sumIndexResult, sumResult);
 		
 		Assertions.assertDoesNotThrow(() -> {
-			DwdWfsRequestor.sendWfsRequest(serviceUrl, message);
+			DwdWfsRequestor.sendWfsRequest(SERVICE_URL, message);
 		});
 		// Assertions.assertEquals(expected, actual);
 	}

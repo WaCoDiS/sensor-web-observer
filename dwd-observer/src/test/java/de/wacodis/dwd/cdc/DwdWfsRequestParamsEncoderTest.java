@@ -32,10 +32,9 @@ public class DwdWfsRequestParamsEncoderTest {
 		extent.add(51.405f);
 		extent.add(6.969f);
 		area.setExtent(extent);
-
-		DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss:SS'Z'");
-		startDate = DateTime.parse("2019-04-24T01:00:00:00Z", df);
-		endDate = DateTime.parse("2019-04-25T10:00:00:00Z", df);
+		
+		startDate = DateTime.parse("2019-04-24T01:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
+		endDate = DateTime.parse("2019-04-25T10:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
 
 	}
 
