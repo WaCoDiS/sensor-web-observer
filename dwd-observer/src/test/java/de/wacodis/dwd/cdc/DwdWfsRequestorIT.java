@@ -112,29 +112,6 @@ public class DwdWfsRequestorIT {
 
 	}
 
-	@Test
-	void test() throws ClientProtocolException, IOException, ParserConfigurationException, SAXException {
-		String message = reader.createGetFeaturePost().xmlText();
-//		InputStream indexResult = this.getClass().getResourceAsStream("/getFeatureResult-test.xml");
-//		InputStream result = DwdWfsRequestor.sendWfsRequest(serviceUrl, message);
-//		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-//		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-//		Document doc = docBuilder.parse(result);
-//		String doString = doc.toString();
-//		int sumIndexResult = indexResult.read();
-//		int sumResult = result.read();
-//		
-//		while(result.read()!=-1) {
-//			sumIndexResult += indexResult.read();
-//			sumResult += result.read();
-//			System.out.println(sumResult);
-//		}	
-//		Assertions.assertEquals(sumIndexResult, sumResult);
-		
-		Assertions.assertDoesNotThrow(() -> {
-			DwdWfsRequestor.sendWfsRequest(SERVICE_URL, message);
-		});
-		// Assertions.assertEquals(expected, actual);
-	}
+	
 
 }

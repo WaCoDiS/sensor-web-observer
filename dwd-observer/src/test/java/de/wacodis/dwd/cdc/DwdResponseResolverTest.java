@@ -1,11 +1,8 @@
 package de.wacodis.dwd.cdc;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -17,59 +14,39 @@ import org.xml.sax.SAXException;
 
 class DwdResponseResolverTest {
 
-	private static DwdWfsRequestParams params;
 	private static DwdResponseResolver resolver;
-	private InputStream capResponse;
-	private InputStream getFeatureResponse;
+	private String typeName = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + "FX_MN003";
 
 	@BeforeAll
 	static void setUp() {
-		// params
-		params = new DwdWfsRequestParams();
-		params.setVersion("2.0.0");
-		params.setTypeName("FX_MN003");
+		resolver = new DwdResponseResolver();
 
-		List<Float> bounds = new ArrayList<Float>();
-		bounds.add(0, 51.0000f);
-		bounds.add(1, 6.6000f);
-		bounds.add(2, 51.5000f);
-		bounds.add(3, 7.3000f);
-		params.setBbox(bounds);
-
-		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
-		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
-
-		params.setStartDate(startDate);
-		params.setEndDate(endDate);
-		
-		resolver = new DwdResponseResolver(params);
-		
-		
 	}
 
 	@Test
 	void testRequestTypeName() throws ParserConfigurationException, SAXException, IOException {
 		// actual
 		InputStream getCapabilitiesStream = this.getClass().getResourceAsStream("/getCapabilities-test.xml");
-		String[] typenameArray = resolver.requestTypeName(getCapabilitiesStream);
+		String[] typenameArray = resolver.requestTypeName(getCapabilitiesStream, typeName);
 		String name = typenameArray[0];
-		String typeName = typenameArray[1];
+		String title = typenameArray[1];
+		
 		// expected
-		String expectedName = resolver.typename;
-		String expectedTypeName = "Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s";
-	
+		String expectedName = name;
+		String expectedTitle = "Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s";
+
+		Assertions.assertEquals(expectedTitle, title);
 		Assertions.assertEquals(expectedName, name);
-		Assertions.assertEquals(expectedTypeName, typeName);
 	}
 
 	@Test
 	void testGenerateSpatioTemporalExtent() throws IOException, SAXException, ParserConfigurationException {
 		// actual
 		InputStream getFeatureResponse = this.getClass().getResourceAsStream("/getFeatureResult-test.xml");
-		SpatioTemporalExtent timeAndBBox = resolver.generateSpatioTemporalExtent(getFeatureResponse);
+		SpatioTemporalExtent timeAndBBox = resolver.generateSpatioTemporalExtent(getFeatureResponse, typeName);
 		ArrayList<Float> bBox = timeAndBBox.getbBox();
 		ArrayList<DateTime> timeFrame = timeAndBBox.getTimeFrame();
-		
+
 		// expected
 		ArrayList<Float> expectedBBox = new ArrayList<Float>();
 		expectedBBox.add(6.7686f);

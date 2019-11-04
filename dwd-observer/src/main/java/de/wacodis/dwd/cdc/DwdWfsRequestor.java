@@ -47,21 +47,23 @@ public class DwdWfsRequestor {
 	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params)
 			throws IOException, ParserConfigurationException, SAXException {
 		LOG.info("Start Buildung Connection Parameters for WFS Service");
+		String typeName = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + params.getTypeName();
 
 		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
 		LOG.info("Start getFeature request");
 		String getPostBody = wfsRequest.createGetFeaturePost().xmlText();
 		InputStream getFeatureResponse = sendWfsRequest(url, getPostBody);
 	
-		DwdResponseResolver resolver = new DwdResponseResolver(params);
-		SpatioTemporalExtent timeAndBbox = resolver.generateSpatioTemporalExtent(getFeatureResponse);
+		DwdResponseResolver resolver = new DwdResponseResolver();
+		SpatioTemporalExtent timeAndBbox = resolver.generateSpatioTemporalExtent(getFeatureResponse, typeName);
 
 		LOG.info("Start getCapabilities request");
 		String capPostBody = wfsRequest.createGetCapabilitiesPost().xmlText();
 		InputStream capResponse = sendWfsRequest(url, capPostBody);
 		
 		// typename and clearname
-		String[] featureClearName = resolver.requestTypeName(capResponse);
+		
+		String[] featureClearName = resolver.requestTypeName(capResponse, typeName);
 
 		LOG.info("Building DwdProductsMetaData Object");
 		// create DwdProductsMetaData
