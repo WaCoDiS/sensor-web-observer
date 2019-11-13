@@ -47,9 +47,14 @@ management:
     enabled: false
 datasource-observer:
   execution:
-    interval:
+    interval: 
+      #all values in seconds
+      # 1 hour
       sensorWeb: 3600
-      sentinel: 60  
+      sentinel: 3600
+      dwd: 3600
+      # 1 day
+      maxInterval: 86400 
   sentinelhub:
     base-url: https://scihub.copernicus.eu/apihub/
     user: testuser
