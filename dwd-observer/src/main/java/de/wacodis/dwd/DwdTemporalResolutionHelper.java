@@ -32,15 +32,10 @@ public class DwdTemporalResolutionHelper {
     private static Set annual = new HashSet<>(Arrays.asList("JA_TT_MN004", "JA_TX_MN004", "JA_TN_MN004", "JA_RR_MN006",
             "JA_P0_MN004", "JA_SH_S_MN006", "JA_NSH_MN006", "JA_SD_S_MN004", "JA_RF_MN004", "JA_N_MN004"));
 
-    // constants for interval calculation
-    public static final int HOURLY_RESOLUTION = 0;
-    public static final int DAILY_RESOLUTION = 1;
-    public static final int MONTHLY_RESOLUTION = 2;
-    public static final int ANNUAL_RESOLUTION = 3;
-
-    public static final int ONE_WEEK_INTERVAL = 24 * 7;
-    public static final int ONE_MONTH_INTERVAL = 24 * 30;
-    public static final int TEN_YEARS_INTERVAL = 24 * 365 * 10;
+    public static final int ONE_DAY_INTERVAL = 24;
+    public static final int ONE_WEEK_INTERVAL = ONE_DAY_INTERVAL * 7;
+    public static final int ONE_MONTH_INTERVAL = ONE_WEEK_INTERVAL * 30;
+    public static final int ONE_YEAR_INTERVAL = ONE_MONTH_INTERVAL * 12;
 
     public static boolean isHourly(String layerName) {
         return hourly.contains(layerName);
@@ -58,21 +53,6 @@ public class DwdTemporalResolutionHelper {
         return annual.contains(layerName);
     }
 
-    public static double calculateInterval(int hourSum, int resolution) {
-        double hourSumD = (double) hourSum;
-        if (resolution == DwdTemporalResolutionHelper.HOURLY_RESOLUTION) {
-            return (hourSumD / DwdTemporalResolutionHelper.ONE_WEEK_INTERVAL); // splitting duration in three days blocks
-        }
-        if (resolution == DwdTemporalResolutionHelper.DAILY_RESOLUTION) {
-            return (hourSumD / DwdTemporalResolutionHelper.ONE_MONTH_INTERVAL); // splitting duration in month blocks
-        }
-        if (resolution == DwdTemporalResolutionHelper.MONTHLY_RESOLUTION) {
-            return (hourSumD / DwdTemporalResolutionHelper.TEN_YEARS_INTERVAL); // splitting duration in 10 years blocks
-        } else {
-            return 1;
-        }
-    }
-
     /**
      * Gets the request intervals for requesting a certain WFS request layer
      *
@@ -87,25 +67,25 @@ public class DwdTemporalResolutionHelper {
         // if the resolution is hourly, the request will be splitted into intervalls
         if (isHourly(layerName)) {
             interval = calculateRequestIntervalsForResolution(startDate, endDate,
-                    HOURLY_RESOLUTION);
+                    LayerTimeResolution.HOURLY_RESOLUTION);
         }
 
         // if the resolution is daily, the request will be splitted into intervalls
         if (isDaily(layerName)) {
             interval = calculateRequestIntervalsForResolution(startDate, endDate,
-                    DAILY_RESOLUTION);
+                    LayerTimeResolution.DAILY_RESOLUTION);
         }
 
         // if the resolution is monthly, the request will be splitted into intervalls
         if (isMonthly(layerName)) {
             interval = calculateRequestIntervalsForResolution(startDate, endDate,
-                    MONTHLY_RESOLUTION);
+                    LayerTimeResolution.MONTHLY_RESOLUTION);
 
         }
         // if the resolution is annual, the request must not be splitted
         if (isAnnual(layerName)) {
             interval = calculateRequestIntervalsForResolution(startDate, endDate,
-                    ANNUAL_RESOLUTION);
+                    LayerTimeResolution.ANNUAL_RESOLUTION);
         }
         return interval;
     }
@@ -119,34 +99,63 @@ public class DwdTemporalResolutionHelper {
      *                   calculation)
      * @return a list of start date/end date tuples
      */
-    public static List<DateTime[]> calculateRequestIntervalsForResolution(DateTime startDate, DateTime endDate, int resolution) {
+    public static List<DateTime[]> calculateRequestIntervalsForResolution(DateTime startDate, DateTime endDate, LayerTimeResolution resolution) {
 
         List<DateTime[]> outputList = new ArrayList<DateTime[]>();
 
         Hours hourSumHours = Hours.hoursBetween(startDate, endDate);
         int hourSum = hourSumHours.getHours();
 
-        double interval = DwdTemporalResolutionHelper.calculateInterval(hourSum, resolution);
-        int intervalInMinutes = (int) (hourSum / interval) * 60;
+        int timeInterval = DwdTemporalResolutionHelper.getIntervalInHours(resolution);
+        int intervalCount = (int) (hourSum / timeInterval);
+
+        if(intervalCount == 0){
+            DateTime[] eachIntervalDates = {startDate, endDate}; // will be probably overwritten
+            outputList.add(eachIntervalDates); // put first value into list
+            return outputList;
+        }
 
         // Start interval
-        DateTime[] eachIntervalDates = {startDate, startDate.plusMinutes(intervalInMinutes)}; // will be probably overwritten
+        DateTime[] eachIntervalDates = {startDate, startDate.plusHours(timeInterval)}; // will be probably overwritten
         outputList.add(eachIntervalDates); // put first value into list
 
-        int endCondition = (int) interval;
         // calculating the start- and enddate for every interval
-        for (int i = 1; i <= interval; i++) {
-            double modulo = interval % endCondition;
-            // every interval
-            if (i <= endCondition || modulo == 0) {
-                eachIntervalDates = new DateTime[2];
-                eachIntervalDates[0] = outputList.get(i - 1)[1];    // startdate is the enddate of the previous interval
-                eachIntervalDates[1] = eachIntervalDates[0].plusMinutes(intervalInMinutes); // enddate
-                outputList.add(eachIntervalDates);
-            }
-
+        for (int i = 1; i < intervalCount; i++) {
+            eachIntervalDates = new DateTime[2];
+            eachIntervalDates[0] = outputList.get(i - 1)[1];    // startdate is the enddate of the previous interval
+            eachIntervalDates[1] = eachIntervalDates[0].plusHours(timeInterval); // enddate
+            outputList.add(eachIntervalDates);
         }
+
+        if(hourSum % timeInterval != 0){
+            eachIntervalDates = new DateTime[2];
+            eachIntervalDates[0] = outputList.get(outputList.size() - 1)[1];
+            eachIntervalDates[1] = endDate;
+            outputList.add(eachIntervalDates);
+        }
+
         return outputList;
+    }
+
+    private static int getIntervalInHours(LayerTimeResolution resolution) {
+        if (resolution == LayerTimeResolution.HOURLY_RESOLUTION) {
+            return DwdTemporalResolutionHelper.ONE_DAY_INTERVAL; // splitting duration in week blocks
+        }
+        if (resolution == LayerTimeResolution.DAILY_RESOLUTION) {
+            return DwdTemporalResolutionHelper.ONE_WEEK_INTERVAL; // splitting duration in month blocks
+        }
+        if (resolution == LayerTimeResolution.MONTHLY_RESOLUTION) {
+            return DwdTemporalResolutionHelper.ONE_YEAR_INTERVAL; // splitting duration in 1 year blocks
+        } else {
+            return 1;
+        }
+    }
+
+    public static enum LayerTimeResolution {
+        HOURLY_RESOLUTION,
+        DAILY_RESOLUTION,
+        MONTHLY_RESOLUTION,
+        ANNUAL_RESOLUTION;
     }
 
 
