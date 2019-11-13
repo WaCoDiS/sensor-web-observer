@@ -35,179 +35,124 @@ import de.wacodis.observer.model.DwdDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
 
 /**
- *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
 public class DwdJob implements Job {
 
-	// identifiers
-	public static final String VERSION_KEY = "version";
-	public static final String LAYER_NAME_KEY = "layerName";
-	public static final String SERVICE_URL_KEY = "serviceUrl";
-	public static final String TEMPORAL_COVERAGE_KEY = "temporalCoverage";
-	public static final String EXECUTION_INTERVAL_KEY = "executionInterval";
-	public static final String EXECUTION_AREA_KEY = "executionArea";
-	public static final String PREVIOUS_DAYS_KEY = "previousDays";
+    // identifiers
+    public static final String VERSION_KEY = "version";
+    public static final String LAYER_NAME_KEY = "layerName";
+    public static final String SERVICE_URL_KEY = "serviceUrl";
+    public static final String TEMPORAL_COVERAGE_KEY = "temporalCoverage";
+    public static final String EXECUTION_INTERVAL_KEY = "executionInterval";
+    public static final String EXECUTION_AREA_KEY = "executionArea";
+    public static final String LATEST_REQUEST_END_DATE = "endDate";
 
-	private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
 
-	JobDataMap jobDataMap = new JobDataMap();
+    JobDataMap jobDataMap = new JobDataMap();
 
     @Autowired
     private PublisherChannel pub;
-	
-	@Override
-	public void execute(JobExecutionContext jec) throws JobExecutionException {
-		LOG.info("Start DwdJob's execute()");
-		JobDataMap dataMap = jec.getJobDetail().getJobDataMap();
 
-		// 1) Get all required request parameters stored in the JobDataMap
-		String version = dataMap.getString(VERSION_KEY);
-		String layerName = dataMap.getString(LAYER_NAME_KEY);
-		String serviceUrl = dataMap.getString(SERVICE_URL_KEY);
-		String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY); // previous days unnecessary?
-		String[] executionAreaJSON = dataMap.getString(EXECUTION_AREA_KEY).split(",");
+    @Override
+    public void execute(JobExecutionContext jec) throws JobExecutionException {
+        LOG.debug("Start DwdJob's execute()");
+        JobDataMap dataMap = jec.getJobDetail().getJobDataMap();
 
-		// parse executionAreaJSON into Float list
-		String bottomLeftYStr = executionAreaJSON[0].split(" ")[0];
-		String bottomLeftXStr = executionAreaJSON[0].split(" ")[1];
-		String upperRightYStr = executionAreaJSON[1].split(" ")[0];
-		String upperRightXStr = executionAreaJSON[1].split(" ")[1];
+        // 1) Get all required request parameters stored in the JobDataMap
+        String version = dataMap.getString(VERSION_KEY);
+        String layerName = dataMap.getString(LAYER_NAME_KEY);
+        String serviceUrl = dataMap.getString(SERVICE_URL_KEY);
+        String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY); // previous days unnecessary?
+        String[] executionAreaJSON = dataMap.getString(EXECUTION_AREA_KEY).split(",");
 
-		float bottomLeftY = Float.parseFloat(bottomLeftYStr);
-		float bottomLeftX = Float.parseFloat(bottomLeftXStr);
-		float upperRightY = Float.parseFloat(upperRightYStr);
-		float upperRightX = Float.parseFloat(upperRightXStr);
-		ArrayList<Float> area = new ArrayList<Float>();
-		area.add(0, bottomLeftY);
-		area.add(1, bottomLeftX);
-		area.add(2, upperRightY);
-		area.add(3, upperRightX);
+        // parse executionAreaJSON into Float list
+        String bottomLeftYStr = executionAreaJSON[0].split(" ")[0];
+        String bottomLeftXStr = executionAreaJSON[0].split(" ")[1];
+        String upperRightYStr = executionAreaJSON[1].split(" ")[0];
+        String upperRightXStr = executionAreaJSON[1].split(" ")[1];
 
-		//Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
+        float bottomLeftY = Float.parseFloat(bottomLeftYStr);
+        float bottomLeftX = Float.parseFloat(bottomLeftXStr);
+        float upperRightY = Float.parseFloat(upperRightYStr);
+        float upperRightX = Float.parseFloat(upperRightXStr);
+        ArrayList<Float> area = new ArrayList<Float>();
+        area.add(0, bottomLeftY);
+        area.add(1, bottomLeftX);
+        area.add(2, upperRightY);
+        area.add(3, upperRightX);
 
-		/*
-		if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer
-				&& ((int) previousDaysCandidate) > 0) {
-			int previousDays = (int) previousDaysCandidate;
-*/
-			Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
+        Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 
-			// timeframe
-			DateTime endDate = DateTime.now();
-			DateTime startDate = endDate.withPeriodAdded(period, -1);
-			LOG.info("Start Test, if there is already an endDate");
-			if (jobDataMap.get("endDate") == null) {
-				LOG.info("New enddate will be set");
-				jobDataMap.put("endDate", endDate);
-			} else {
-				LOG.info("There is already an enddate");
-				startDate = (DateTime) jobDataMap.get("endDate");
-			}
-			LOG.info("Start creating DwdEnvelope");
-			try {
-				Set<DwdDataEnvelope> finalEnvelopeSet = createFinalEnvelopeSet(version, layerName, serviceUrl, area,
-						startDate, endDate);
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		//}
-
-	}
-
-	/**
-	 * 
-	 * @param version - version number of WFS - usually 2.0.0
-	 * @param layerName - short designation of layer
-	 * @param serviceUrl - general url of webservice
-	 * @param area - bbox (minLon, minLat, maxLon, maxLat)
-	 * @param startDate
-	 * @param endDate
-	 * @return Set of DwdDataEnvelope by splitting into intervals
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
-	 */
-	private Set<DwdDataEnvelope> createFinalEnvelopeSet(String version, String layerName, String serviceUrl,
-			ArrayList<Float> area, DateTime startDate, DateTime endDate) throws ParserConfigurationException, SAXException {
-		Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
-		List<DateTime[]> interval = new ArrayList<DateTime[]>();
-
-		// if the resolution is hourly, the request will be splitted into intervalls
-		if (DwdTemporalResolution.isHourly(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
-					DwdTemporalResolution.HOURLY_RESOLUTION);
+        DateTime endDate = DateTime.now();
+		DateTime startDate = null;
+		// If there was a Job execution before, consider the latest request
+		// end date as start date for the current request.
+		// Else, calculate the start date for an initial request by taking a
+		// certain period into account
+		if(jobDataMap.get(LATEST_REQUEST_END_DATE) != null){
+			startDate = (DateTime) jobDataMap.get(LATEST_REQUEST_END_DATE);
+		 }else{
+			startDate = endDate.withPeriodAdded(period, -1);
 		}
+		jobDataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
-		// if the resolution is daily, the request will be splitted into intervalls
-		if (DwdTemporalResolution.isDaily(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
-					DwdTemporalResolution.DAILY_RESOLUTION);
-		}
+        this.createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
+    }
 
-		// if the resolution is monthly, the request will be splitted into intervalls
-		if (DwdTemporalResolution.isMonthly(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
-					DwdTemporalResolution.MONTHLY_RESOLUTION);
+    /**
+     * Create the {@link DwdDataEnvelope} for a set of request parameters
+     *
+     * @param version    version number of WFS - usually 2.0.0
+     * @param layerName  short designation of layer
+     * @param serviceUrl general url of webservice
+     * @param area       bbox (minLon, minLat, maxLon, maxLat)
+     * @param startDate  start date of the request timeframe
+     * @param endDate    end date of the request timeframe
+     */
+    private void createDwdDataEnvelope(String version, String layerName, String serviceUrl,
+                                       ArrayList<Float> area, DateTime startDate, DateTime endDate) {
+        Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
+        List<DateTime[]> interval = DwdTemporalResolutionHelper.getRequestIntervals(startDate, endDate, layerName);
 
-		}
-		// if the resolution is annual, the request must not be splitted
-		if (DwdTemporalResolution.isAnnual(layerName)) {
-			interval = DwdTemporalResolution.calculateStartAndEndDate(startDate, endDate,
-					DwdTemporalResolution.ANNUAL_RESOLUTION);
-		}
-		LOG.info("Start creating Loop to create DwdDataEnvelopes if the amount of data is too large.");
-		if (interval != null) {
-			for (int i = 0; i < interval.size(); i++) {
-				DwdDataEnvelope dataEnvelope = createDwdDataEnvelope(version, layerName, serviceUrl, area,
-						interval.get(i)[0], interval.get(i)[1]);
-				LOG.info("Add DwdDataEnvelope Nr. " + i);
-				envelopeSet.add(dataEnvelope);
-				//i++;
-			}
-		}
-		LOG.info("Finished creating DwdDataEnvelopeSets");
-		return envelopeSet;
-	}
-	/**
-	 * 
-	 * @param version - version number of WFS - usually 2.0.0
-	 * @param layerName - short designation of layer
-	 * @param serviceUrl - general url of webservice
-	 * @param area - bbox (minLon, minLat, maxLon, maxLat)
-	 * @param startDate
-	 * @param endDate
-	 * @return DwdDataEnvelope
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
-	 */
-	private DwdDataEnvelope createDwdDataEnvelope(String version, String layerName, String serviceUrl, List<Float> area,
-			DateTime startDate, DateTime endDate) throws ParserConfigurationException, SAXException {
+        LOG.info("Start requesting DWD data iteratively if the amount of data is too large.");
+        if (interval != null) {
+            for (int i = 0; i < interval.size(); i++) {
+                DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, interval.get(i)[0], interval.get(i)[1]);
+                DwdDataEnvelope dataEnvelope = this.requestDwdMetadata(serviceUrl, params);
+                if (dataEnvelope != null) {
+                    // Publish DwdDataEnvelope message
+                    pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
+                    LOG.info("Successfully created and published new DwdDataEnvelope: {}", dataEnvelope);
+                } else {
+                    LOG.warn("Failed creation and publishing of new DwdDataEnvelope for request params: {}", params);
+                }
+            }
+        }
+    }
 
-		// 2) Create a DwdWfsRequestParams object from the restored request parameters
-		DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, startDate, endDate);
+    /**
+     * Request DWD metadata from an WFS and create a {@link DwdDataEnvelope}
+     *
+     * @param serviceUrl the DWD WFS service URL
+     * @param params
+     * @return
+     */
+    private DwdDataEnvelope requestDwdMetadata(String serviceUrl, DwdWfsRequestParams params) {
+        DwdDataEnvelope dataEnvelope = null;
+        try {
+            // Request DWD WFS with request paramaters
+            DwdProductsMetadata metadata = DwdWfsRequestor.request(serviceUrl, params);
 
-		// 3) Request WFS with request paramaters
-		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		try {
-			metadata = DwdWfsRequestor.request(serviceUrl, params);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            // Decode DwdProductsMetadata to DwdDataEnvelope
+            dataEnvelope = DwdProductsMetadataDecoder.decode(metadata);
+            LOG.debug("new dataEnvelope:\n{}", dataEnvelope.toString());
 
-		// 4) Decode DwdProductsMetada to DwdDataEnvelope
-		DwdDataEnvelope dataEnvelope = DwdProductsMetadataDecoder.decode(metadata);
-		LOG.info("new dataEnvelope:\n{}", dataEnvelope.toString());
-
-		// 5) Publish DwdDataEnvelope message
-		pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
-		LOG.info("DataEnvelope published");
-		
-		return dataEnvelope;
-	}
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            LOG.error("Error while performing DWD WFS request for DWD product metadata.");
+        }
+        return dataEnvelope;
+    }
 
 }

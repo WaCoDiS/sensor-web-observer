@@ -7,10 +7,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.http.client.ClientProtocolException;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +60,7 @@ public class DwdWfsRequestorIT {
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
 
 		metadata.setServiceUrl(SERVICE_URL);
-		metadata.setLayername("CDC:VGSL_FX_MN003");
+		metadata.setLayerName("CDC:VGSL_FX_MN003");
 		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
 
 		ArrayList<Float> extent = new ArrayList<Float>();
@@ -83,7 +80,7 @@ public class DwdWfsRequestorIT {
 		// ServiceURL
 		Assertions.assertEquals(metadata.getServiceUrl(), result.getServiceUrl());
 		// LayerName
-		Assertions.assertEquals(metadata.getLayername(), result.getLayername());
+		Assertions.assertEquals(metadata.getLayerName(), result.getLayerName());
 		// ClearName
 		Assertions.assertEquals(metadata.getParameter(), result.getParameter());
 		// bbox

@@ -18,11 +18,11 @@ public class DwdWfsRequestParams {
 
 	// https://cdc.dwd.de:443/geoserver/CDC/wfs? +
 
-	String version;
-	String typeName;
-	List<Float> bbox;
-	DateTime startDate;
-	DateTime endDate;
+	private String version;
+	private String typeName;
+	private List<Float> bbox;
+	private DateTime startDate;
+	private DateTime endDate;
 
 	// Konstruktor
 	public DwdWfsRequestParams() {

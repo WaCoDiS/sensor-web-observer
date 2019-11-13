@@ -23,7 +23,7 @@ public class DwdDataEnvelopeTest {
 		// fill dummy object
 		metadata = new DwdProductsMetadata();
 		metadata.setServiceUrl("https://cdc.dwd.de:443/geoserver/CDC/wfs?");
-		metadata.setLayername("CDC:VGSL_FX_MN003");
+		metadata.setLayerName("CDC:VGSL_FX_MN003");
 		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
 		
 		// bbox
@@ -51,7 +51,7 @@ public class DwdDataEnvelopeTest {
 
 		// comparison
 		Assertions.assertEquals(envelope.getServiceUrl(), metadata.getServiceUrl());
-		Assertions.assertEquals(envelope.getLayerName(), metadata.getLayername());
+		Assertions.assertEquals(envelope.getLayerName(), metadata.getLayerName());
 		Assertions.assertEquals(envelope.getParameter(), metadata.getParameter());
 		Assertions.assertEquals(envelope.getAreaOfInterest().getExtent(), metadata.getExtent());
 		Assertions.assertEquals(envelope.getTimeFrame().getEndTime(), metadata.getEndDate());

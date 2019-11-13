@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 class DwdResponseResolverTest {
@@ -43,7 +46,12 @@ class DwdResponseResolverTest {
 	void testGenerateSpatioTemporalExtent() throws IOException, SAXException, ParserConfigurationException {
 		// actual
 		InputStream getFeatureResponse = this.getClass().getResourceAsStream("/getFeatureResult-test.xml");
-		SpatioTemporalExtent timeAndBBox = resolver.generateSpatioTemporalExtent(getFeatureResponse, typeName);
+
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+		Document doc = docBuilder.parse(getFeatureResponse);
+
+		SpatioTemporalExtent timeAndBBox = resolver.generateSpatioTemporalExtent(doc, typeName);
 		ArrayList<Float> bBox = timeAndBBox.getbBox();
 		ArrayList<DateTime> timeFrame = timeAndBBox.getTimeFrame();
 

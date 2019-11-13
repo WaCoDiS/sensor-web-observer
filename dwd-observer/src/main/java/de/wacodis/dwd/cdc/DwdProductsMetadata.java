@@ -19,12 +19,12 @@ import org.joda.time.DateTime;
 public class DwdProductsMetadata {
     //TODO: define required station metadata
 	
-	String serviceUrl;
-	String layername;
-	String parameter;
-	ArrayList<Float> extent = new ArrayList<Float>();
-	DateTime startDate;
-	DateTime endDate;
+	private String serviceUrl;
+	private String layerName;
+	private String parameter;
+	private ArrayList<Float> extent = new ArrayList<Float>();
+	private DateTime startDate;
+	private DateTime endDate;
 	
 	public String getServiceUrl() {
 		return serviceUrl;
@@ -34,12 +34,12 @@ public class DwdProductsMetadata {
 		this.serviceUrl = serviceUrl;
 	}
 
-	public String getLayername() {
-		return layername;
+	public String getLayerName() {
+		return layerName;
 	}
 
-	public void setLayername(String layername) {
-		this.layername = layername;
+	public void setLayerName(String layerName) {
+		this.layerName = layerName;
 	}
 
 	public String getParameter() {

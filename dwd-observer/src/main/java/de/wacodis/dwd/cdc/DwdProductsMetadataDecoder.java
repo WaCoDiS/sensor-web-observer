@@ -27,7 +27,7 @@ public class DwdProductsMetadataDecoder {
     	// serviceUrl
     	dwdDE.setServiceUrl(metadata.getServiceUrl());
     	// layername and clear text
-    	dwdDE.setLayerName(metadata.getLayername());
+    	dwdDE.setLayerName(metadata.getLayerName());
     	dwdDE.setParameter(metadata.getParameter());
     	// bbox
     	extent.extent(metadata.getExtent());

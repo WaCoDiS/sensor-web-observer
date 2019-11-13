@@ -10,8 +10,11 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.opengis.wfs.x20.GetFeatureDocument;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -22,6 +25,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
@@ -46,18 +50,22 @@ public class DwdWfsRequestor {
 	 */
 	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params)
 			throws IOException, ParserConfigurationException, SAXException {
-		LOG.info("Start Buildung Connection Parameters for WFS Service");
+		LOG.debug("Start Buildung Connection Parameters for WFS Service");
 		String typeName = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + params.getTypeName();
 
 		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
-		LOG.info("Start getFeature request");
+		LOG.debug("Start getFeature request");
 		String getPostBody = wfsRequest.createGetFeaturePost().xmlText();
 		InputStream getFeatureResponse = sendWfsRequest(url, getPostBody);
+
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+		Document doc = docBuilder.parse(getFeatureResponse);
 	
 		DwdResponseResolver resolver = new DwdResponseResolver();
-		SpatioTemporalExtent timeAndBbox = resolver.generateSpatioTemporalExtent(getFeatureResponse, typeName);
+		SpatioTemporalExtent timeAndBbox = resolver.generateSpatioTemporalExtent(doc, typeName);
 
-		LOG.info("Start getCapabilities request");
+		LOG.debug("Start getCapabilities request");
 		String capPostBody = wfsRequest.createGetCapabilitiesPost().xmlText();
 		InputStream capResponse = sendWfsRequest(url, capPostBody);
 		
@@ -65,10 +73,10 @@ public class DwdWfsRequestor {
 		
 		String[] featureClearName = resolver.requestTypeName(capResponse, typeName);
 
-		LOG.info("Building DwdProductsMetaData Object");
+		LOG.debug("Building DwdProductsMetaData Object");
 		// create DwdProductsMetaData
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		metadata.setLayername(featureClearName[0]);
+		metadata.setLayerName(featureClearName[0]);
 		metadata.setParameter(featureClearName[1]);
 		// bbox
 		ArrayList<Float> extent = timeAndBbox.getbBox();
@@ -81,14 +89,14 @@ public class DwdWfsRequestor {
 
 		// serviceurl
 		metadata.setServiceUrl(url);
-		LOG.info("End of request()-Method - Return DwdProductsMetaData Object");
+		LOG.debug("End of request()-Method - Return DwdProductsMetaData Object");
 		return metadata;
 	}
 
 	/**
 	 * Delivers the post response depending on the outputformat (xml)
 	 * 
-	 * @param url         serviceURL
+	 * @param url serviceURL
 	 * @param postRequest post message (xml)
 	 * @return httpContent post response
 	 * @throws UnsupportedEncodingException

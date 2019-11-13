@@ -8,7 +8,6 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xmlbeans.XmlException;
-import org.jdom2.JDOMException;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import net.opengis.wfs.x20.GetFeatureDocument;
 
@@ -54,7 +52,7 @@ class DwdWfsRequestorBuilderTest {
 
 	@DisplayName("Test builder Method")
 	@Test
-	void testBuilder() throws JDOMException, IOException, XmlException, ParserConfigurationException, SAXException {
+	void testBuilder() throws IOException, XmlException {
 
 		GetFeatureDocument result = reader.createGetFeaturePost();
 

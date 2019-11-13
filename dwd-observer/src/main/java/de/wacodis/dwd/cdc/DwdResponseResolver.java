@@ -38,7 +38,7 @@ public class DwdResponseResolver {
 	
 	public String[] requestTypeName(InputStream capResponse, String typeName)
 			throws ParserConfigurationException, SAXException, IOException {
-		LOG.info("Resolve TypeName out of GetCapabilities Document");
+		LOG.debug("Resolve TypeName out of GetCapabilities Document");
 
 		// create Document to search for the correct Elements
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -81,14 +81,10 @@ public class DwdResponseResolver {
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
 	 */
-	public SpatioTemporalExtent generateSpatioTemporalExtent(InputStream getFeatureResponse, String typeName)
+	public SpatioTemporalExtent generateSpatioTemporalExtent(Document doc, String typeName)
 			throws IOException, SAXException, ParserConfigurationException {
-		LOG.info("Resolving the actual timeframe and bounding box out of GetFeature Document");
+		LOG.debug("Resolving the actual timeframe and bounding box out of GetFeature Document");
 		SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
-
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-		Document doc = docBuilder.parse(getFeatureResponse);
 
 		// BBOX
 		NodeList lowerNodes = doc.getElementsByTagName(LOWER_CORNER_TAG);

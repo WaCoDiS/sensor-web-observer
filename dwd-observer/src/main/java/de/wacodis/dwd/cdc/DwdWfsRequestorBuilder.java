@@ -31,222 +31,229 @@ import net.opengis.wfs.x20.GetFeatureType;
 import net.opengis.wfs.x20.QueryDocument;
 import net.opengis.wfs.x20.QueryType;
 
+/**
+ * Helps building a DWD WFS request for certain request parameters
+ */
 public class DwdWfsRequestorBuilder {
 
-	// class attributes
-	public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	public static final String TYPE_NAME_PREFIX = "CDC:VGSL_";
-	public static final String GEOMETRY_ATTRIBUTE = "CDC:GEOM";
-	public static final String TIMESTAMP_ATTRIBUTE = "CDC:ZEITSTEMPEL";
-	public static final String EPSG_URN = "urn:ogc:def:crs:EPSG::4326";
-	public static final String SERVICE_ATTRIBUTE = "WFS";
-	public static final String OUTPUT_FORMAT = "application/gml+xml; version=3.2";
+    // class attributes
+    public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    public static final String TYPE_NAME_PREFIX = "CDC:VGSL_";
+    public static final String GEOMETRY_ATTRIBUTE = "CDC:GEOM";
+    public static final String TIMESTAMP_ATTRIBUTE = "CDC:ZEITSTEMPEL";
+    public static final String EPSG_URN = "urn:ogc:def:crs:EPSG::4326";
+    public static final String SERVICE_ATTRIBUTE = "WFS";
+    public static final String OUTPUT_FORMAT = "application/gml+xml; version=3.2";
 
-	// attributes
-	String version;// &version=2.0.0
-	String typeName;// &typeName=CDC%3AVGSL_FX_MN003
-	List<String> bbox = new ArrayList<String>();// &bbox=51.200,6.700,51.500,7.300
-	DateTime startDate;
-	DateTime endDate;
-	ArrayList<String[]> namespaces = new ArrayList<String[]>();
-	ArrayList<String[]> attributes = new ArrayList<String[]>();
+    // attributes
+    String version;// &version=2.0.0
+    String typeName;// &typeName=CDC%3AVGSL_FX_MN003
+    List<String> bbox = new ArrayList<String>();// &bbox=51.200,6.700,51.500,7.300
+    DateTime startDate;
+    DateTime endDate;
+    ArrayList<String[]> namespaces = new ArrayList<String[]>();
+    ArrayList<String[]> attributes = new ArrayList<String[]>();
 
-	// constructor
-	public DwdWfsRequestorBuilder(DwdWfsRequestParams params) {
-		this.version = params.getVersion();
-		this.typeName = params.getTypeName();
-		// convert bbox from Float to String
-		for (int i = 0; i < params.getBbox().size(); i++) {
-			bbox.add(i, Float.toString(params.getBbox().get(i)));
-		}
-		this.startDate = params.getStartDate();
-		this.endDate = params.getEndDate();
-	}
-/**
- * Creates the HTTP post message for the getFeatureDocument by assembling the single xml-elements
- * 
- * @return getFeatureDoc	post body
- */
-	public GetFeatureDocument createGetFeaturePost() {
+    public DwdWfsRequestorBuilder(DwdWfsRequestParams params) {
+        this.version = params.getVersion();
+        this.typeName = params.getTypeName();
+        // convert bbox from Float to String
+        for (int i = 0; i < params.getBbox().size(); i++) {
+            bbox.add(i, Float.toString(params.getBbox().get(i)));
+        }
+        this.startDate = params.getStartDate();
+        this.endDate = params.getEndDate();
+    }
 
-		createXmlAttributesList();
+    /**
+     * Creates a {@link GetFeatureDocument} for a WFS GetFeature request assembling the single POSt body XML elements
+     *
+     * @return {@link GetFeatureDocument} for the WFS GetFeature request POST body
+     */
+    public GetFeatureDocument createGetFeaturePost() {
 
-		// <GetFeature>
-		GetFeatureDocument getFeatureDoc = GetFeatureDocument.Factory.newInstance();
-		GetFeatureType getFeature = getFeatureDoc.addNewGetFeature();
+        createXmlAttributesList();
 
-		// <Query>
-		QueryDocument queryDoc = QueryDocument.Factory.newInstance();
-		QueryType query = queryDoc.addNewQuery();
-		ArrayList<String> typeList = new ArrayList<String>();
-		typeList.add(TYPE_NAME_PREFIX + typeName);
+        // <GetFeature>
+        GetFeatureDocument getFeatureDoc = GetFeatureDocument.Factory.newInstance();
+        GetFeatureType getFeature = getFeatureDoc.addNewGetFeature();
 
-		// <Filter>
-		FilterDocument filterDocument = FilterDocument.Factory.newInstance();
-		FilterType filter = filterDocument.addNewFilter();
+        // <Query>
+        QueryDocument queryDoc = QueryDocument.Factory.newInstance();
+        QueryType query = queryDoc.addNewQuery();
+        ArrayList<String> typeList = new ArrayList<String>();
+        typeList.add(TYPE_NAME_PREFIX + typeName);
 
-		// <And>
-		AndDocument andDocument = AndDocument.Factory.newInstance();
-		BinaryLogicOpType andType = andDocument.addNewAnd();
+        // <Filter>
+        FilterDocument filterDocument = FilterDocument.Factory.newInstance();
+        FilterType filter = filterDocument.addNewFilter();
 
-		// <BBOX>
-		BBOXType bboxType = createBboxElement();
-		// </BBOX>
-		addXSAnyElement(andType, bboxType);
+        // <And>
+        AndDocument andDocument = AndDocument.Factory.newInstance();
+        BinaryLogicOpType andType = andDocument.addNewAnd();
 
-		// <PropertyIsBetween>
-		PropertyIsBetweenType propBetweenType = createPropertyIsBetweenElement();
-		// </PropertyIsBetween>
-		addXSAnyElement(andType, propBetweenType);
+        // <BBOX>
+        BBOXType bboxType = createBboxElement();
+        // </BBOX>
+        addXSAnyElement(andType, bboxType);
 
-		// </And>
-		filter.set(andDocument);
-		// </Filter>
-		query.set(filterDocument);
-		// </Query>
-		query.setTypeNames(typeList);
-		// </GetFeature>
-		getFeature.set(queryDoc);
+        // <PropertyIsBetween>
+        PropertyIsBetweenType propBetweenType = createPropertyIsBetweenElement();
+        // </PropertyIsBetween>
+        addXSAnyElement(andType, propBetweenType);
 
-		// Attributes for <GetFeature>
-		// namespaces
-		addAttributesToElement(getFeature);
-		return getFeatureDoc;
-	}
+        // </And>
+        filter.set(andDocument);
+        // </Filter>
+        query.set(filterDocument);
+        // </Query>
+        query.setTypeNames(typeList);
+        // </GetFeature>
+        getFeature.set(queryDoc);
 
-	/**
-	 * Add attributes and namespaces to the getFeature-Element
-	 * 
-	 * @param getFeature	getFeature-Element
-	 */
-	private void addAttributesToElement(GetFeatureType getFeature) {
-		XmlCursor cursor = getFeature.newCursor();
-		cursor.toNextToken();
-		// insert namespaces (prefix, url)
-		for (int i = 0; i < namespaces.size(); i++) {
-			cursor.insertNamespace(namespaces.get(i)[0], namespaces.get(i)[1]);
-		}
-		// insert attributes (prefix, attributename, attributevalue)
-		for (int i = 0; i < attributes.size(); i++) {
-			cursor.insertAttributeWithValue(attributes.get(i)[1], attributes.get(i)[0], attributes.get(i)[2]);
-		}
-		cursor.dispose();
-	}
-/**
- * Creates the PropertyIsBetween-element between start- and enddate
- * 
- * @return propBetweenType	PropertyIsBetween-Element
- */
-	private PropertyIsBetweenType createPropertyIsBetweenElement() {
+        // Attributes for <GetFeature>
+        // namespaces
+        addAttributesToElement(getFeature);
+        return getFeatureDoc;
+    }
 
-		PropertyIsBetweenDocument propBetweenDocument = PropertyIsBetweenDocument.Factory.newInstance();
-		PropertyIsBetweenType propBetweenType = propBetweenDocument.addNewPropertyIsBetween();
+    /**
+     * Add attributes and namespaces to the {@link GetFeatureType} element
+     *
+     * @param getFeature {@link GetFeatureType} of a WFS request
+     */
+    private void addAttributesToElement(GetFeatureType getFeature) {
+        XmlCursor cursor = getFeature.newCursor();
+        cursor.toNextToken();
+        // insert namespaces (prefix, url)
+        for (int i = 0; i < namespaces.size(); i++) {
+            cursor.insertNamespace(namespaces.get(i)[0], namespaces.get(i)[1]);
+        }
+        // insert attributes (prefix, attributename, attributevalue)
+        for (int i = 0; i < attributes.size(); i++) {
+            cursor.insertAttributeWithValue(attributes.get(i)[1], attributes.get(i)[0], attributes.get(i)[2]);
+        }
+        cursor.dispose();
+    }
 
-		// <ValueReference>
-		ValueReferenceDocument valueRefDocument2 = ValueReferenceDocument.Factory.newInstance();
-		valueRefDocument2.setValueReference(TIMESTAMP_ATTRIBUTE);
-		// </ValueReference>
+    /**
+     * Creates a {@link PropertyIsBetweenType} for a WFS GetFeature request
+     *
+     * @return {@link PropertyIsBetweenType}
+     */
+    private PropertyIsBetweenType createPropertyIsBetweenElement() {
 
-		// <Literal>
-		LiteralDocument litDoc = LiteralDocument.Factory.newInstance();
-		LiteralType litType1 = litDoc.addNewLiteral();
-		XmlString xmlString = XmlString.Factory.newValue(FORMATTER.print(startDate));
-		litType1.set(xmlString);
-		// </Literal>
+        PropertyIsBetweenDocument propBetweenDocument = PropertyIsBetweenDocument.Factory.newInstance();
+        PropertyIsBetweenType propBetweenType = propBetweenDocument.addNewPropertyIsBetween();
 
-		// <Literal>
-		LiteralDocument litDoc2 = LiteralDocument.Factory.newInstance();
-		LiteralType litType2 = litDoc2.addNewLiteral();
-		XmlString xmlString2 = XmlString.Factory.newValue(FORMATTER.print(endDate));
-		litType2.set(xmlString2);
-		// </Literal>
+        // <ValueReference>
+        ValueReferenceDocument valueRefDocument2 = ValueReferenceDocument.Factory.newInstance();
+        valueRefDocument2.setValueReference(TIMESTAMP_ATTRIBUTE);
+        // </ValueReference>
 
-		addXSAnyElement(propBetweenType, litType2);
-		addXSAnyElement(propBetweenType, litType1);
+        // <Literal>
+        LiteralDocument litDoc = LiteralDocument.Factory.newInstance();
+        LiteralType litType1 = litDoc.addNewLiteral();
+        XmlString xmlString = XmlString.Factory.newValue(FORMATTER.print(startDate));
+        litType1.set(xmlString);
+        // </Literal>
 
-		addXSAnyElement(propBetweenType, valueRefDocument2.getExpression());
-		return propBetweenType;
-	}
-/**
- * Creates the BBOX-element 
- * 
- * @return BBOXType		BBOX-Element
- */
-	private BBOXType createBboxElement() {
+        // <Literal>
+        LiteralDocument litDoc2 = LiteralDocument.Factory.newInstance();
+        LiteralType litType2 = litDoc2.addNewLiteral();
+        XmlString xmlString2 = XmlString.Factory.newValue(FORMATTER.print(endDate));
+        litType2.set(xmlString2);
+        // </Literal>
 
-		BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
-		BBOXType bboxType = bboxDocument.addNewBBOX();
+        addXSAnyElement(propBetweenType, litType2);
+        addXSAnyElement(propBetweenType, litType1);
 
-		// <ValueReference>
-		ValueReferenceDocument valueRefDocument = ValueReferenceDocument.Factory.newInstance();
-		valueRefDocument.setValueReference(GEOMETRY_ATTRIBUTE);
-		// </ValueReference>
+        addXSAnyElement(propBetweenType, valueRefDocument2.getExpression());
+        return propBetweenType;
+    }
 
-		// <Envelope>
-		EnvelopeDocument envDoc = EnvelopeDocument.Factory.newInstance();
-		EnvelopeType envType = envDoc.addNewEnvelope();
-		envType.setSrsName(EPSG_URN);
-		DirectPositionType lowerCorner = envType.addNewLowerCorner();
-		lowerCorner.setStringValue(bbox.get(0) + " " + bbox.get(1));
-		DirectPositionType upperCorner = envType.addNewUpperCorner();
-		upperCorner.setStringValue(bbox.get(2) + " " + bbox.get(3));
-		// </Envelope>
-		addXSAnyElement(bboxType, envType);
-		addXSAnyElement(bboxType, valueRefDocument.getExpression());
-		return bboxType;
-	}
-/**
- * Adds childelements to a target element
- * 
- * @param target	where the children have to be added
- * @param newChild	what has to be added
- */
-	protected void addXSAnyElement(XmlObject target, XmlObject newChild) {
-		XmlCursor childCur = newChild.newCursor();
+    /**
+     * Creates a {@link BBOXType} for a WFS GetFeature request
+     *
+     * @return {@link BBOXType}
+     */
+    private BBOXType createBboxElement() {
 
-		XmlCursor targetCur = target.newCursor();
-		targetCur.toNextToken();
+        BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
+        BBOXType bboxType = bboxDocument.addNewBBOX();
 
-		childCur.moveXml(targetCur);
+        // <ValueReference>
+        ValueReferenceDocument valueRefDocument = ValueReferenceDocument.Factory.newInstance();
+        valueRefDocument.setValueReference(GEOMETRY_ATTRIBUTE);
+        // </ValueReference>
 
-		childCur.dispose();
-		targetCur.dispose();
-	}
+        // <Envelope>
+        EnvelopeDocument envDoc = EnvelopeDocument.Factory.newInstance();
+        EnvelopeType envType = envDoc.addNewEnvelope();
+        envType.setSrsName(EPSG_URN);
+        DirectPositionType lowerCorner = envType.addNewLowerCorner();
+        lowerCorner.setStringValue(bbox.get(0) + " " + bbox.get(1));
+        DirectPositionType upperCorner = envType.addNewUpperCorner();
+        upperCorner.setStringValue(bbox.get(2) + " " + bbox.get(3));
+        // </Envelope>
+        addXSAnyElement(bboxType, envType);
+        addXSAnyElement(bboxType, valueRefDocument.getExpression());
+        return bboxType;
+    }
 
-	/**
-	 * Creates lists for the namespaces and attributes
-	 */
-	private void createXmlAttributesList() {
-		// namespaces
-		namespaces.add(new String[] { "xsi", "http://www.w3.org/2001/XMLSchema-instance" });
-		namespaces.add(new String[] { "", "http://www.opengis.net/wfs/2.0" });
-		namespaces.add(new String[] { "wfs", "http://www.opengis.net/wfs/2.0" });
-		namespaces.add(new String[] { "ows", "http://www.opengis.net/ows/1.1" });
-		namespaces.add(new String[] { "gml", "http://www.opengis.net/gml/3.2" });
-		namespaces.add(new String[] { "fes", "http://www.opengis.net/fes/2.0" });
-		namespaces.add(new String[] { "xlink", "http://www.w3.org/1999/xlink" });
-		namespaces.add(new String[] { "xs", "http://www.w3.org/2001/XMLSchema" });
-		namespaces.add(new String[] { "inspire_dls", "http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" });
-		namespaces.add(new String[] { "inspire_common", "http://inspire.ec.europa.eu/schemas/common/1.0" });
-		namespaces.add(new String[] { "CDC", "https://cdc.dwd.de" });
-		namespaces.add(new String[] { "ogc", "http://www.opengis.net/ogc" });
-		// attributes
-		attributes.add(new String[] { "xsi", "schemaLocation",
-				"http://www.opengis.net/wfs/2.0 https://cdc.dwd.de:443/geoserver/schemas/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd" });
-		attributes.add(new String[] { "", "service", SERVICE_ATTRIBUTE });
-		attributes.add(new String[] { "", "version", this.version });
-		attributes.add(new String[] { "", "outputFormat",OUTPUT_FORMAT});
-	}
-/**
- * Creates GetCapabilities post-message
- * 
- * @return getCapDoc
- */
-	public GetCapabilitiesDocument createGetCapabilitiesPost() {
-		GetCapabilitiesDocument getCapDoc = GetCapabilitiesDocument.Factory.newInstance();
-		GetCapabilitiesType getCapType = getCapDoc.addNewGetCapabilities();
-		getCapType.setService(SERVICE_ATTRIBUTE);
+    /**
+     * Adds childelements to a target element
+     *
+     * @param target   where the children have to be added
+     * @param newChild what has to be added
+     */
+    protected void addXSAnyElement(XmlObject target, XmlObject newChild) {
+        XmlCursor childCur = newChild.newCursor();
 
-		return getCapDoc;
-	}
+        XmlCursor targetCur = target.newCursor();
+        targetCur.toNextToken();
+
+        childCur.moveXml(targetCur);
+
+        childCur.dispose();
+        targetCur.dispose();
+    }
+
+    /**
+     * Creates lists for the namespaces and attributes
+     */
+    private void createXmlAttributesList() {
+        // namespaces
+        namespaces.add(new String[]{"xsi", "http://www.w3.org/2001/XMLSchema-instance"});
+        namespaces.add(new String[]{"", "http://www.opengis.net/wfs/2.0"});
+        namespaces.add(new String[]{"wfs", "http://www.opengis.net/wfs/2.0"});
+        namespaces.add(new String[]{"ows", "http://www.opengis.net/ows/1.1"});
+        namespaces.add(new String[]{"gml", "http://www.opengis.net/gml/3.2"});
+        namespaces.add(new String[]{"fes", "http://www.opengis.net/fes/2.0"});
+        namespaces.add(new String[]{"xlink", "http://www.w3.org/1999/xlink"});
+        namespaces.add(new String[]{"xs", "http://www.w3.org/2001/XMLSchema"});
+        namespaces.add(new String[]{"inspire_dls", "http://inspire.ec.europa.eu/schemas/inspire_dls/1.0"});
+        namespaces.add(new String[]{"inspire_common", "http://inspire.ec.europa.eu/schemas/common/1.0"});
+        namespaces.add(new String[]{"CDC", "https://cdc.dwd.de"});
+        namespaces.add(new String[]{"ogc", "http://www.opengis.net/ogc"});
+        // attributes
+        attributes.add(new String[]{"xsi", "schemaLocation",
+                "http://www.opengis.net/wfs/2.0 https://cdc.dwd.de:443/geoserver/schemas/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd"});
+        attributes.add(new String[]{"", "service", SERVICE_ATTRIBUTE});
+        attributes.add(new String[]{"", "version", this.version});
+        attributes.add(new String[]{"", "outputFormat", OUTPUT_FORMAT});
+    }
+
+    /**
+     * Creates GetCapabilities POST body
+     *
+     * @return {@link GetCapabilitiesDocument} for GetCapabilities POST request body
+     */
+    public GetCapabilitiesDocument createGetCapabilitiesPost() {
+        GetCapabilitiesDocument getCapDoc = GetCapabilitiesDocument.Factory.newInstance();
+        GetCapabilitiesType getCapType = getCapDoc.addNewGetCapabilities();
+        getCapType.setService(SERVICE_ATTRIBUTE);
+
+        return getCapDoc;
+    }
 }
