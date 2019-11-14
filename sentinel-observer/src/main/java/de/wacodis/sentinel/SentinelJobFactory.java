@@ -46,7 +46,7 @@ public class SentinelJobFactory implements JobFactory {
         // this should always be the case
         if (def.isPresent()) {
             CopernicusSubsetDefinition copDef = (CopernicusSubsetDefinition) def.get();
-            if (copDef.getMaximumCloudCoverage() > 0) {
+            if (copDef.getMaximumCloudCoverage() != null && copDef.getMaximumCloudCoverage() > 0) {
                 data.put(SentinelJob.MAX_CLOUD_COVERAGE_KEY, copDef.getMaximumCloudCoverage());
             }
             
