@@ -20,8 +20,7 @@ public class JobScheduler {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobScheduler.class);
 
-    private static final int DEFAULTEXECUTIONINTERVAL_SECONDS = 60 * 60;
-    private static final int DEFAULTMAXEXECUTIONINTERVAL_SECONDS = 60 * 60 * 24; // 24 hours 
+    private static final int DEFAULTEXECUTIONINTERVAL_SECONDS = 60 * 60; //1 hour, 3600 seconds
 
     @Autowired
     private QuartzServer wacodisQuartz;
@@ -57,7 +56,7 @@ public class JobScheduler {
         }
 
         //use default max interval if not set in config
-        int executionInterval = (this.intervalConf.getMaxInterval() > 0) ? calculateObservationInterval(job, data.getInt("executionInterval"), this.intervalConf.getMaxInterval()) : calculateObservationInterval(job, data.getInt("executionInterval"), DEFAULTMAXEXECUTIONINTERVAL_SECONDS);
+        int executionInterval = calculateObservationInterval(job, data.getInt("executionInterval"));
 
         LOG.info("Build new Trigger for wacodis job {} with execution interval: {} seconds", job.getId(), executionInterval);
 
@@ -73,8 +72,8 @@ public class JobScheduler {
     /**
      * @return interval in seconds
      */
-    private int calculateObservationInterval(WacodisJobDefinition job, int unadjustedInterval, int maxInterval) {
-        ObservationIntervalCalculator intervalCalc = new WacodisJobScheduleIntervalCalculator(new Duration(unadjustedInterval * 1000), new Duration(maxInterval * 1000)); //Duration constructor demands milliseconds
+    private int calculateObservationInterval(WacodisJobDefinition job, int unadjustedInterval) {
+        ObservationIntervalCalculator intervalCalc =  (this.intervalConf.getMaxInterval() > 0) ? new WacodisJobScheduleIntervalCalculator(new Duration(unadjustedInterval * 1000), new Duration(this.intervalConf.getMaxInterval() * 1000)) : new WacodisJobScheduleIntervalCalculator(new Duration(unadjustedInterval * 1000)); //Duration constructor demands milliseconds
         Duration interval = intervalCalc.calculateInterval(job);
         long intervalSeconds = interval.getStandardSeconds();
 
