@@ -16,9 +16,6 @@ public class ExecutionIntervalConfig {
     private int sensorWeb;
     private int sentinel;
     private int dwd;
-    private int sensorWebMax;
-    private int sentinelMax;
-    private int dwdMax;
     private int maxInterval;
     
 
@@ -44,30 +41,6 @@ public class ExecutionIntervalConfig {
 
     public void setDwd(int dwd) {
         this.dwd = dwd;
-    }
-
-    public int getSensorWebMax() {
-        return sensorWebMax;
-    }
-
-    public void setSensorWebMax(int sensorWebMax) {
-        this.sensorWebMax = sensorWebMax;
-    }
-
-    public int getSentinelMax() {
-        return sentinelMax;
-    }
-
-    public void setSentinelMax(int sentinelMax) {
-        this.sentinelMax = sentinelMax;
-    }
-
-    public int getDwdMax() {
-        return dwdMax;
-    }
-
-    public void setDwdMax(int dwdMax) {
-        this.dwdMax = dwdMax;
     }
 
     public int getMaxInterval() {
