@@ -30,6 +30,7 @@
         <spring-boot.version>2.0.4.RELEASE</spring-boot.version>
         <java.version>1.8</java.version>
         <springfox-version>2.8.0</springfox-version>
+        <surefire-plugin.version>2.22.1</surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -272,5 +273,15 @@
 
         </dependencies>
     </dependencyManagement>
+    
+    <build>
+        <plugins>
+            <!-- use surefire plugin version that supports JUnit 5 -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

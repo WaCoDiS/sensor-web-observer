@@ -29,3 +29,4 @@ nb*.xml
 
 .factorypath
 
+/datasource-observer-core/nbproject/
