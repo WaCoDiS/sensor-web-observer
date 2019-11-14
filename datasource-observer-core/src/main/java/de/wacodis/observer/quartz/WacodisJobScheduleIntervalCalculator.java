@@ -74,7 +74,7 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
 
     @Override
     public Duration calculateInterval(WacodisJobDefinition job) {
-        LOG.debug("calculating observation schedule for wacodis job {}, cron pattern: {}", job.getId(), job.getExecution().getPattern());
+        LOG.debug("calculating observation schedule for wacodis job {}", job.getId());
         Duration jobExecInterval = calculateJobExecutionInterval(job);
         Duration observationInterval = calculateObservationInterval(jobExecInterval);
 
@@ -101,17 +101,16 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
 
     private Duration calculateJobExecutionInterval(WacodisJobDefinition job) {
         Duration duration;
-
         CronDefinition unixCronDef = CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX);
         CronParser unixCronParser = new CronParser(unixCronDef);
+        ZonedDateTime now = ZonedDateTime.now();
 
-        String cronPattern = job.getExecution().getPattern();
-
-        if (cronPattern != null && !cronPattern.isEmpty()) {
+        if (isCronPatternProvided(job)) { 
             DateTime startDuration;
             DateTime endDuration;
 
-            ZonedDateTime now = ZonedDateTime.now();
+            String cronPattern = job.getExecution().getPattern();
+            
             cronPattern = cronPattern.trim();
             //get time frame from execution interval
             Cron jobCron = unixCronParser.parse(cronPattern);
@@ -133,18 +132,18 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
                 duration = new org.joda.time.Duration(startDuration, endDuration);
             } else {
                 LOG.debug("Cannot calculate previous execution for wacodis job {}, try to derive schedule from temporal coverage", job.getId());
-                duration = calculateDurationFromTemporalCoverage(job);
+                duration = calculateDurationFromTemporalCoverage(job, convertZonedDateTimeToDateTime(now));
             }
         } else {
             LOG.debug("No cron pattern provided for wacodis job {}, derive schedule from temporal coverage", job.getId());
             //get time frame from temporal coverage 
-            duration = calculateDurationFromTemporalCoverage(job);
+            duration = calculateDurationFromTemporalCoverage(job, convertZonedDateTimeToDateTime(now));
         }
 
         return duration;
     }
 
-    private Duration calculateDurationFromTemporalCoverage(WacodisJobDefinition job) {
+    private Duration calculateDurationFromTemporalCoverage(WacodisJobDefinition job, DateTime instant) {
         if (job.getTemporalCoverage() != null && job.getTemporalCoverage().getDuration() != null && !job.getTemporalCoverage().getDuration().isEmpty()) { //check if period is defined in job definition
             Period period = Period.parse(job.getTemporalCoverage().getDuration());
             return calculateDurationFromPeriod(period);
@@ -155,7 +154,10 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
     }
 
     private Duration calculateDurationFromPeriod(Period period, DateTime instant) {
-        return period.toStandardDuration();
+        DateTime start = instant;
+        DateTime end = instant.plus(period);
+
+        return new Duration(start, end);
     }
 
     private Duration calculateDurationFromPeriod(Period period) {
@@ -166,6 +168,15 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
         return new DateTime(
                 zonedDateTime.toInstant().toEpochMilli(),
                 DateTimeZone.forTimeZone(TimeZone.getTimeZone(zonedDateTime.getZone())));
+    }
+
+    private boolean isCronPatternProvided(WacodisJobDefinition job) {
+        if (job.getExecution() == null) {
+            return false;
+        } else {
+            String cronPattern = job.getExecution().getPattern();
+            return (cronPattern != null && !cronPattern.trim().isEmpty());
+        }
     }
 
 }
