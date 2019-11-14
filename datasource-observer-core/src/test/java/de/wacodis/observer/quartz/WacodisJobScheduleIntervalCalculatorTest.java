@@ -78,11 +78,11 @@ public class WacodisJobScheduleIntervalCalculatorTest {
         Duration unadjustedInterval = new Duration(3600 * 1000); //1 hour in millis
 
         WacodisJobScheduleIntervalCalculator instance = new WacodisJobScheduleIntervalCalculator(unadjustedInterval);
-        instance.setMaxExecutionInterval(new Duration(1)); //set short max interval
+        instance.setMaxObservationInterval(new Duration(1)); //set short max interval
 
         Duration adjustedInterval = instance.calculateInterval(job);
 
-        assertEquals(instance.getMaxExecutionInterval(), adjustedInterval);
+        assertEquals(instance.getMaxObservationInterval(), adjustedInterval);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class WacodisJobScheduleIntervalCalculatorTest {
 
         Duration adjustedInterval = instance.calculateInterval(job);
         //adjusted interval must not be shorter than unadjusted interval
-        assertEquals(instance.getUnajustedExecutionInterval(), adjustedInterval);
+        assertEquals(instance.getUnadustedInterval(), adjustedInterval);
     }
 
     @Test
