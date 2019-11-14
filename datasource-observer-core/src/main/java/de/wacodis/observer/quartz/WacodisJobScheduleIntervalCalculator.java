@@ -86,7 +86,7 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
     private Duration calculateObservationInterval(Duration jobExecutionInterval) {
         double daysInExecInterval = ((double) jobExecutionInterval.getMillis()) / (24 * 60 * 60 * 1000); //86400 seconds in 24 hours
 
-        double intervalMultiplicator = daysInExecInterval * this.dailyCoefficient;
+        double intervalMultiplicator = daysInExecInterval * Math.abs(this.dailyCoefficient);
         long adjustedInterval_Millis = (long) (intervalMultiplicator * unajustedExecutionInterval.getMillis());
         Duration adjustedObservationInterval = new Duration(adjustedInterval_Millis);
 
