@@ -101,7 +101,7 @@ public class WacodisJobScheduleIntervalCalculatorTest {
 
         Duration adjustedInterval = instance.calculateInterval(job);
         //adjusted interval must not be shorter than unadjusted interval
-        assertEquals(instance.getUnadustedInterval(), adjustedInterval);
+        assertEquals(instance.getUnadjustedInterval(), adjustedInterval);
     }
 
     @Test

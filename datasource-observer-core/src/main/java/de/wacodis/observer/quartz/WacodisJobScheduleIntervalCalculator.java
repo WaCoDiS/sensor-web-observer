@@ -35,7 +35,7 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
 
     private static final Logger LOG = LoggerFactory.getLogger(WacodisJobScheduleIntervalCalculator.class);
 
-    private Duration unadustedInterval;
+    private Duration unadjustedInterval;
     private Duration maxObservationInterval = new Duration(60 * 60 * 24 * 1000); //24 hours
     private double dailyCoefficient = 0.2;
 
@@ -44,7 +44,7 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
      * interval will never fall below the provided value
      */
     public WacodisJobScheduleIntervalCalculator(Duration unadjustedInterval) {
-        this.unadustedInterval = unadjustedInterval;
+        this.unadjustedInterval = unadjustedInterval;
     }
 
     /**
@@ -54,23 +54,23 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
      * provided value
      */
     public WacodisJobScheduleIntervalCalculator(Duration unadjustedInterval, Duration maxObservationInterval) {
-        this.unadustedInterval = unadjustedInterval;
+        this.unadjustedInterval = unadjustedInterval;
         this.maxObservationInterval = maxObservationInterval;
     }
 
     /* 
      * @return base interval to be adjusted, also adjusted interval will never fall below this value
      */
-    public Duration getUnadustedInterval() {
-        return unadustedInterval;
+    public Duration getUnadjustedInterval() {
+        return unadjustedInterval;
     }
 
     /**
-     * @param unadustedInterval base interval to be adjusted, also adjusted
+     * @param unadjustedInterval base interval to be adjusted, also adjusted
      * interval will never fall below the provided value
      */
-    public void setUnadustedInterval(Duration unadustedInterval) {
-        this.unadustedInterval = unadustedInterval;
+    public void setUnadjustedInterval(Duration unadjustedInterval) {
+        this.unadjustedInterval = unadjustedInterval;
     }
 
     /**
@@ -157,13 +157,13 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
         double daysInExecInterval = ((double) jobExecutionInterval.getMillis()) / (24 * 60 * 60 * 1000); //86400 seconds in 24 hours
 
         double intervalMultiplicator = daysInExecInterval * Math.abs(this.dailyCoefficient);
-        long adjustedInterval_Millis = (long) (intervalMultiplicator * unadustedInterval.getMillis());
+        long adjustedInterval_Millis = (long) (intervalMultiplicator * unadjustedInterval.getMillis());
         Duration adjustedObservationInterval = new Duration(adjustedInterval_Millis);
 
         if (adjustedObservationInterval.isLongerThan(maxObservationInterval)) { //constructor demands milliseconds
             return maxObservationInterval;
-        } else if (adjustedObservationInterval.isShorterThan(unadustedInterval)) {
-            return unadustedInterval;
+        } else if (adjustedObservationInterval.isShorterThan(unadjustedInterval)) {
+            return unadjustedInterval;
         } else {
             return adjustedObservationInterval;
         }
@@ -302,6 +302,6 @@ public class WacodisJobScheduleIntervalCalculator implements ObservationInterval
     }
 
     private Duration getDefaultInterval() {
-        return (this.unadustedInterval.isShorterThan(this.maxObservationInterval)) ? this.unadustedInterval : this.maxObservationInterval;
+        return (this.unadjustedInterval.isShorterThan(this.maxObservationInterval)) ? this.unadjustedInterval : this.maxObservationInterval;
     }
 }
