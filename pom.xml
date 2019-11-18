@@ -17,7 +17,8 @@
 		<module>datasource-observer-app</module>
 		<module>datasource-observer-core</module>
 		<module>data-models</module>
-	</modules>
+        <module>code-de-observer</module>
+    </modules>
 
 
 	<properties>
