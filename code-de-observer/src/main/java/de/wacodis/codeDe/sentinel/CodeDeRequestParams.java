@@ -1,4 +1,4 @@
-package sentinel;
+package de.wacodis.codeDe.sentinel;
 
 import org.joda.time.DateTime;
 
