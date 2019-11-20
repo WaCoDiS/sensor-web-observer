@@ -3,11 +3,16 @@ package de.wacodis.dwd.cdc;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.opengis.gml.x32.AbstractGMLDocument;
+import net.opengis.gml.x32.EnvelopeDocument;
+import net.opengis.wfs.x20.FeatureCollectionDocument;
+import org.apache.xmlbeans.XmlException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +24,12 @@ import org.xml.sax.SAXException;
 public class DwdResponseResolver {
 
 	final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
-	public static final String FEATURE_TYPE_TAG = "FeatureType";
-	public static final String TITLE_TAG = "Title";
-	public static final String NAME_TAG = "Name";
-	public static final String LOWER_CORNER_TAG = "gml:lowerCorner";
-	public static final String UPPER_CORNER_TAG = "gml:upperCorner";
+	private static final String FEATURE_TYPE_TAG = "FeatureType";
+	private static final String TITLE_TAG = "Title";
+	private static final String NAME_TAG = "Name";
+	private static final String LOWER_CORNER_TAG = "gml:lowerCorner";
+	private static final String UPPER_CORNER_TAG = "gml:upperCorner";
+    private static final String FEATURE_COLLECION_TAG = "wfs:FeatureCollection";
 
 	/**
 	 * Delivers a String Array consisting of <name>- and <title> values
@@ -138,7 +144,23 @@ public class DwdResponseResolver {
 		timeAndBbox.setTimeFrame(timeFrame);
 
 		return timeAndBbox;
-
 	}
+
+    /**
+     * Checks whether the WFS response {@link Document} contains a FeatureCollection or not
+     * @param doc the {@link Document} that contains the WFS response
+     * @return true if the FeatureColection withing the reponse is not empty.
+     * @throws SAXException if the WFS response does not contain a wfs:FeatureCollection tag
+     */
+	public boolean responseContainsFeatureCollection(Document doc) throws SAXException {
+	    if(!doc.getDocumentElement().getTagName().equals(FEATURE_COLLECION_TAG)){
+	        throw new SAXException("WFS response document does not contain tag: " + FEATURE_COLLECION_TAG);
+        }
+	    int numberReturned = Integer.parseInt(doc.getDocumentElement().getAttribute("numberReturned"));
+        if(numberReturned<=0){
+            return false;
+        }
+	    return true;
+    }
 
 }

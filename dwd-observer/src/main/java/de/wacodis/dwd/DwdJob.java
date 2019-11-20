@@ -145,14 +145,17 @@ public class DwdJob implements Job {
         try {
             // Request DWD WFS with request paramaters
             DwdProductsMetadata metadata = DwdWfsRequestor.request(serviceUrl, params);
+            if (metadata == null) {
+                LOG.info("No dataEnvelope to publish from DWD WFS response");
+            }
 
             // Decode DwdProductsMetadata to DwdDataEnvelope
             dataEnvelope = DwdProductsMetadataDecoder.decode(metadata);
-            LOG.debug("Publish new dataEnvelope:\n{}", dataEnvelope.toString());
+            LOG.info("Publish new dataEnvelope:\n{}", dataEnvelope.toString());
 
         } catch (IOException | ParserConfigurationException | SAXException | XmlException e) {
             LOG.error(e.getMessage());
-            LOG.debug("Error while request DWD WFS for URL " + serviceUrl + " with parameters: " + params, e);
+            LOG.debug("Error while performing DWD WFS request for URL " + serviceUrl + " with parameters: " + params, e);
         }
         return dataEnvelope;
     }
