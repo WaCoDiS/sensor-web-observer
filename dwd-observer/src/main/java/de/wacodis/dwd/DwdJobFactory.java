@@ -7,11 +7,13 @@ package de.wacodis.dwd;
 
 import java.util.Optional;
 
+import de.wacodis.observer.config.ExecutionIntervalConfig;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import de.wacodis.observer.core.JobFactory;
@@ -26,6 +28,9 @@ import de.wacodis.observer.model.WacodisJobDefinition;
 public class DwdJobFactory implements JobFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DwdJobFactory.class);
+
+    @Autowired
+    private ExecutionIntervalConfig intervalConfig;
 
     @Override
     public boolean supportsJobDefinition(WacodisJobDefinition job) {
@@ -53,9 +58,8 @@ public class DwdJobFactory implements JobFactory {
             data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
             data.put(DwdJob.SERVICE_URL_KEY, def.getServiceUrl());
             data.put(DwdJob.TEMPORAL_COVERAGE_KEY, job.getTemporalCoverage().getDuration());
+            data.put(DwdJob.EXECUTION_INTERVAL_KEY, intervalConfig.getDwd());
 
-            // Set Job execution interval depending on DWD Layer
-            data.put(DwdJob.EXECUTION_INTERVAL_KEY, 60 * 60 * 24);
             String extent = job.getAreaOfInterest().getExtent().get(1) + " "
                     + job.getAreaOfInterest().getExtent().get(0) + ","
                     + job.getAreaOfInterest().getExtent().get(3) + " "

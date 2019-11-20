@@ -11,6 +11,7 @@ public class ExecutionIntervalConfig {
 
     public int sensorWeb;
     public int sentinel;
+    public int dwd;
 
     public int getSensorWeb() {
         return sensorWeb;
@@ -26,6 +27,14 @@ public class ExecutionIntervalConfig {
 
     public void setSentinel(int sentinel) {
         this.sentinel = sentinel;
+    }
+
+    public int getDwd() {
+        return dwd;
+    }
+
+    public void setDwd(int dwd) {
+        this.dwd = dwd;
     }
 
 }
