@@ -75,7 +75,6 @@ public class DwdResponseResolver {
 	 * Determines the spatial and temporal extentn of the denoted feature
 	 * 
 	 * @param typeName name with prefix, e.g. CDC:VGSL_TT_TU_MN009
-	 * @param getFeatureResponse getFeature document
 	 * @return timeAndBbox spatial and temporal extent
 	 * @throws IOException
 	 * @throws SAXException

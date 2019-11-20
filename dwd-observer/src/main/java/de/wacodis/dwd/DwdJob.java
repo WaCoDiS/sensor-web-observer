@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.xmlbeans.XmlException;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
@@ -116,7 +117,7 @@ public class DwdJob implements Job {
         Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
         List<DateTime[]> interval = DwdTemporalResolutionHelper.getRequestIntervals(startDate, endDate, layerName);
 
-        LOG.info("Start requesting DWD data iteratively if the amount of data is too large.");
+        // Start requesting DWD data iteratively if the amount of data is too large
         if (interval != null) {
             for (int i = 0; i < interval.size(); i++) {
                 DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, interval.get(i)[0], interval.get(i)[1]);
@@ -147,10 +148,11 @@ public class DwdJob implements Job {
 
             // Decode DwdProductsMetadata to DwdDataEnvelope
             dataEnvelope = DwdProductsMetadataDecoder.decode(metadata);
-            LOG.debug("new dataEnvelope:\n{}", dataEnvelope.toString());
+            LOG.debug("Publish new dataEnvelope:\n{}", dataEnvelope.toString());
 
-        } catch (IOException | ParserConfigurationException | SAXException e) {
-            LOG.error("Error while performing DWD WFS request for DWD product metadata.");
+        } catch (IOException | ParserConfigurationException | SAXException | XmlException e) {
+            LOG.error(e.getMessage());
+            LOG.debug("Error while request DWD WFS for URL " + serviceUrl + " with parameters: " + params, e);
         }
         return dataEnvelope;
     }

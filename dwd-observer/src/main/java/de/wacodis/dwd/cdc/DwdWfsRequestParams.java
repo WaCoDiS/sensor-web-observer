@@ -81,4 +81,14 @@ public class DwdWfsRequestParams {
 		this.endDate = endDate;
 	}
 
+	@Override
+	public String toString() {
+		return "DwdWfsRequestParams{" +
+				"version='" + version + '\'' +
+				", typeName='" + typeName + '\'' +
+				", bbox=" + bbox +
+				", startDate=" + startDate +
+				", endDate=" + endDate +
+				'}';
+	}
 }
