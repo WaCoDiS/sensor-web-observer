@@ -25,18 +25,22 @@ import org.xml.sax.SAXException;
 class DwdResponseResolverTest {
 
 	private static DwdResponseResolver resolver;
+	private static DocumentBuilder docBuilder;
 	private String typeName = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + "FX_MN003";
 
 	@BeforeAll
-	static void setUp() {
+	static void setUp() throws ParserConfigurationException {
 		resolver = new DwdResponseResolver();
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		docBuilder = dbf.newDocumentBuilder();
 	}
 
 	@Test
 	void testRequestTypeName() throws ParserConfigurationException, SAXException, IOException {
 		// actual
 		InputStream getCapabilitiesStream = this.getClass().getResourceAsStream("/getCapabilities-test.xml");
-		String[] typenameArray = resolver.requestTypeName(getCapabilitiesStream, typeName);
+
+		String[] typenameArray = resolver.requestTypeName(docBuilder.parse(getCapabilitiesStream), typeName);
 		String name = typenameArray[0];
 		String title = typenameArray[1];
 		
@@ -89,25 +93,40 @@ class DwdResponseResolverTest {
 	}
 
 	@Test
-	void responseContainsFeatureCollectionForValidResponse() throws ParserConfigurationException, IOException, SAXException {
+	void testResponseContainsFeatureCollectionForValidResponse() throws  IOException, SAXException {
 		InputStream getFeatureResponse = this.getClass().getResourceAsStream("/getFeatureResult-test.xml");
 
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-		Document doc = docBuilder.parse(getFeatureResponse);
-
-		Assertions.assertTrue(resolver.responseContainsFeatureCollection(doc));
+		Assertions.assertTrue(resolver.responseContainsFeatureCollection(docBuilder.parse(getFeatureResponse)));
 	}
 
 	@Test
-	void responseContainsFeatureCollectionForEmptyResponse() throws ParserConfigurationException, IOException, SAXException {
+	void testResponseContainsFeatureCollectionForEmptyResponse() throws IOException, SAXException {
 		InputStream getFeatureResponse = this.getClass().getResourceAsStream("/getFeatureResultEmpty-test.xml");
 
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-		Document doc = docBuilder.parse(getFeatureResponse);
-
-		Assertions.assertFalse(resolver.responseContainsFeatureCollection(doc));
+		Assertions.assertFalse(resolver.responseContainsFeatureCollection(docBuilder.parse(getFeatureResponse)));
 	}
+
+	@Test
+	void testResponseContainsFeatureCollectionThrowsExceptionForInvalidResponse() {
+		InputStream getFeatureResponse = this.getClass().getResourceAsStream("/exceptionResponse-test.xml");
+
+		Assertions.assertThrows(SAXException.class, () -> resolver.responseContainsFeatureCollection(docBuilder.parse(getFeatureResponse)));
+	}
+
+
+	@Test
+	void testResponseContainsCapabilities() throws IOException, SAXException {
+		InputStream getCapabiltiesResponse = this.getClass().getResourceAsStream("/exceptionResponse-test.xml");
+
+		Assertions.assertTrue( resolver.responseContainsFeatureCollection(docBuilder.parse(getCapabiltiesResponse)));
+	}
+
+	@Test
+	void testResponseContainsCapabilitiesThrowsExceptionForInvalidResponse() {
+		InputStream getCapabiltiesResponse = this.getClass().getResourceAsStream("/exceptionResponse-test.xml");
+
+		Assertions.assertThrows(SAXException.class, () -> resolver.responseContainsFeatureCollection(docBuilder.parse(getCapabiltiesResponse)));
+	}
+
 
 }

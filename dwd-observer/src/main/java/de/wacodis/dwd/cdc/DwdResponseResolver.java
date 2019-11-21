@@ -16,40 +16,39 @@ import org.apache.xmlbeans.XmlException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+@Component
 public class DwdResponseResolver {
 
-	final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
+	final static Logger LOG = LoggerFactory.getLogger(DwdResponseResolver.class);
 	private static final String FEATURE_TYPE_TAG = "FeatureType";
 	private static final String TITLE_TAG = "Title";
 	private static final String NAME_TAG = "Name";
 	private static final String LOWER_CORNER_TAG = "gml:lowerCorner";
 	private static final String UPPER_CORNER_TAG = "gml:upperCorner";
     private static final String FEATURE_COLLECION_TAG = "wfs:FeatureCollection";
+	private static final String CAPABILITIES_TAG = "wfs:WFS_CAPABILITIES";
 
 	/**
 	 * Delivers a String Array consisting of <name>- and <title> values
 	 * 
 	 * @param typeName name with prefix, e.g. CDC:VGSL_TT_TU_MN009
-	 * @param capResponse getCapabilities document
+	 * @param doc GetCapabilities response document
 	 * @return featureTypeName <name> and <title> of the denoted feature
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
 	 */
 	
-	public String[] requestTypeName(InputStream capResponse, String typeName)
+	public String[] requestTypeName(Document doc, String typeName)
 			throws ParserConfigurationException, SAXException, IOException {
 		LOG.debug("Resolve TypeName out of GetCapabilities Document");
 
-		// create Document to search for the correct Elements
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-		Document doc = docBuilder.parse(capResponse);
 		// initialize return attribute
 		String[] featureTypeName = new String[2];
 
@@ -79,15 +78,11 @@ public class DwdResponseResolver {
 
 	/**
 	 * Determines the spatial and temporal extentn of the denoted feature
-	 * 
+	 * @param doc GetFeature response document
 	 * @param typeName name with prefix, e.g. CDC:VGSL_TT_TU_MN009
 	 * @return timeAndBbox spatial and temporal extent
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
 	 */
-	public SpatioTemporalExtent generateSpatioTemporalExtent(Document doc, String typeName)
-			throws IOException, SAXException, ParserConfigurationException {
+	public SpatioTemporalExtent generateSpatioTemporalExtent(Document doc, String typeName) {
 		LOG.debug("Resolving the actual timeframe and bounding box out of GetFeature Document");
 		SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
 
@@ -149,12 +144,12 @@ public class DwdResponseResolver {
     /**
      * Checks whether the WFS response {@link Document} contains a FeatureCollection or not
      * @param doc the {@link Document} that contains the WFS response
-     * @return true if the FeatureColection withing the reponse is not empty.
+     * @return true if the response document contains a FeatureCollection and the collection is not empty
      * @throws SAXException if the WFS response does not contain a wfs:FeatureCollection tag
      */
 	public boolean responseContainsFeatureCollection(Document doc) throws SAXException {
 	    if(!doc.getDocumentElement().getTagName().equals(FEATURE_COLLECION_TAG)){
-	        throw new SAXException("WFS response document does not contain tag: " + FEATURE_COLLECION_TAG);
+	        throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", FEATURE_COLLECION_TAG, doc.getTextContent()));
         }
 	    int numberReturned = Integer.parseInt(doc.getDocumentElement().getAttribute("numberReturned"));
         if(numberReturned<=0){
@@ -162,5 +157,19 @@ public class DwdResponseResolver {
         }
 	    return true;
     }
+
+	/**
+	 * Checks whether the WFS response {@link Document} contains WFS_Capabilities or not
+	 * @param doc the {@link Document} that contains the WFS response
+	 * @return true if the response document contains WFS_Capabilities
+	 * @throws SAXException if the WFS response does not contain a wfs:WFS_Capabilities tag
+	 */
+	public boolean responseContainsCapabilities(Document doc) throws SAXException {
+		if(!doc.getDocumentElement().getTagName().equals(CAPABILITIES_TAG)){
+			throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", CAPABILITIES_TAG, doc.getTextContent()));
+		}
+
+		return true;
+	}
 
 }
