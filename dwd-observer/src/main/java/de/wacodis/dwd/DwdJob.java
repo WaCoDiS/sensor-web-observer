@@ -56,6 +56,9 @@ public class DwdJob implements Job {
     @Autowired
     private PublisherChannel pub;
 
+    @Autowired
+    private DwdWfsRequestor requestor;
+
     @Override
     public void execute(JobExecutionContext jec) throws JobExecutionException {
         LOG.debug("Start DwdJob's execute()");
@@ -137,14 +140,14 @@ public class DwdJob implements Job {
      * Request DWD metadata from an WFS and create a {@link DwdDataEnvelope}
      *
      * @param serviceUrl the DWD WFS service URL
-     * @param params
+     * @param params parameters to use for DWD WFS request
      * @return
      */
     private DwdDataEnvelope requestDwdMetadata(String serviceUrl, DwdWfsRequestParams params) {
         DwdDataEnvelope dataEnvelope = null;
         try {
             // Request DWD WFS with request paramaters
-            DwdProductsMetadata metadata = DwdWfsRequestor.request(serviceUrl, params);
+            DwdProductsMetadata metadata = requestor.request(serviceUrl, params);
             if (metadata == null) {
                 LOG.info("No dataEnvelope to publish from DWD WFS response");
             }
@@ -153,7 +156,7 @@ public class DwdJob implements Job {
             dataEnvelope = DwdProductsMetadataDecoder.decode(metadata);
             LOG.info("Publish new dataEnvelope:\n{}", dataEnvelope.toString());
 
-        } catch (IOException | ParserConfigurationException | SAXException | XmlException e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             LOG.error(e.getMessage());
             LOG.debug("Error while performing DWD WFS request for URL " + serviceUrl + " with parameters: " + params, e);
         }

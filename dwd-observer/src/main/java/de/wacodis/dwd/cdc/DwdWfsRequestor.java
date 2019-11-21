@@ -25,6 +25,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -34,9 +37,15 @@ import org.xml.sax.SAXException;
  *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
-public class DwdWfsRequestor {
+@Component
+public class DwdWfsRequestor implements InitializingBean {
 
 	final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
+
+	@Autowired
+	private DwdResponseResolver responseResolver;
+
+	private DocumentBuilder docBuilder;
 
 	/**
 	 * Performs a query with the given parameters
@@ -48,36 +57,34 @@ public class DwdWfsRequestor {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	public static DwdProductsMetadata request(String url, DwdWfsRequestParams params)
+	public DwdProductsMetadata request(String url, DwdWfsRequestParams params)
 			throws IOException, ParserConfigurationException, SAXException {
-		LOG.debug("Start Buildung Connection Parameters for WFS Service");
 		String typeName = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + params.getTypeName();
+		DwdProductsMetadata metadata = new DwdProductsMetadata();
 
 		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
-		LOG.debug("Start getFeature request");
+
 		String getPostBody = wfsRequest.createGetFeaturePost().xmlText();
 		InputStream getFeatureResponse = sendWfsRequest(url, getPostBody);
+		Document getFeatureDoc = docBuilder.parse(getFeatureResponse);
 
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-		Document doc = docBuilder.parse(getFeatureResponse);
-	
-		DwdResponseResolver resolver = new DwdResponseResolver();
-		SpatioTemporalExtent timeAndBbox = resolver.generateSpatioTemporalExtent(doc, typeName);
+		if(!responseResolver.responseContainsFeatureCollection(getFeatureDoc)){
+			return null;
+		}
+		SpatioTemporalExtent timeAndBbox = responseResolver.generateSpatioTemporalExtent(getFeatureDoc, typeName);
 
-		LOG.debug("Start getCapabilities request");
 		String capPostBody = wfsRequest.createGetCapabilitiesPost().xmlText();
 		InputStream capResponse = sendWfsRequest(url, capPostBody);
-		
-		// typename and clearname
-		
-		String[] featureClearName = resolver.requestTypeName(capResponse, typeName);
+		Document getCapDoc = docBuilder.parse(getFeatureResponse);
 
-		LOG.debug("Building DwdProductsMetaData Object");
-		// create DwdProductsMetaData
-		DwdProductsMetadata metadata = new DwdProductsMetadata();
-		metadata.setLayerName(featureClearName[0]);
-		metadata.setParameter(featureClearName[1]);
+		if(responseResolver.responseContainsCapabilities(getCapDoc)){
+			// typename and clearname
+			String[] featureClearName = responseResolver.requestTypeName(getCapDoc, typeName);
+
+			metadata.setLayerName(featureClearName[0]);
+			metadata.setParameter(featureClearName[1]);
+		}
+
 		// bbox
 		ArrayList<Float> extent = timeAndBbox.getbBox();
 		metadata.setExtent(extent.get(0), extent.get(1), extent.get(2), extent.get(3));
@@ -89,7 +96,7 @@ public class DwdWfsRequestor {
 
 		// serviceurl
 		metadata.setServiceUrl(url);
-		LOG.debug("End of request()-Method - Return DwdProductsMetaData Object");
+
 		return metadata;
 	}
 
@@ -103,7 +110,7 @@ public class DwdWfsRequestor {
 	 * @throws IOException
 	 * @throws ClientProtocolException
 	 */
-	protected static InputStream sendWfsRequest(String url, String postRequest)
+	protected InputStream sendWfsRequest(String url, String postRequest)
 			throws UnsupportedEncodingException, IOException, ClientProtocolException {
 		// contact http-client
 		CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -117,5 +124,11 @@ public class DwdWfsRequestor {
 		HttpEntity responseEntity = response.getEntity(); // fill http-Object (status, parameters, content)
 		InputStream httpContent = responseEntity.getContent(); // ask for content
 		return httpContent;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		this.docBuilder = dbf.newDocumentBuilder();
 	}
 }
