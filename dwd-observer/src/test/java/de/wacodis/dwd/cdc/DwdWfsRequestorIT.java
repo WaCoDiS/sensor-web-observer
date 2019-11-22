@@ -29,7 +29,7 @@ public class DwdWfsRequestorIT {
 	
 
 	@BeforeAll
-	static void setup() throws ParseException {
+	static void setup() throws Exception {
 		
 		params = new DwdWfsRequestParams();
 		params.setVersion("2.0.0");
@@ -52,7 +52,7 @@ public class DwdWfsRequestorIT {
 
 		reader = new DwdWfsRequestorBuilder(params);
 		requestor = new DwdWfsRequestor();
-
+		requestor.afterPropertiesSet();
 	}
 
 	@DisplayName("Test request Method")
@@ -89,7 +89,10 @@ public class DwdWfsRequestorIT {
 		// ClearName
 		Assertions.assertEquals(metadata.getParameter(), result.getParameter());
 		// bbox
-		Assertions.assertEquals(metadata.getEnvelope(), result.getEnvelope());
+		Assertions.assertEquals(metadata.getEnvelope().getMinLon(), result.getEnvelope().getMinLon());
+		Assertions.assertEquals(metadata.getEnvelope().getMinLat(), result.getEnvelope().getMinLat());
+		Assertions.assertEquals(metadata.getEnvelope().getMaxLon(), result.getEnvelope().getMaxLon());
+		Assertions.assertEquals(metadata.getEnvelope().getMaxLat(), result.getEnvelope().getMaxLat());
 		// time
 		// is the startDate of the feature timeframe between the query startDate and
 		// endDate

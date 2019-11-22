@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,9 +46,6 @@ public class DwdWfsRequestor implements InitializingBean {
 
     final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
 
-    @Autowired
-    private DwdResponseResolver responseResolver;
-
     private DocumentBuilder docBuilder;
 
     /**
@@ -62,6 +60,7 @@ public class DwdWfsRequestor implements InitializingBean {
      */
     public DwdProductsMetadata request(String url, DwdWfsRequestParams params)
             throws IOException, ParserConfigurationException, SAXException {
+        DwdResponseResolver responseResolver = new DwdResponseResolver();
         String typeName = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + params.getTypeName();
         DwdProductsMetadata metadata = new DwdProductsMetadata();
 
@@ -78,7 +77,7 @@ public class DwdWfsRequestor implements InitializingBean {
 
         String capPostBody = wfsRequest.createGetCapabilitiesPost().xmlText();
         InputStream capResponse = sendWfsRequest(url, capPostBody);
-        Document getCapDoc = docBuilder.parse(getFeatureResponse);
+        Document getCapDoc = docBuilder.parse(capResponse);
 
         if (responseResolver.responseContainsCapabilities(getCapDoc)) {
             // typename and clearname
