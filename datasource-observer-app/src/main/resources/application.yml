@@ -50,7 +50,7 @@ datasource-observer:
     interval:
       sensorWeb: 3600
       sentinel: 60
-      dwd: 60
+      dwd: 3600
   sentinelhub:
     base-url: https://scihub.copernicus.eu/apihub/
     user: testuser
