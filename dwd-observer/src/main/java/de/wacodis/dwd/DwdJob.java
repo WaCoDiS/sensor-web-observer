@@ -90,23 +90,23 @@ public class DwdJob implements Job {
         Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 
         DateTime endDate = DateTime.now();
-		DateTime startDate = null;
-		// If there was a Job execution before, consider the latest request
-		// end date as start date for the current request.
-		// Else, calculate the start date for an initial request by taking a
-		// certain period into account
-		if(jobDataMap.get(LATEST_REQUEST_END_DATE) != null){
-			startDate = (DateTime) jobDataMap.get(LATEST_REQUEST_END_DATE);
-		 }else{
-			startDate = endDate.withPeriodAdded(period, -1);
-		}
-		jobDataMap.put(LATEST_REQUEST_END_DATE, endDate);
+        DateTime startDate = null;
+        // If there was a Job execution before, consider the latest request
+        // end date as start date for the current request.
+        // Else, calculate the start date for an initial request by taking a
+        // certain period into account
+        if (jobDataMap.get(LATEST_REQUEST_END_DATE) != null) {
+            startDate = (DateTime) jobDataMap.get(LATEST_REQUEST_END_DATE);
+        } else {
+            startDate = endDate.withPeriodAdded(period, -1);
+        }
+        jobDataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
         this.createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
     }
 
     /**
-     * Create the {@link DwdDataEnvelope} for a set of request parameters
+     * Create and publish the {@link DwdDataEnvelope} for a set of request parameters
      *
      * @param version    version number of WFS - usually 2.0.0
      * @param layerName  short designation of layer
@@ -140,7 +140,7 @@ public class DwdJob implements Job {
      * Request DWD metadata from an WFS and create a {@link DwdDataEnvelope}
      *
      * @param serviceUrl the DWD WFS service URL
-     * @param params parameters to use for DWD WFS request
+     * @param params     parameters to use for DWD WFS request
      * @return
      */
     private DwdDataEnvelope requestDwdMetadata(String serviceUrl, DwdWfsRequestParams params) {

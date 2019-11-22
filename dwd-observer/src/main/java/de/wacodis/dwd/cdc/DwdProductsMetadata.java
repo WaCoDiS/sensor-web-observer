@@ -17,8 +17,7 @@ import org.joda.time.DateTime;
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
 public class DwdProductsMetadata {
-    //TODO: define required station metadata
-	
+
 	private String serviceUrl;
 	private String layerName;
 	private String parameter;

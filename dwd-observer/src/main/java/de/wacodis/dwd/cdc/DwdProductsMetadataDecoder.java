@@ -12,18 +12,23 @@ import de.wacodis.observer.model.AbstractDataEnvelopeTimeFrame;
 import de.wacodis.observer.model.DwdDataEnvelope;
 
 /**
- * Decodes DWD products metadata into a DataEnvelope
+ * Decoder for DWD product metadata into a DataEnvelope
  *
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
 public class DwdProductsMetadataDecoder {
-    
+
+	/**
+	 * Decodes {@link DwdProductsMetadata} to {@link DwdDataEnvelope}
+	 * @param metadata the {@link DwdProductsMetadata} to be decoded
+	 * @return {@link DwdDataEnvelope}
+	 */
     public static DwdDataEnvelope decode(DwdProductsMetadata metadata){
-    	
+
     	// create objects
     	DwdDataEnvelope dwdDE = new DwdDataEnvelope();
     	AbstractDataEnvelopeAreaOfInterest extent = new AbstractDataEnvelopeAreaOfInterest();
-    	
+
     	// serviceUrl
     	dwdDE.setServiceUrl(metadata.getServiceUrl());
     	// layername and clear text
@@ -39,7 +44,7 @@ public class DwdProductsMetadataDecoder {
     	timeframe.setStartTime(startDate);
     	timeframe.setEndTime(endDate);
     	dwdDE.setTimeFrame(timeframe);
-    	
+
         return dwdDE;
     }
 

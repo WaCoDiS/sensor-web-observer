@@ -40,95 +40,95 @@ import org.xml.sax.SAXException;
 @Component
 public class DwdWfsRequestor implements InitializingBean {
 
-	final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
+    final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
 
-	@Autowired
-	private DwdResponseResolver responseResolver;
+    @Autowired
+    private DwdResponseResolver responseResolver;
 
-	private DocumentBuilder docBuilder;
+    private DocumentBuilder docBuilder;
 
-	/**
-	 * Performs a query with the given parameters
-	 *
-	 * @param url    DWD CDC FeatureService URL
-	 * @param params Paramaters for the FeatureService URL
-	 * @return metadata for the found stationary weather data
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 */
-	public DwdProductsMetadata request(String url, DwdWfsRequestParams params)
-			throws IOException, ParserConfigurationException, SAXException {
-		String typeName = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + params.getTypeName();
-		DwdProductsMetadata metadata = new DwdProductsMetadata();
+    /**
+     * Performs a query with the given parameters
+     *
+     * @param url    DWD CDC FeatureService URL
+     * @param params Paramaters for the FeatureService URL
+     * @return metadata for the found stationary weather data
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     */
+    public DwdProductsMetadata request(String url, DwdWfsRequestParams params)
+            throws IOException, ParserConfigurationException, SAXException {
+        String typeName = DwdWfsRequestorBuilder.TYPE_NAME_PREFIX + params.getTypeName();
+        DwdProductsMetadata metadata = new DwdProductsMetadata();
 
-		DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
+        DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
 
-		String getPostBody = wfsRequest.createGetFeaturePost().xmlText();
-		InputStream getFeatureResponse = sendWfsRequest(url, getPostBody);
-		Document getFeatureDoc = docBuilder.parse(getFeatureResponse);
+        String getPostBody = wfsRequest.createGetFeaturePost().xmlText();
+        InputStream getFeatureResponse = sendWfsRequest(url, getPostBody);
+        Document getFeatureDoc = docBuilder.parse(getFeatureResponse);
 
-		if(!responseResolver.responseContainsFeatureCollection(getFeatureDoc)){
-			return null;
-		}
-		SpatioTemporalExtent timeAndBbox = responseResolver.generateSpatioTemporalExtent(getFeatureDoc, typeName);
+        if (!responseResolver.responseContainsFeatureCollection(getFeatureDoc)) {
+            return null;
+        }
+        SpatioTemporalExtent timeAndBbox = responseResolver.generateSpatioTemporalExtent(getFeatureDoc, typeName);
 
-		String capPostBody = wfsRequest.createGetCapabilitiesPost().xmlText();
-		InputStream capResponse = sendWfsRequest(url, capPostBody);
-		Document getCapDoc = docBuilder.parse(getFeatureResponse);
+        String capPostBody = wfsRequest.createGetCapabilitiesPost().xmlText();
+        InputStream capResponse = sendWfsRequest(url, capPostBody);
+        Document getCapDoc = docBuilder.parse(getFeatureResponse);
 
-		if(responseResolver.responseContainsCapabilities(getCapDoc)){
-			// typename and clearname
-			String[] featureClearName = responseResolver.requestTypeName(getCapDoc, typeName);
+        if (responseResolver.responseContainsCapabilities(getCapDoc)) {
+            // typename and clearname
+            String[] featureClearName = responseResolver.requestTypeName(getCapDoc, typeName);
 
-			metadata.setLayerName(featureClearName[0]);
-			metadata.setParameter(featureClearName[1]);
-		}
+            metadata.setLayerName(featureClearName[0]);
+            metadata.setParameter(featureClearName[1]);
+        }
 
-		// bbox
-		ArrayList<Float> extent = timeAndBbox.getbBox();
-		metadata.setExtent(extent.get(0), extent.get(1), extent.get(2), extent.get(3));
+        // bbox
+        ArrayList<Float> extent = timeAndBbox.getbBox();
+        metadata.setExtent(extent.get(0), extent.get(1), extent.get(2), extent.get(3));
 
-		// timeframe
-		ArrayList<DateTime> timeFrame = timeAndBbox.getTimeFrame();
-		metadata.setStartDate(timeFrame.get(0));
-		metadata.setEndDate(timeFrame.get(1));
+        // timeframe
+        ArrayList<DateTime> timeFrame = timeAndBbox.getTimeFrame();
+        metadata.setStartDate(timeFrame.get(0));
+        metadata.setEndDate(timeFrame.get(1));
 
-		// serviceurl
-		metadata.setServiceUrl(url);
+        // serviceurl
+        metadata.setServiceUrl(url);
 
-		return metadata;
-	}
+        return metadata;
+    }
 
-	/**
-	 * Delivers the post response depending on the outputformat (xml)
-	 * 
-	 * @param url serviceURL
-	 * @param postRequest post message (xml)
-	 * @return httpContent post response
-	 * @throws UnsupportedEncodingException
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 */
-	protected InputStream sendWfsRequest(String url, String postRequest)
-			throws UnsupportedEncodingException, IOException, ClientProtocolException {
-		// contact http-client
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost(url);
-		httpPost.addHeader("content-type", "application/xml");
-		// create PostMessage
-		StringEntity entity = new StringEntity(postRequest);
-		httpPost.setEntity(entity);
-		HttpResponse response = httpclient.execute(httpPost);
+    /**
+     * Delivers the post response depending on the outputformat (xml)
+     *
+     * @param url         serviceURL
+     * @param postRequest post message (xml)
+     * @return httpContent post response
+     * @throws UnsupportedEncodingException
+     * @throws IOException
+     * @throws ClientProtocolException
+     */
+    protected InputStream sendWfsRequest(String url, String postRequest)
+            throws UnsupportedEncodingException, IOException, ClientProtocolException {
+        // contact http-client
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.addHeader("content-type", "application/xml");
+        // create PostMessage
+        StringEntity entity = new StringEntity(postRequest);
+        httpPost.setEntity(entity);
+        HttpResponse response = httpclient.execute(httpPost);
 
-		HttpEntity responseEntity = response.getEntity(); // fill http-Object (status, parameters, content)
-		InputStream httpContent = responseEntity.getContent(); // ask for content
-		return httpContent;
-	}
+        HttpEntity responseEntity = response.getEntity(); // fill http-Object (status, parameters, content)
+        InputStream httpContent = responseEntity.getContent(); // ask for content
+        return httpContent;
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		this.docBuilder = dbf.newDocumentBuilder();
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        this.docBuilder = dbf.newDocumentBuilder();
+    }
 }

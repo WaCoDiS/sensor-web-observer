@@ -109,7 +109,7 @@ public class DwdTemporalResolutionHelper {
         int timeInterval = DwdTemporalResolutionHelper.getIntervalInHours(resolution);
         int intervalCount = (int) (hourSum / timeInterval);
 
-        if(intervalCount == 0){
+        if (intervalCount == 0) {
             DateTime[] eachIntervalDates = {startDate, endDate}; // will be probably overwritten
             outputList.add(eachIntervalDates); // put first value into list
             return outputList;
@@ -127,7 +127,7 @@ public class DwdTemporalResolutionHelper {
             outputList.add(eachIntervalDates);
         }
 
-        if(hourSum % timeInterval != 0){
+        if (hourSum % timeInterval != 0) {
             eachIntervalDates = new DateTime[2];
             eachIntervalDates[0] = outputList.get(outputList.size() - 1)[1];
             eachIntervalDates[1] = endDate;

@@ -25,151 +25,154 @@ import org.xml.sax.SAXException;
 @Component
 public class DwdResponseResolver {
 
-	final static Logger LOG = LoggerFactory.getLogger(DwdResponseResolver.class);
-	private static final String FEATURE_TYPE_TAG = "FeatureType";
-	private static final String TITLE_TAG = "Title";
-	private static final String NAME_TAG = "Name";
-	private static final String LOWER_CORNER_TAG = "gml:lowerCorner";
-	private static final String UPPER_CORNER_TAG = "gml:upperCorner";
+    final static Logger LOG = LoggerFactory.getLogger(DwdResponseResolver.class);
+    private static final String FEATURE_TYPE_TAG = "FeatureType";
+    private static final String TITLE_TAG = "Title";
+    private static final String NAME_TAG = "Name";
+    private static final String LOWER_CORNER_TAG = "gml:lowerCorner";
+    private static final String UPPER_CORNER_TAG = "gml:upperCorner";
     private static final String FEATURE_COLLECION_TAG = "wfs:FeatureCollection";
-	private static final String CAPABILITIES_TAG = "wfs:WFS_CAPABILITIES";
+    private static final String CAPABILITIES_TAG = "wfs:WFS_CAPABILITIES";
 
-	/**
-	 * Delivers a String Array consisting of <name>- and <title> values
-	 * 
-	 * @param typeName name with prefix, e.g. CDC:VGSL_TT_TU_MN009
-	 * @param doc GetCapabilities response document
-	 * @return featureTypeName <name> and <title> of the denoted feature
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
-	 */
-	
-	public String[] requestTypeName(Document doc, String typeName)
-			throws ParserConfigurationException, SAXException, IOException {
-		LOG.debug("Resolve TypeName out of GetCapabilities Document");
+    /**
+     * Delivers a String Array consisting of <name>- and <title> values
+     *
+     * @param typeName name with prefix, e.g. CDC:VGSL_TT_TU_MN009
+     * @param doc      GetCapabilities response document
+     * @return featureTypeName <name> and <title> of the denoted feature
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
 
-		// initialize return attribute
-		String[] featureTypeName = new String[2];
+    public String[] requestTypeName(Document doc, String typeName)
+            throws ParserConfigurationException, SAXException, IOException {
+        LOG.debug("Resolve TypeName out of GetCapabilities Document");
 
-		// search all FeatureType elements
-		NodeList nodes = doc.getElementsByTagName(FEATURE_TYPE_TAG);
-		for (int i = 0; i < nodes.getLength(); i++) {
-			// check content of childnodes <name> and <title> of every <FeatureType>
-			Element featureType = (Element) nodes.item(i);
+        // initialize return attribute
+        String[] featureTypeName = new String[2];
 
-			NodeList titleNodes = featureType.getElementsByTagName(TITLE_TAG);
-			String title = titleNodes.item(0).getTextContent();
+        // search all FeatureType elements
+        NodeList nodes = doc.getElementsByTagName(FEATURE_TYPE_TAG);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            // check content of childnodes <name> and <title> of every <FeatureType>
+            Element featureType = (Element) nodes.item(i);
 
-			NodeList NameNodes = featureType.getElementsByTagName(NAME_TAG);
-			String name = NameNodes.item(0).getTextContent();
+            NodeList titleNodes = featureType.getElementsByTagName(TITLE_TAG);
+            String title = titleNodes.item(0).getTextContent();
 
-			// search for the correct typeName
-			if (name.equals(typeName)) {
-				// fill return attribute
-				featureTypeName[0] = name; // <name>
-				featureTypeName[1] = title; // <title>
-			}
+            NodeList NameNodes = featureType.getElementsByTagName(NAME_TAG);
+            String name = NameNodes.item(0).getTextContent();
 
-		}
+            // search for the correct typeName
+            if (name.equals(typeName)) {
+                // fill return attribute
+                featureTypeName[0] = name; // <name>
+                featureTypeName[1] = title; // <title>
+            }
 
-		return featureTypeName;
-	}
+        }
 
-	/**
-	 * Determines the spatial and temporal extentn of the denoted feature
-	 * @param doc GetFeature response document
-	 * @param typeName name with prefix, e.g. CDC:VGSL_TT_TU_MN009
-	 * @return timeAndBbox spatial and temporal extent
-	 */
-	public SpatioTemporalExtent generateSpatioTemporalExtent(Document doc, String typeName) {
-		LOG.debug("Resolving the actual timeframe and bounding box out of GetFeature Document");
-		SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
+        return featureTypeName;
+    }
 
-		// BBOX
-		NodeList lowerNodes = doc.getElementsByTagName(LOWER_CORNER_TAG);
-		String lowerCornerBBox = lowerNodes.item(0).getTextContent();
-		NodeList upperNodes = doc.getElementsByTagName(UPPER_CORNER_TAG);
-		String upperCornerBBox = upperNodes.item(0).getTextContent();
+    /**
+     * Determines the spatial and temporal extentn of the denoted feature
+     *
+     * @param doc      GetFeature response document
+     * @param typeName name with prefix, e.g. CDC:VGSL_TT_TU_MN009
+     * @return timeAndBbox spatial and temporal extent
+     */
+    public SpatioTemporalExtent generateSpatioTemporalExtent(Document doc, String typeName) {
+        LOG.debug("Resolving the actual timeframe and bounding box out of GetFeature Document");
+        SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
 
-		// BBOX Parameter
-		// Schema is [minLon, minLat, maxLon, maxLat]
-		ArrayList<Float> extent = new ArrayList<Float>();
-		extent.add(0, Float.parseFloat(lowerCornerBBox.split(" ")[1]));
-		extent.add(1, Float.parseFloat(lowerCornerBBox.split(" ")[0]));
-		extent.add(2, Float.parseFloat(upperCornerBBox.split(" ")[1]));
-		extent.add(3, Float.parseFloat(upperCornerBBox.split(" ")[0]));
+        // BBOX
+        NodeList lowerNodes = doc.getElementsByTagName(LOWER_CORNER_TAG);
+        String lowerCornerBBox = lowerNodes.item(0).getTextContent();
+        NodeList upperNodes = doc.getElementsByTagName(UPPER_CORNER_TAG);
+        String upperCornerBBox = upperNodes.item(0).getTextContent();
 
-		// TimeFrame Parameter
-		DateTime startDate = new DateTime();
-		DateTime endDate = new DateTime();
-		ArrayList<DateTime> timeFrame = new ArrayList<DateTime>();
+        // BBOX Parameter
+        // Schema is [minLon, minLat, maxLon, maxLat]
+        ArrayList<Float> extent = new ArrayList<Float>();
+        extent.add(0, Float.parseFloat(lowerCornerBBox.split(" ")[1]));
+        extent.add(1, Float.parseFloat(lowerCornerBBox.split(" ")[0]));
+        extent.add(2, Float.parseFloat(upperCornerBBox.split(" ")[1]));
+        extent.add(3, Float.parseFloat(upperCornerBBox.split(" ")[0]));
 
-		NodeList featureNodes = doc.getElementsByTagName(typeName);
-		for (int i = 0; i < featureNodes.getLength(); i++) {
-			Element feature = (Element) featureNodes.item(i);
-			NodeList timeStampNodes = feature.getElementsByTagName(DwdWfsRequestorBuilder.TIMESTAMP_ATTRIBUTE);
-			String timeStamp = timeStampNodes.item(0).getTextContent();
+        // TimeFrame Parameter
+        DateTime startDate = new DateTime();
+        DateTime endDate = new DateTime();
+        ArrayList<DateTime> timeFrame = new ArrayList<DateTime>();
 
-			DateTime temp = DateTime.parse(timeStamp, DwdWfsRequestorBuilder.FORMATTER);
-			// Set start Values
-			if (i == 0) {
+        NodeList featureNodes = doc.getElementsByTagName(typeName);
+        for (int i = 0; i < featureNodes.getLength(); i++) {
+            Element feature = (Element) featureNodes.item(i);
+            NodeList timeStampNodes = feature.getElementsByTagName(DwdWfsRequestorBuilder.TIMESTAMP_ATTRIBUTE);
+            String timeStamp = timeStampNodes.item(0).getTextContent();
 
-				// Time Frame - First values
-				startDate = temp;
-				endDate = temp;
-				timeFrame.add(0, startDate);
-				timeFrame.add(1, endDate);
-			}
+            DateTime temp = DateTime.parse(timeStamp, DwdWfsRequestorBuilder.FORMATTER);
+            // Set start Values
+            if (i == 0) {
 
-			// Set StartDate or EndDate
-			if (temp.isBefore(startDate)) {
-				startDate = temp;
-				timeFrame.remove(0);
-				timeFrame.add(0, startDate);
-			}
+                // Time Frame - First values
+                startDate = temp;
+                endDate = temp;
+                timeFrame.add(0, startDate);
+                timeFrame.add(1, endDate);
+            }
 
-			if (temp.isAfter(endDate)) {
-				endDate = temp;
-				timeFrame.remove(1);
-				timeFrame.add(1, endDate);
-			}
-		}
-		timeAndBbox.setbBox(extent);
-		timeAndBbox.setTimeFrame(timeFrame);
+            // Set StartDate or EndDate
+            if (temp.isBefore(startDate)) {
+                startDate = temp;
+                timeFrame.remove(0);
+                timeFrame.add(0, startDate);
+            }
 
-		return timeAndBbox;
-	}
+            if (temp.isAfter(endDate)) {
+                endDate = temp;
+                timeFrame.remove(1);
+                timeFrame.add(1, endDate);
+            }
+        }
+        timeAndBbox.setbBox(extent);
+        timeAndBbox.setTimeFrame(timeFrame);
+
+        return timeAndBbox;
+    }
 
     /**
      * Checks whether the WFS response {@link Document} contains a FeatureCollection or not
+     *
      * @param doc the {@link Document} that contains the WFS response
      * @return true if the response document contains a FeatureCollection and the collection is not empty
      * @throws SAXException if the WFS response does not contain a wfs:FeatureCollection tag
      */
-	public boolean responseContainsFeatureCollection(Document doc) throws SAXException {
-	    if(!doc.getDocumentElement().getTagName().equals(FEATURE_COLLECION_TAG)){
-	        throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", FEATURE_COLLECION_TAG, doc.getTextContent()));
+    public boolean responseContainsFeatureCollection(Document doc) throws SAXException {
+        if (!doc.getDocumentElement().getTagName().equals(FEATURE_COLLECION_TAG)) {
+            throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", FEATURE_COLLECION_TAG, doc.getTextContent()));
         }
-	    int numberReturned = Integer.parseInt(doc.getDocumentElement().getAttribute("numberReturned"));
-        if(numberReturned<=0){
+        int numberReturned = Integer.parseInt(doc.getDocumentElement().getAttribute("numberReturned"));
+        if (numberReturned <= 0) {
             return false;
         }
-	    return true;
+        return true;
     }
 
-	/**
-	 * Checks whether the WFS response {@link Document} contains WFS_Capabilities or not
-	 * @param doc the {@link Document} that contains the WFS response
-	 * @return true if the response document contains WFS_Capabilities
-	 * @throws SAXException if the WFS response does not contain a wfs:WFS_Capabilities tag
-	 */
-	public boolean responseContainsCapabilities(Document doc) throws SAXException {
-		if(!doc.getDocumentElement().getTagName().equals(CAPABILITIES_TAG)){
-			throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", CAPABILITIES_TAG, doc.getTextContent()));
-		}
+    /**
+     * Checks whether the WFS response {@link Document} contains WFS_Capabilities or not
+     *
+     * @param doc the {@link Document} that contains the WFS response
+     * @return true if the response document contains WFS_Capabilities
+     * @throws SAXException if the WFS response does not contain a wfs:WFS_Capabilities tag
+     */
+    public boolean responseContainsCapabilities(Document doc) throws SAXException {
+        if (!doc.getDocumentElement().getTagName().equals(CAPABILITIES_TAG)) {
+            throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", CAPABILITIES_TAG, doc.getTextContent()));
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 }
