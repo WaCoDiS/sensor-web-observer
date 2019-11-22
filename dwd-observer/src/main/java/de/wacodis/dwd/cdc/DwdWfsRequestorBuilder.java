@@ -1,12 +1,12 @@
 package de.wacodis.dwd.cdc;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import de.wacodis.dwd.cdc.model.DwdWfsRequestParams;
+import de.wacodis.dwd.cdc.model.Envelope;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -46,23 +46,25 @@ public class DwdWfsRequestorBuilder {
     public static final String OUTPUT_FORMAT = "application/gml+xml; version=3.2";
 
     // attributes
-    String version;// &version=2.0.0
-    String typeName;// &typeName=CDC%3AVGSL_FX_MN003
-    List<String> bbox = new ArrayList<String>();// &bbox=51.200,6.700,51.500,7.300
-    DateTime startDate;
-    DateTime endDate;
+//    String version;// &version=2.0.0
+//    String typeName;// &typeName=CDC%3AVGSL_FX_MN003
+//    List<String> bbox = new ArrayList<String>();// &bbox=51.200,6.700,51.500,7.300
+//    DateTime startDate;
+//    DateTime endDate;
     ArrayList<String[]> namespaces = new ArrayList<String[]>();
     ArrayList<String[]> attributes = new ArrayList<String[]>();
+    private DwdWfsRequestParams params;
 
     public DwdWfsRequestorBuilder(DwdWfsRequestParams params) {
-        this.version = params.getVersion();
-        this.typeName = params.getTypeName();
-        // convert bbox from Float to String
-        for (int i = 0; i < params.getBbox().size(); i++) {
-            bbox.add(i, Float.toString(params.getBbox().get(i)));
-        }
-        this.startDate = params.getStartDate();
-        this.endDate = params.getEndDate();
+//        this.version = params.getVersion();
+//        this.typeName = params.getTypeName();
+//        // convert bbox from Float to String
+//        for (int i = 0; i < params.getBbox().size(); i++) {
+//            bbox.add(i, Float.toString(params.getBbox().get(i)));
+//        }
+//        this.startDate = params.getStartDate();
+//        this.endDate = params.getEndDate();
+        this.params = params;
     }
 
     /**
@@ -82,7 +84,7 @@ public class DwdWfsRequestorBuilder {
         QueryDocument queryDoc = QueryDocument.Factory.newInstance();
         QueryType query = queryDoc.addNewQuery();
         ArrayList<String> typeList = new ArrayList<String>();
-        typeList.add(TYPE_NAME_PREFIX + typeName);
+        typeList.add(TYPE_NAME_PREFIX + params.getTypeName());
 
         // <Filter>
         FilterDocument filterDocument = FilterDocument.Factory.newInstance();
@@ -93,7 +95,7 @@ public class DwdWfsRequestorBuilder {
         BinaryLogicOpType andType = andDocument.addNewAnd();
 
         // <BBOX>
-        BBOXType bboxType = createBboxElement();
+        BBOXType bboxType = createBboxElement(this.params.getEnvelope());
         // </BBOX>
         addXSAnyElement(andType, bboxType);
 
@@ -126,12 +128,12 @@ public class DwdWfsRequestorBuilder {
         XmlCursor cursor = getFeature.newCursor();
         cursor.toNextToken();
         // insert namespaces (prefix, url)
-        for (int i = 0; i < namespaces.size(); i++) {
-            cursor.insertNamespace(namespaces.get(i)[0], namespaces.get(i)[1]);
+        for (int i = 0; i < this.namespaces.size(); i++) {
+            cursor.insertNamespace(this.namespaces.get(i)[0], this.namespaces.get(i)[1]);
         }
         // insert attributes (prefix, attributename, attributevalue)
-        for (int i = 0; i < attributes.size(); i++) {
-            cursor.insertAttributeWithValue(attributes.get(i)[1], attributes.get(i)[0], attributes.get(i)[2]);
+        for (int i = 0; i < this.attributes.size(); i++) {
+            cursor.insertAttributeWithValue(this.attributes.get(i)[1], this.attributes.get(i)[0], this.attributes.get(i)[2]);
         }
         cursor.dispose();
     }
@@ -154,14 +156,14 @@ public class DwdWfsRequestorBuilder {
         // <Literal>
         LiteralDocument litDoc = LiteralDocument.Factory.newInstance();
         LiteralType litType1 = litDoc.addNewLiteral();
-        XmlString xmlString = XmlString.Factory.newValue(FORMATTER.print(startDate));
+        XmlString xmlString = XmlString.Factory.newValue(FORMATTER.print(this.params.getStartDate()));
         litType1.set(xmlString);
         // </Literal>
 
         // <Literal>
         LiteralDocument litDoc2 = LiteralDocument.Factory.newInstance();
         LiteralType litType2 = litDoc2.addNewLiteral();
-        XmlString xmlString2 = XmlString.Factory.newValue(FORMATTER.print(endDate));
+        XmlString xmlString2 = XmlString.Factory.newValue(FORMATTER.print(this.params.getEndDate()));
         litType2.set(xmlString2);
         // </Literal>
 
@@ -177,7 +179,7 @@ public class DwdWfsRequestorBuilder {
      *
      * @return {@link BBOXType}
      */
-    private BBOXType createBboxElement() {
+    public BBOXType createBboxElement(Envelope envelope) {
 
         BBOXDocument bboxDocument = BBOXDocument.Factory.newInstance();
         BBOXType bboxType = bboxDocument.addNewBBOX();
@@ -192,9 +194,9 @@ public class DwdWfsRequestorBuilder {
         EnvelopeType envType = envDoc.addNewEnvelope();
         envType.setSrsName(EPSG_URN);
         DirectPositionType lowerCorner = envType.addNewLowerCorner();
-        lowerCorner.setStringValue(bbox.get(0) + " " + bbox.get(1));
+        lowerCorner.setStringValue(envelope.getMinLat() + " " + envelope.getMinLon());
         DirectPositionType upperCorner = envType.addNewUpperCorner();
-        upperCorner.setStringValue(bbox.get(2) + " " + bbox.get(3));
+        upperCorner.setStringValue(envelope.getMaxLat() + " " + envelope.getMaxLon());
         // </Envelope>
         addXSAnyElement(bboxType, envType);
         addXSAnyElement(bboxType, valueRefDocument.getExpression());
@@ -224,24 +226,24 @@ public class DwdWfsRequestorBuilder {
      */
     private void createXmlAttributesList() {
         // namespaces
-        namespaces.add(new String[]{"xsi", "http://www.w3.org/2001/XMLSchema-instance"});
-        namespaces.add(new String[]{"", "http://www.opengis.net/wfs/2.0"});
-        namespaces.add(new String[]{"wfs", "http://www.opengis.net/wfs/2.0"});
-        namespaces.add(new String[]{"ows", "http://www.opengis.net/ows/1.1"});
-        namespaces.add(new String[]{"gml", "http://www.opengis.net/gml/3.2"});
-        namespaces.add(new String[]{"fes", "http://www.opengis.net/fes/2.0"});
-        namespaces.add(new String[]{"xlink", "http://www.w3.org/1999/xlink"});
-        namespaces.add(new String[]{"xs", "http://www.w3.org/2001/XMLSchema"});
-        namespaces.add(new String[]{"inspire_dls", "http://inspire.ec.europa.eu/schemas/inspire_dls/1.0"});
-        namespaces.add(new String[]{"inspire_common", "http://inspire.ec.europa.eu/schemas/common/1.0"});
-        namespaces.add(new String[]{"CDC", "https://cdc.dwd.de"});
-        namespaces.add(new String[]{"ogc", "http://www.opengis.net/ogc"});
+        this.namespaces.add(new String[]{"xsi", "http://www.w3.org/2001/XMLSchema-instance"});
+        this.namespaces.add(new String[]{"", "http://www.opengis.net/wfs/2.0"});
+        this.namespaces.add(new String[]{"wfs", "http://www.opengis.net/wfs/2.0"});
+        this.namespaces.add(new String[]{"ows", "http://www.opengis.net/ows/1.1"});
+        this.namespaces.add(new String[]{"gml", "http://www.opengis.net/gml/3.2"});
+        this.namespaces.add(new String[]{"fes", "http://www.opengis.net/fes/2.0"});
+        this.namespaces.add(new String[]{"xlink", "http://www.w3.org/1999/xlink"});
+        this.namespaces.add(new String[]{"xs", "http://www.w3.org/2001/XMLSchema"});
+        this.namespaces.add(new String[]{"inspire_dls", "http://inspire.ec.europa.eu/schemas/inspire_dls/1.0"});
+        this.namespaces.add(new String[]{"inspire_common", "http://inspire.ec.europa.eu/schemas/common/1.0"});
+        this.namespaces.add(new String[]{"CDC", "https://cdc.dwd.de"});
+        this.namespaces.add(new String[]{"ogc", "http://www.opengis.net/ogc"});
         // attributes
-        attributes.add(new String[]{"xsi", "schemaLocation",
+        this.attributes.add(new String[]{"xsi", "schemaLocation",
                 "http://www.opengis.net/wfs/2.0 https://cdc.dwd.de:443/geoserver/schemas/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd"});
-        attributes.add(new String[]{"", "service", SERVICE_ATTRIBUTE});
-        attributes.add(new String[]{"", "version", this.version});
-        attributes.add(new String[]{"", "outputFormat", OUTPUT_FORMAT});
+        this.attributes.add(new String[]{"", "service", SERVICE_ATTRIBUTE});
+        this.attributes.add(new String[]{"", "version", this.params.getVersion()});
+        this.attributes.add(new String[]{"", "outputFormat", OUTPUT_FORMAT});
     }
 
     /**

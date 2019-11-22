@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.wacodis.dwd.cdc;
+package de.wacodis.dwd.cdc.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class DwdProductsMetadata {
 	private String serviceUrl;
 	private String layerName;
 	private String parameter;
-	private ArrayList<Float> extent = new ArrayList<Float>();
+	private Envelope envelope;
 	private DateTime startDate;
 	private DateTime endDate;
 	
@@ -49,20 +49,13 @@ public class DwdProductsMetadata {
 		this.parameter = parameter;
 	}
 
-	public List<Float> getExtent() {
-		return extent;
+	public Envelope getEnvelope() {
+		return envelope;
 	}
 
 	
-	public void setExtent(ArrayList<Float> extent) {
-		this.extent = extent;
-	}
-
-	public void setExtent(float xmin, float ymin, float xmax, float ymax) {
-		this.extent.add(xmin);
-		this.extent.add(ymin);
-		this.extent.add(xmax);
-		this.extent.add(ymax);
+	public void setEnvelope(Envelope envelope) {
+		this.envelope = envelope;
 	}
 
 	public DateTime getStartDate() {

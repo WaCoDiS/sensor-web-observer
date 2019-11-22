@@ -7,13 +7,10 @@ package de.wacodis.dwd;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xmlbeans.XmlException;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
@@ -27,10 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 import org.xml.sax.SAXException;
 
-import de.wacodis.dwd.cdc.DwdProductsMetadata;
-import de.wacodis.dwd.cdc.DwdProductsMetadataDecoder;
-import de.wacodis.dwd.cdc.DwdRequestParamsEncoder;
-import de.wacodis.dwd.cdc.DwdWfsRequestParams;
+import de.wacodis.dwd.cdc.model.DwdProductsMetadata;
+import de.wacodis.dwd.cdc.model.DwdProductsMetadataDecoder;
+import de.wacodis.dwd.cdc.model.DwdRequestParamsEncoder;
+import de.wacodis.dwd.cdc.model.DwdWfsRequestParams;
 import de.wacodis.dwd.cdc.DwdWfsRequestor;
 import de.wacodis.observer.model.DwdDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
@@ -58,6 +55,9 @@ public class DwdJob implements Job {
 
     @Autowired
     private DwdWfsRequestor requestor;
+
+    @Autowired
+    private DwdTemporalResolutionHelper temporalResolutionHelper;
 
     @Override
     public void execute(JobExecutionContext jec) throws JobExecutionException {
@@ -117,13 +117,14 @@ public class DwdJob implements Job {
      */
     private void createDwdDataEnvelope(String version, String layerName, String serviceUrl,
                                        ArrayList<Float> area, DateTime startDate, DateTime endDate) {
-        Set<DwdDataEnvelope> envelopeSet = new HashSet<DwdDataEnvelope>();
-        List<DateTime[]> interval = DwdTemporalResolutionHelper.getRequestIntervals(startDate, endDate, layerName);
+        DwdRequestParamsEncoder encoder = new DwdRequestParamsEncoder();
+
+        List<DateTime[]> interval = temporalResolutionHelper.getRequestIntervals(startDate, endDate, layerName);
 
         // Start requesting DWD data iteratively if the amount of data is too large
         if (interval != null) {
             for (int i = 0; i < interval.size(); i++) {
-                DwdWfsRequestParams params = DwdRequestParamsEncoder.encode(version, layerName, area, interval.get(i)[0], interval.get(i)[1]);
+                DwdWfsRequestParams params = encoder.encode(version, layerName, area, interval.get(i)[0], interval.get(i)[1]);
                 DwdDataEnvelope dataEnvelope = this.requestDwdMetadata(serviceUrl, params);
                 if (dataEnvelope != null) {
                     // Publish DwdDataEnvelope message
@@ -144,6 +145,7 @@ public class DwdJob implements Job {
      * @return
      */
     private DwdDataEnvelope requestDwdMetadata(String serviceUrl, DwdWfsRequestParams params) {
+        DwdProductsMetadataDecoder decoder = new DwdProductsMetadataDecoder();
         DwdDataEnvelope dataEnvelope = null;
         try {
             // Request DWD WFS with request paramaters
@@ -153,7 +155,7 @@ public class DwdJob implements Job {
             }
 
             // Decode DwdProductsMetadata to DwdDataEnvelope
-            dataEnvelope = DwdProductsMetadataDecoder.decode(metadata);
+            dataEnvelope = decoder.decode(metadata);
             LOG.info("Publish new dataEnvelope:\n{}", dataEnvelope.toString());
 
         } catch (IOException | ParserConfigurationException | SAXException e) {

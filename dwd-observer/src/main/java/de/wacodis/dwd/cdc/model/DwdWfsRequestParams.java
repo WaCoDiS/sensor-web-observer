@@ -3,9 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.wacodis.dwd.cdc;
-
-import java.util.List;
+package de.wacodis.dwd.cdc.model;
 
 import org.joda.time.DateTime;
 
@@ -20,7 +18,7 @@ public class DwdWfsRequestParams {
 
     private String version;
     private String typeName;
-    private List<Float> bbox;
+    private Envelope envelope;
     private DateTime startDate;
     private DateTime endDate;
 
@@ -29,11 +27,11 @@ public class DwdWfsRequestParams {
 
     }
 
-    public DwdWfsRequestParams(String version, String typeName, List<Float> bbox, DateTime startDate, DateTime endDate) {
+    public DwdWfsRequestParams(String version, String typeName, Envelope envelope, DateTime startDate, DateTime endDate) {
         super();
         this.version = version;
         this.typeName = typeName;
-        this.bbox = bbox;
+        this.envelope = envelope;
         this.startDate = startDate;
         this.endDate = endDate;
 
@@ -57,12 +55,12 @@ public class DwdWfsRequestParams {
         this.typeName = typeName;
     }
 
-    public List<Float> getBbox() {
-        return bbox;
+    public Envelope getEnvelope() {
+        return this.envelope;
     }
 
-    public void setBbox(List<Float> bounds) {
-        this.bbox = bounds;
+    public void setEnvelope(Envelope envelope) {
+        this.envelope = envelope;
     }
 
     public DateTime getStartDate() {
@@ -86,7 +84,7 @@ public class DwdWfsRequestParams {
         return "DwdWfsRequestParams{" +
                 "version='" + version + '\'' +
                 ", typeName='" + typeName + '\'' +
-                ", bbox=" + bbox +
+                ", bbox=" + envelope +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 '}';

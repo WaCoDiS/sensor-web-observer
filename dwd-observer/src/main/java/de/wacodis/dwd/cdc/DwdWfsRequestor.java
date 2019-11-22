@@ -14,7 +14,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.opengis.wfs.x20.GetFeatureDocument;
+import de.wacodis.dwd.cdc.model.DwdProductsMetadata;
+import de.wacodis.dwd.cdc.model.DwdWfsRequestParams;
+import de.wacodis.dwd.cdc.model.Envelope;
+import de.wacodis.dwd.cdc.model.SpatioTemporalExtent;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -86,8 +89,8 @@ public class DwdWfsRequestor implements InitializingBean {
         }
 
         // bbox
-        ArrayList<Float> extent = timeAndBbox.getbBox();
-        metadata.setExtent(extent.get(0), extent.get(1), extent.get(2), extent.get(3));
+        Envelope envelope = timeAndBbox.getbBox();
+        metadata.setEnvelope(envelope);
 
         // timeframe
         ArrayList<DateTime> timeFrame = timeAndBbox.getTimeFrame();

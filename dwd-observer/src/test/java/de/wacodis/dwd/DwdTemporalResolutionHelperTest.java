@@ -4,15 +4,24 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class DwdTemporalResolutionHelperTest {
+
+	private static DwdTemporalResolutionHelper resolutionHelper;
+
+	@BeforeAll
+	static void init(){
+		resolutionHelper = new DwdTemporalResolutionHelper();
+	}
+
 
     @Test
     void testCalculateRequestIntervalsForHourlyResolution() {
 		DateTime startDate = DateTime.parse("2019-09-01T00:00Z");
 		DateTime endDate = DateTime.parse("2019-09-30T00:00Z");
-        List<DateTime[]> intervals = DwdTemporalResolutionHelper.calculateRequestIntervalsForResolution(startDate, endDate,
+        List<DateTime[]> intervals = resolutionHelper.calculateRequestIntervalsForResolution(startDate, endDate,
                 DwdTemporalResolutionHelper.LayerTimeResolution.HOURLY_RESOLUTION);
 
         Assertions.assertEquals(29, intervals.size());
@@ -29,7 +38,7 @@ class DwdTemporalResolutionHelperTest {
 	void testCalculateRequestIntervalsForDailyResolution() {
 		DateTime startDate = DateTime.parse("2019-09-01T00:00Z");
 		DateTime endDate = DateTime.parse("2019-10-01T00:00Z");
-		List<DateTime[]> intervals = DwdTemporalResolutionHelper.calculateRequestIntervalsForResolution(startDate, endDate,
+		List<DateTime[]> intervals = resolutionHelper.calculateRequestIntervalsForResolution(startDate, endDate,
 				DwdTemporalResolutionHelper.LayerTimeResolution.DAILY_RESOLUTION);
 
 		Assertions.assertEquals(5, intervals.size());
@@ -46,7 +55,7 @@ class DwdTemporalResolutionHelperTest {
 	void testCalculateRequestIntervalsIfResolutionIsGreaterThanTargetTimeFrame() {
 		DateTime startDate = DateTime.parse("2019-09-01T00:00Z");
 		DateTime endDate = DateTime.parse("2019-09-02T00:00Z");
-		List<DateTime[]> intervals = DwdTemporalResolutionHelper.calculateRequestIntervalsForResolution(startDate, endDate,
+		List<DateTime[]> intervals = resolutionHelper.calculateRequestIntervalsForResolution(startDate, endDate,
 				DwdTemporalResolutionHelper.LayerTimeResolution.DAILY_RESOLUTION);
 
 		Assertions.assertEquals(1, intervals.size());

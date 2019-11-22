@@ -1,13 +1,15 @@
-package de.wacodis.dwd.cdc;
+package de.wacodis.dwd.cdc.model;
 
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
 
+/**
+ * Encapsulates the spatio-temporal extent of DWD products
+ */
 public class SpatioTemporalExtent {
     private ArrayList<DateTime> timeFrame;
-    private ArrayList<Float> bBox;
-
+    private Envelope envelope;
 
     public ArrayList<DateTime> getTimeFrame() {
         return timeFrame;
@@ -17,13 +19,11 @@ public class SpatioTemporalExtent {
         this.timeFrame = timeFrame;
     }
 
-    public ArrayList<Float> getbBox() {
-        return bBox;
+    public Envelope getbBox() {
+        return envelope;
     }
 
-    public void setbBox(ArrayList<Float> bBox) {
-        this.bBox = bBox;
+    public void setbBox(Envelope envelope) {
+        this.envelope = envelope;
     }
-
-
 }

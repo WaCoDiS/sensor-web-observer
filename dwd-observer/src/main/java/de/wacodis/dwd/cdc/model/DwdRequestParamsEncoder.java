@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.wacodis.dwd.cdc;
+package de.wacodis.dwd.cdc.model;
 
 import java.util.List;
 
@@ -26,20 +26,29 @@ public class DwdRequestParamsEncoder {
      * @param coordinates bbox (minLon, minLat, maxLon, maxLat)
      * @param startDate   start date of the request timeframe
      * @param endDate     end date of the request timeframe
-     * @return
+     * @return the encoded {@link DwdWfsRequestParams}
      */
-    public static DwdWfsRequestParams encode(String version, String typeName, List<Float> coordinates,
+    public DwdWfsRequestParams encode(String version, String typeName, List<Float> coordinates,
                                              DateTime startDate, DateTime endDate) {
 
         DwdWfsRequestParams params = new DwdWfsRequestParams();
 
         params.setVersion(version);
         params.setTypeName(typeName);
-        params.setBbox(coordinates);
+        params.setEnvelope(encodeEnvelope(coordinates));
         params.setStartDate(startDate); // Temporal Coverage?
         params.setEndDate(endDate);
 
         return params;
+    }
+
+    private Envelope encodeEnvelope(List<Float> coordinates){
+        Envelope envelope = new Envelope();
+        envelope.setMinLon(coordinates.get(0));
+        envelope.setMinLat(coordinates.get(1));
+        envelope.setMaxLon(coordinates.get(2));
+        envelope.setMaxLat(coordinates.get(3));
+        return envelope;
     }
 
 }

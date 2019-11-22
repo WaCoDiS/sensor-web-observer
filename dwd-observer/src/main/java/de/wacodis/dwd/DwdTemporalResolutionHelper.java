@@ -8,10 +8,12 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
+import org.springframework.stereotype.Component;
 
 /**
  * Helper class for dealing with different time resolutions of the various DWD WFS layers
  */
+@Component
 public class DwdTemporalResolutionHelper {
 
     // Enumerations of temporal resolution
@@ -61,7 +63,7 @@ public class DwdTemporalResolutionHelper {
      * @param layerName name of the DWD WFS layer
      * @return a list of start date/end date tuples
      */
-    public static List<DateTime[]> getRequestIntervals(DateTime startDate, DateTime endDate, String layerName) {
+    public List<DateTime[]> getRequestIntervals(DateTime startDate, DateTime endDate, String layerName) {
         List<DateTime[]> interval = new ArrayList<DateTime[]>();
 
         // if the resolution is hourly, the request will be splitted into intervalls
@@ -99,14 +101,14 @@ public class DwdTemporalResolutionHelper {
      *                   calculation)
      * @return a list of start date/end date tuples
      */
-    public static List<DateTime[]> calculateRequestIntervalsForResolution(DateTime startDate, DateTime endDate, LayerTimeResolution resolution) {
+    public List<DateTime[]> calculateRequestIntervalsForResolution(DateTime startDate, DateTime endDate, LayerTimeResolution resolution) {
 
         List<DateTime[]> outputList = new ArrayList<DateTime[]>();
 
         Hours hourSumHours = Hours.hoursBetween(startDate, endDate);
         int hourSum = hourSumHours.getHours();
 
-        int timeInterval = DwdTemporalResolutionHelper.getIntervalInHours(resolution);
+        int timeInterval = this.getIntervalInHours(resolution);
         int intervalCount = (int) (hourSum / timeInterval);
 
         if (intervalCount == 0) {
@@ -137,7 +139,7 @@ public class DwdTemporalResolutionHelper {
         return outputList;
     }
 
-    private static int getIntervalInHours(LayerTimeResolution resolution) {
+    private int getIntervalInHours(LayerTimeResolution resolution) {
         if (resolution == LayerTimeResolution.HOURLY_RESOLUTION) {
             return DwdTemporalResolutionHelper.ONE_DAY_INTERVAL; // splitting duration in week blocks
         }

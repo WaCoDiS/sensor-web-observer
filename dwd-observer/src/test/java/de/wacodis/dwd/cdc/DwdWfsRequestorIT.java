@@ -3,10 +3,12 @@ package de.wacodis.dwd.cdc;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import de.wacodis.dwd.cdc.model.DwdProductsMetadata;
+import de.wacodis.dwd.cdc.model.DwdWfsRequestParams;
+import de.wacodis.dwd.cdc.model.Envelope;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +24,7 @@ public class DwdWfsRequestorIT {
 
 	private static DwdWfsRequestParams params;
 	private static DwdWfsRequestorBuilder reader;
+	private static DwdWfsRequestor requestor;
 	private static String SERVICE_URL = "https://cdc.dwd.de:443/geoserver/CDC/wfs?";
 	
 
@@ -33,12 +36,13 @@ public class DwdWfsRequestorIT {
 		params.setTypeName("FX_MN003");
 		// params.setTypeName("CDC:VGSL_TT_TU_MN009");
 
-		List<Float> bounds = new ArrayList<Float>();
-		bounds.add(0, 51.0000f);
-		bounds.add(1, 6.6000f);
-		bounds.add(2, 51.5000f);
-		bounds.add(3, 7.3000f);
-		params.setBbox(bounds);
+		Envelope envelope = new Envelope();
+		envelope.setMinLon(6.6000f);
+		envelope.setMinLat(51.0000f);
+		envelope.setMaxLon(7.3000f);
+		envelope.setMaxLat(51.5000f);
+
+		params.setEnvelope(envelope);
 
 		DateTime startDate = DateTime.parse("2019-04-24T01:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
 		DateTime endDate = DateTime.parse("2019-04-25T10:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
@@ -47,6 +51,7 @@ public class DwdWfsRequestorIT {
 		params.setEndDate(endDate);
 
 		reader = new DwdWfsRequestorBuilder(params);
+		requestor = new DwdWfsRequestor();
 
 	}
 
@@ -54,7 +59,7 @@ public class DwdWfsRequestorIT {
 	@Test
 	void testRequest() throws IOException, ParserConfigurationException, SAXException {
 		DwdProductsMetadata result = new DwdProductsMetadata();
-		result = DwdWfsRequestor.request(SERVICE_URL, params);
+		result = requestor.request(SERVICE_URL, params);
 
 		// object of comparison
 		DwdProductsMetadata metadata = new DwdProductsMetadata();
@@ -63,13 +68,13 @@ public class DwdWfsRequestorIT {
 		metadata.setLayerName("CDC:VGSL_FX_MN003");
 		metadata.setParameter("Tägliche Stationsmessungen der maximalen Windspitze in ca. 10 m Höhe in m/s");
 
-		ArrayList<Float> extent = new ArrayList<Float>();
+		Envelope envelope = new Envelope();
+		envelope.setMinLon(6.7686f);
+		envelope.setMinLat(51.2531f);
+		envelope.setMaxLon(7.2156f);
+		envelope.setMaxLat(51.4041f);
 
-		extent.add(0, 6.7686f);
-		extent.add(1, 51.2531f);
-		extent.add(2, 7.2156f);
-		extent.add(3, 51.4041f);
-		metadata.setExtent(extent);
+		metadata.setEnvelope(envelope);
 
 		DateTime startDate = DateTime.parse("2010-04-24T02:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
 		DateTime endDate = DateTime.parse("2019-04-25T02:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
@@ -84,7 +89,7 @@ public class DwdWfsRequestorIT {
 		// ClearName
 		Assertions.assertEquals(metadata.getParameter(), result.getParameter());
 		// bbox
-		Assertions.assertEquals(metadata.getExtent(), result.getExtent());
+		Assertions.assertEquals(metadata.getEnvelope(), result.getEnvelope());
 		// time
 		// is the startDate of the feature timeframe between the query startDate and
 		// endDate
@@ -104,7 +109,7 @@ public class DwdWfsRequestorIT {
 	void testExceptions() {
 		// request
 		Assertions.assertDoesNotThrow(() -> {
-			DwdWfsRequestor.request(SERVICE_URL, params);
+			requestor.request(SERVICE_URL, params);
 		});
 
 	}

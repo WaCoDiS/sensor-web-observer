@@ -8,9 +8,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import de.wacodis.dwd.cdc.model.Envelope;
+import de.wacodis.dwd.cdc.model.SpatioTemporalExtent;
 import net.opengis.gml.x32.EnvelopeDocument;
 import net.opengis.gml.x32.EnvelopeType;
-import net.opengis.gml.x32.impl.EnvelopeDocumentImpl;
 import net.opengis.wfs.x20.EnvelopePropertyType;
 import net.opengis.wfs.x20.FeatureCollectionDocument;
 import org.apache.xmlbeans.XmlException;
@@ -72,15 +73,9 @@ class DwdResponseResolverTest {
 		int nodeLength = nodes.getLength();
 
 		SpatioTemporalExtent timeAndBBox = resolver.generateSpatioTemporalExtent(doc, typeName);
-		ArrayList<Float> bBox = timeAndBBox.getbBox();
+		Envelope bBox = timeAndBBox.getbBox();
 		ArrayList<DateTime> timeFrame = timeAndBBox.getTimeFrame();
 
-		// expected
-		ArrayList<Float> expectedBBox = new ArrayList<Float>();
-		expectedBBox.add(6.7686f);
-		expectedBBox.add(51.2531f);
-		expectedBBox.add(7.2156f);
-		expectedBBox.add(51.4041f);
 		ArrayList<DateTime> expectedTimeFrame = new ArrayList<DateTime>();
 		DateTime expectedStartDate = DateTime.parse("2019-04-25T00:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
 		DateTime expectedEndDate = DateTime.parse("2019-04-25T00:00:00Z", DwdWfsRequestorBuilder.FORMATTER);
@@ -88,7 +83,11 @@ class DwdResponseResolverTest {
 		expectedTimeFrame.add(expectedEndDate);
 
 		// comparison
-		Assertions.assertEquals(expectedBBox, bBox);
+		Assertions.assertEquals(6.7686f, bBox.getMinLon());
+		Assertions.assertEquals(51.2531f, bBox.getMinLat());
+		Assertions.assertEquals(7.2156f, bBox.getMaxLon());
+		Assertions.assertEquals(51.4041f, bBox.getMaxLat());
+
 		Assertions.assertEquals(expectedTimeFrame, timeFrame);
 	}
 
@@ -116,16 +115,16 @@ class DwdResponseResolverTest {
 
 	@Test
 	void testResponseContainsCapabilities() throws IOException, SAXException {
-		InputStream getCapabiltiesResponse = this.getClass().getResourceAsStream("/exceptionResponse-test.xml");
+		InputStream getCapabiltiesResponse = this.getClass().getResourceAsStream("/getCapabilities-test.xml");
 
-		Assertions.assertTrue( resolver.responseContainsFeatureCollection(docBuilder.parse(getCapabiltiesResponse)));
+		Assertions.assertTrue( resolver.responseContainsCapabilities(docBuilder.parse(getCapabiltiesResponse)));
 	}
 
 	@Test
 	void testResponseContainsCapabilitiesThrowsExceptionForInvalidResponse() {
 		InputStream getCapabiltiesResponse = this.getClass().getResourceAsStream("/exceptionResponse-test.xml");
 
-		Assertions.assertThrows(SAXException.class, () -> resolver.responseContainsFeatureCollection(docBuilder.parse(getCapabiltiesResponse)));
+		Assertions.assertThrows(SAXException.class, () -> resolver.responseContainsCapabilities(docBuilder.parse(getCapabiltiesResponse)));
 	}
 
 

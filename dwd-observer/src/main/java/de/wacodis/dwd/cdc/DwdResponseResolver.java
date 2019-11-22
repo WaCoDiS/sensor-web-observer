@@ -1,18 +1,12 @@
 package de.wacodis.dwd.cdc;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.opengis.gml.x32.AbstractGMLDocument;
-import net.opengis.gml.x32.EnvelopeDocument;
-import net.opengis.wfs.x20.FeatureCollectionDocument;
-import org.apache.xmlbeans.XmlException;
+import de.wacodis.dwd.cdc.model.Envelope;
+import de.wacodis.dwd.cdc.model.SpatioTemporalExtent;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +16,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+
 @Component
+/**
+ * Helper class to resolve required product metadata from DWD WFS responses
+ */
 public class DwdResponseResolver {
 
     final static Logger LOG = LoggerFactory.getLogger(DwdResponseResolver.class);
@@ -32,7 +30,7 @@ public class DwdResponseResolver {
     private static final String LOWER_CORNER_TAG = "gml:lowerCorner";
     private static final String UPPER_CORNER_TAG = "gml:upperCorner";
     private static final String FEATURE_COLLECION_TAG = "wfs:FeatureCollection";
-    private static final String CAPABILITIES_TAG = "wfs:WFS_CAPABILITIES";
+    private static final String CAPABILITIES_TAG = "wfs:WFS_Capabilities";
 
     /**
      * Delivers a String Array consisting of <name>- and <title> values
@@ -44,7 +42,6 @@ public class DwdResponseResolver {
      * @throws SAXException
      * @throws IOException
      */
-
     public String[] requestTypeName(Document doc, String typeName)
             throws ParserConfigurationException, SAXException, IOException {
         LOG.debug("Resolve TypeName out of GetCapabilities Document");
@@ -84,7 +81,6 @@ public class DwdResponseResolver {
      * @return timeAndBbox spatial and temporal extent
      */
     public SpatioTemporalExtent generateSpatioTemporalExtent(Document doc, String typeName) {
-        LOG.debug("Resolving the actual timeframe and bounding box out of GetFeature Document");
         SpatioTemporalExtent timeAndBbox = new SpatioTemporalExtent();
 
         // BBOX
@@ -95,11 +91,11 @@ public class DwdResponseResolver {
 
         // BBOX Parameter
         // Schema is [minLon, minLat, maxLon, maxLat]
-        ArrayList<Float> extent = new ArrayList<Float>();
-        extent.add(0, Float.parseFloat(lowerCornerBBox.split(" ")[1]));
-        extent.add(1, Float.parseFloat(lowerCornerBBox.split(" ")[0]));
-        extent.add(2, Float.parseFloat(upperCornerBBox.split(" ")[1]));
-        extent.add(3, Float.parseFloat(upperCornerBBox.split(" ")[0]));
+        Envelope envelope = new Envelope();
+        envelope.setMinLon(Float.parseFloat(lowerCornerBBox.split(" ")[1]));
+        envelope.setMinLat(Float.parseFloat(lowerCornerBBox.split(" ")[0]));
+        envelope.setMaxLon(Float.parseFloat(upperCornerBBox.split(" ")[1]));
+        envelope.setMaxLat(Float.parseFloat(upperCornerBBox.split(" ")[0]));
 
         // TimeFrame Parameter
         DateTime startDate = new DateTime();
@@ -136,7 +132,7 @@ public class DwdResponseResolver {
                 timeFrame.add(1, endDate);
             }
         }
-        timeAndBbox.setbBox(extent);
+        timeAndBbox.setbBox(envelope);
         timeAndBbox.setTimeFrame(timeFrame);
 
         return timeAndBbox;
@@ -151,7 +147,7 @@ public class DwdResponseResolver {
      */
     public boolean responseContainsFeatureCollection(Document doc) throws SAXException {
         if (!doc.getDocumentElement().getTagName().equals(FEATURE_COLLECION_TAG)) {
-            throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", FEATURE_COLLECION_TAG, doc.getTextContent()));
+            throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", FEATURE_COLLECION_TAG, doc.getDocumentElement().getTextContent()));
         }
         int numberReturned = Integer.parseInt(doc.getDocumentElement().getAttribute("numberReturned"));
         if (numberReturned <= 0) {
@@ -169,7 +165,7 @@ public class DwdResponseResolver {
      */
     public boolean responseContainsCapabilities(Document doc) throws SAXException {
         if (!doc.getDocumentElement().getTagName().equals(CAPABILITIES_TAG)) {
-            throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", CAPABILITIES_TAG, doc.getTextContent()));
+            throw new SAXException(String.format("No tag \'%s\' within WFS response document: %s", CAPABILITIES_TAG, doc.getDocumentElement().getTextContent()));
         }
 
         return true;
