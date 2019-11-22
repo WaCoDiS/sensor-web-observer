@@ -59,11 +59,12 @@ public class DwdJobFactory implements JobFactory {
             data.put(DwdJob.SERVICE_URL_KEY, def.getServiceUrl());
             data.put(DwdJob.TEMPORAL_COVERAGE_KEY, job.getTemporalCoverage().getDuration());
             data.put(DwdJob.EXECUTION_INTERVAL_KEY, intervalConfig.getDwd());
+            data.put(DwdJob.LATEST_REQUEST_END_DATE, null);
 
-            String extent = job.getAreaOfInterest().getExtent().get(1) + " "
-                    + job.getAreaOfInterest().getExtent().get(0) + ","
-                    + job.getAreaOfInterest().getExtent().get(3) + " "
-                    + job.getAreaOfInterest().getExtent().get(2);
+            String extent = job.getAreaOfInterest().getExtent().get(0) + " "
+                    + job.getAreaOfInterest().getExtent().get(1) + ","
+                    + job.getAreaOfInterest().getExtent().get(2) + " "
+                    + job.getAreaOfInterest().getExtent().get(3);
             data.put(DwdJob.EXECUTION_AREA_KEY, extent);    // e.g. "52.0478 6.0124,52.5687 7.1420"
 
         }

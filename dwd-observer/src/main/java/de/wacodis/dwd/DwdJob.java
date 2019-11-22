@@ -14,10 +14,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,8 @@ import de.wacodis.observer.publisher.PublisherChannel;
 /**
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
 public class DwdJob implements Job {
 
     // identifiers
@@ -47,8 +46,6 @@ public class DwdJob implements Job {
     public static final String LATEST_REQUEST_END_DATE = "endDate";
 
     private static final Logger LOG = LoggerFactory.getLogger(DwdJob.class);
-
-    JobDataMap jobDataMap = new JobDataMap();
 
     @Autowired
     private PublisherChannel pub;
@@ -95,12 +92,12 @@ public class DwdJob implements Job {
         // end date as start date for the current request.
         // Else, calculate the start date for an initial request by taking a
         // certain period into account
-        if (jobDataMap.get(LATEST_REQUEST_END_DATE) != null) {
-            startDate = (DateTime) jobDataMap.get(LATEST_REQUEST_END_DATE);
+        if (dataMap.get(LATEST_REQUEST_END_DATE) != null) {
+            startDate = (DateTime) dataMap.get(LATEST_REQUEST_END_DATE);
         } else {
             startDate = endDate.withPeriodAdded(period, -1);
         }
-        jobDataMap.put(LATEST_REQUEST_END_DATE, endDate);
+        dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
         this.createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
     }
@@ -152,6 +149,7 @@ public class DwdJob implements Job {
             DwdProductsMetadata metadata = requestor.request(serviceUrl, params);
             if (metadata == null) {
                 LOG.info("No dataEnvelope to publish from DWD WFS response");
+                return null;
             }
 
             // Decode DwdProductsMetadata to DwdDataEnvelope
