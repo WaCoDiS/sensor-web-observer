@@ -9,7 +9,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -19,10 +22,18 @@ public class CodeDeOpenSearchRequestor {
 
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
-    public static CodeDeProductsMetadata request(CodeDeRequestParams params) throws IOException {
+    public static CodeDeProductsMetadata request(CodeDeRequestParams params) throws IOException, SAXException {
         String getRequestUrl = null;
         InputStream getResponse = sendOpenSearchRequest(getRequestUrl);
+        // analyse inputStream
+        DocumentBuilder docBuilder = null;
+        Document getResponseDoc = docBuilder.parse(getResponse);
+
         CodeDeProductsMetadata metadata = new CodeDeProductsMetadata();
+        //metadata.setParentIdentifier();
+
+
+
         return metadata;
     }
 
