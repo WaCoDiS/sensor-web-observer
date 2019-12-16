@@ -2,6 +2,8 @@ package de.wacodis.codeDe.sentinel;
 
 import de.wacodis.codeDe.CodeDeJob;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -31,10 +33,21 @@ public class CodeDeResponseResolver {
     private static final String HYPER_REFERENCE = "href";
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
     private final XPath xpath;
+    public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     public CodeDeResponseResolver(){
         XPathFactory factory = XPathFactory.newInstance();
         this.xpath = factory.newXPath();
+        Map<String, String> prefMap = new HashMap<String, String>(){
+            {
+                put("opt", "http://www.opengis.net/opt/2.1");
+                put("om", "http://www.opengis.net/om/2.0");
+                put("georss", "http://www.georss.org/georss");
+                put("dc", "http://purl.org/dc/elements/1.1/");
+            }
+        };
+        SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
+        xpath.setNamespaceContext(namespaces);
     }
 
     public List<String> getDownloadLink(Document xmlDoc) throws ParserConfigurationException, XPathExpressionException {
@@ -71,16 +84,6 @@ public class CodeDeResponseResolver {
 
 
     public float getCloudCoverage(Document xmlDoc) throws XPathExpressionException {
-
-        Map<String, String> prefMap = new HashMap<String, String>(){
-            {
-                put("opt", "http://www.opengis.net/opt/2.1");
-                put("om", "http://www.opengis.net/om/2.0");
-            }
-        };
-        SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
-        xpath.setNamespaceContext(namespaces);
-
         String xPathStringCloudCoverage="/feed/entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expressionCloudCoverage = this.xpath.compile(xPathStringCloudCoverage);
         String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(xmlDoc, XPathConstants.STRING);
@@ -91,18 +94,45 @@ public class CodeDeResponseResolver {
 
 
 
+
+
     public String getParentIdentifier(Document xmlDoc){
         String parentIdentifier = null;
         return parentIdentifier;
     }
 
-    public List<DateTime> getTimeFrame(Document xmlDoc) {
-        List<DateTime> timeFrame = new ArrayList<DateTime>();
-        return timeFrame;
+    public List<List<DateTime>> getTimeFrame(Document xmlDoc) throws XPathExpressionException {
+        List<List<DateTime>> timeFrames = new ArrayList<List<DateTime>>();
+        String xPathString="/feed/entry/dc:date";
+        XPathExpression expressionBbox= this.xpath.compile(xPathString);
+        NodeList resultBbox = (NodeList)expressionBbox.evaluate(xmlDoc, XPathConstants.NODESET);
+        NodeList nodeList = (NodeList) resultBbox;
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            String[] timeFrame = nodeList.item(i).getNodeValue().split("/");
+            List<DateTime> timeStamp = new ArrayList<DateTime>();
+            for(int k = 0; k < timeFrame.length; i++){
+                DateTime expectedStartDate = DateTime.parse(timeFrame[k], FORMATTER);
+                timeStamp.add(expectedStartDate);
+            }
+            timeFrames.add(timeStamp);
+        }
+        return timeFrames;
     }
 
-    public List<Float> getBbox(Document xmlDoc) {
-        List<Float> bbox = new ArrayList<Float>();
-        return bbox;
+    public List<List<Float>> getBbox(Document xmlDoc) throws XPathExpressionException {
+        List<List<Float>> bboxForAll = new ArrayList<List<Float>>();
+        String xPathStringBbox="/feed/entry/georss:box";
+        XPathExpression expressionBbox= this.xpath.compile(xPathStringBbox);
+        NodeList resultBbox = (NodeList)expressionBbox.evaluate(xmlDoc, XPathConstants.NODESET);
+        NodeList bboxNodes = (NodeList) resultBbox;
+        for (int i = 0; i < bboxNodes.getLength(); i++) {
+            String[] bboxCoordinates = bboxNodes.item(i).getNodeValue().split(" ");
+            List<Float> bboxForOne = new ArrayList<Float>();
+            for(int k = 0; k < bboxCoordinates.length; i++){
+                bboxForOne.add(Float.parseFloat(bboxCoordinates[k]));
+            }
+            bboxForAll.add(bboxForOne);
+        }
+        return bboxForAll;
     }
 }
