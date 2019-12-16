@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CodeDeOpenSearchRequestor {
@@ -26,7 +27,9 @@ public class CodeDeOpenSearchRequestor {
 
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
-    public static CodeDeProductsMetadata request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public static List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+        List<CodeDeProductsMetadata> resultMetadata = new ArrayList<CodeDeProductsMetadata>();
+
         LOG.debug("Start building connection parameters for GET-request");
         String getRequestUrl = null;
         LOG.debug("Start GET-request");
@@ -42,12 +45,26 @@ public class CodeDeOpenSearchRequestor {
         CodeDeResponseResolver resolver = new CodeDeResponseResolver();
         List<String> downloadLinks = resolver.getDownloadLink(getResponseDoc);
 
-        CodeDeProductsMetadata metadata = new CodeDeProductsMetadata();
+        List<String> metadataLinks = resolver.getMetaDataLinks(getResponseDoc);
+        // request links
+        for (int i=0; i<metadataLinks.size(); i++) {
+            CodeDeProductsMetadata metadata = new CodeDeProductsMetadata();
+            getResponse = sendOpenSearchRequest(metadataLinks.get(i));
+            Document getMetadataDoc = docBuilder.parse(getResponse);
+            float cloudCoverage = resolver.getCloudCoverage(getMetadataDoc);
+            metadata.setCloudCover(cloudCoverage);
+
+
+
+
+            resultMetadata.add(metadata);
+        }
+
         //metadata.setParentIdentifier();
 
 
 
-        return metadata;
+        return resultMetadata;
     }
 
     public static InputStream sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
