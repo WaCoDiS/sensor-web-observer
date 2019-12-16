@@ -10,7 +10,7 @@ public class CodeDeProductsMetadata {
     // required
     public String datasetId;
     public String satellite;
-    public ArrayList<Float> cloudCover = new ArrayList<Float>();
+    public float cloudCover;
     public String portal;
 
     // optional
@@ -59,16 +59,12 @@ public class CodeDeProductsMetadata {
         this.areaOfInterest.add(yMax);
     }
 
-    public List<Float> getCloudCover() {
+    public float getCloudCover() {
         return cloudCover;
     }
 
-    public void setCloudCover(ArrayList<Float> cloudCover) {
+    public void setCloudCover(float cloudCover) {
         this.cloudCover = cloudCover;
     }
 
-    public void setCloudCover(float min, float max){
-        this.cloudCover.add(min);
-        this.cloudCover.add(max);
-    }
 }

@@ -40,7 +40,7 @@ class CodeDeOpenSearchRequestorBuilderTest {
                 "startDate=2019-10-01T00:00:00Z&" +
                 "endDate=2019-10-31T00:00:00Z&" +
                 "bbox=6.96,50.9,8.02,51.2&" +
-                "cloudCover=[0,40]";
+                "cloudCover=[0.0,40.0]";
         Assertions.assertEquals(expectedRequestUrl, actualRequestUrl);
     }
 
