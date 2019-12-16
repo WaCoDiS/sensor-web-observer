@@ -30,17 +30,8 @@ public class CodeDeResponseResolver {
     public CodeDeResponseResolver(){
         XPathFactory factory = XPathFactory.newInstance();
         this.xpath = factory.newXPath();
-        /*Map<String, String> prefMap = new HashMap<String, String>() {
-            {
-                put("os", "http://a9.com/-/spec/opensearch/1.1/");
-                put("a", "http://www.w3.org/2005/Atom");
-            }
-        };*/
-        //SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
-        //xpath.setNamespaceContext(namespaces);
     }
-
-
+    
     public List<String> getDownloadLink(Document xmlDoc) throws ParserConfigurationException, XPathExpressionException {
         LOG.debug("Resolve TypeName out of GetCapabilities Document");
         List<String> donwloadLinks = new ArrayList<String>();

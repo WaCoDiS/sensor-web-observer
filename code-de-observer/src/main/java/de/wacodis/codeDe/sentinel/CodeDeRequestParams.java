@@ -10,9 +10,9 @@ public class CodeDeRequestParams {
     public DateTime startDate;
     public DateTime endDate;
     public List<Float> bbox;
-    public List<Byte> cloudCover;
+    public List<Float> cloudCover;
 
-    public CodeDeRequestParams(String parentIdentifier, DateTime startDate, DateTime endDate, List<Float> bbox, List<Byte> cloudCover) {
+    public CodeDeRequestParams(String parentIdentifier, DateTime startDate, DateTime endDate, List<Float> bbox, List<Float> cloudCover) {
         this.parentIdentifier = parentIdentifier;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -52,11 +52,11 @@ public class CodeDeRequestParams {
         this.bbox = bbox;
     }
 
-    public List<Byte> getCloudCover() {
+    public List<Float> getCloudCover() {
         return cloudCover;
     }
 
-    public void setCloudCover(List<Byte> cloudCover) {
+    public void setCloudCover(List<Float> cloudCover) {
         this.cloudCover = cloudCover;
     }
 }

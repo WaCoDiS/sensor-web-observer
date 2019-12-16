@@ -7,11 +7,18 @@ import java.util.List;
 
 public class CodeDeProductsMetadata {
 
+    // required
+    public String datasetId;
+    public String satellite;
+    public ArrayList<Float> cloudCover = new ArrayList<Float>();
+    public String portal;
+
+    // optional
     public String parentIdentifier;
     public DateTime startDate;
     public DateTime endDate;
-    public ArrayList<Float> bbox = new ArrayList<Float>();
-    public ArrayList<Byte> cloudCover = new ArrayList<Byte>();
+    public ArrayList<Float> areaOfInterest = new ArrayList<Float>();
+
 
     public String getParentIdentifier() {
         return parentIdentifier;
@@ -37,30 +44,30 @@ public class CodeDeProductsMetadata {
         this.endDate = endDate;
     }
 
-    public List<Float> getBbox() {
-        return bbox;
+    public List<Float> getAreaOfInterest() {
+        return areaOfInterest;
     }
 
-    public void setBbox(ArrayList<Float> bbox) {
-        this.bbox = bbox;
+    public void setAreaOfInterest(ArrayList<Float> areaOfInterest) {
+        this.areaOfInterest = areaOfInterest;
     }
 
     public void setBbox(float xMin, float yMin, float xMax, float yMax){
-        this.bbox.add(xMin);
-        this.bbox.add(yMin);
-        this.bbox.add(xMax);
-        this.bbox.add(yMax);
+        this.areaOfInterest.add(xMin);
+        this.areaOfInterest.add(yMin);
+        this.areaOfInterest.add(xMax);
+        this.areaOfInterest.add(yMax);
     }
 
-    public List<Byte> getCloudCover() {
+    public List<Float> getCloudCover() {
         return cloudCover;
     }
 
-    public void setCloudCover(ArrayList<Byte> cloudCover) {
+    public void setCloudCover(ArrayList<Float> cloudCover) {
         this.cloudCover = cloudCover;
     }
 
-    public void setCloudCover(byte min, byte max){
+    public void setCloudCover(float min, float max){
         this.cloudCover.add(min);
         this.cloudCover.add(max);
     }
