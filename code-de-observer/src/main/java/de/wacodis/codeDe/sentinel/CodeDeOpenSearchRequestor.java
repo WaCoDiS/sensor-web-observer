@@ -13,8 +13,12 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class CodeDeOpenSearchRequestor {
 
@@ -22,12 +26,21 @@ public class CodeDeOpenSearchRequestor {
 
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
-    public static CodeDeProductsMetadata request(CodeDeRequestParams params) throws IOException, SAXException {
+    public static CodeDeProductsMetadata request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+        LOG.debug("Start building connection parameters for GET-request");
         String getRequestUrl = null;
+        LOG.debug("Start GET-request");
         InputStream getResponse = sendOpenSearchRequest(getRequestUrl);
-        // analyse inputStream
-        DocumentBuilder docBuilder = null;
+        LOG.debug("Analyze InputStream");
+
+        // create xml-Document
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         Document getResponseDoc = docBuilder.parse(getResponse);
+
+        // analyze xml-Document
+        CodeDeResponseResolver resolver = new CodeDeResponseResolver();
+        List<String> downloadLinks = resolver.getDownloadLink(getResponseDoc);
 
         CodeDeProductsMetadata metadata = new CodeDeProductsMetadata();
         //metadata.setParentIdentifier();

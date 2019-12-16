@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,12 +33,9 @@ class CodeDeResponseResolverTest {
         expectedDownloadLinks.add("https://code-de.org/download/S2B_MSIL2A_20191012T103029_N0213_R108_T32UMB_20191012T135838.SAFE.zip");
         expectedDownloadLinks.add("https://code-de.org/download/S2B_MSIL2A_20191012T103029_N0213_R108_T31UGS_20191012T135838.SAFE.zip");
 
-
-
     }
-
     @Test
-    void test() throws ParserConfigurationException, IOException, SAXException {
+    void test() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         // actual
         openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.txt");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -48,5 +46,4 @@ class CodeDeResponseResolverTest {
 
         Assertions.assertEquals(expectedDownloadLinks, actualDownloadLinks);
     }
-
 }
