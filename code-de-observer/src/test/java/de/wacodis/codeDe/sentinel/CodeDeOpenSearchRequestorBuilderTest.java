@@ -24,9 +24,9 @@ class CodeDeOpenSearchRequestorBuilderTest {
         bbox.add(50.9f);
         bbox.add(8.02f);
         bbox.add(51.2f);
-        List<Byte> cloudCover = new ArrayList<Byte>();
-        cloudCover.add((byte) 0);
-        cloudCover.add((byte) 40);
+        List<Float> cloudCover = new ArrayList<Float>();
+        cloudCover.add(0.f);
+        cloudCover.add(40.f);
         params = new CodeDeRequestParams(parentIdentifier, startDate, endDate, bbox, cloudCover);
     }
 
