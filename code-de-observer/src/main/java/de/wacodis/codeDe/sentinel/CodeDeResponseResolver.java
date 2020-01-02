@@ -121,14 +121,14 @@ public class CodeDeResponseResolver {
     /**
      * Returns the cloud coverage percentage of the product
      *
-     * @param entryNode <entry>-Tag of the OpenSearch Response and consists one sentinel product
+     * @param xmlDoc the xml document which contains the metadata of one sentinel product
      * @return float number (percentage)
      * @throws XPathExpressionException
      */
-    public float getCloudCoverage(Node entryNode) throws XPathExpressionException {
+    public float getCloudCoverage(Document xmlDoc) throws XPathExpressionException {
         String xPathStringCloudCoverage="/a:feed/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expressionCloudCoverage = this.xpath.compile(xPathStringCloudCoverage);
-        String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(entryNode, XPathConstants.STRING);
+        String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(xmlDoc, XPathConstants.STRING);
         float cloudCoverage = Float.parseFloat(resultCloudCoverage);
         return cloudCoverage;
     }
