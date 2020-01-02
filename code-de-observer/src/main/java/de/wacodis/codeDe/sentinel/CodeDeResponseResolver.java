@@ -7,18 +7,16 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import de.wacodis.sentinel.apihub.decode.SimpleNamespaceContext;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import javax.xml.xpath.*;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,43 +49,58 @@ public class CodeDeResponseResolver {
         xpath.setNamespaceContext(namespaces);
     }
 
-    public List<String> getDownloadLink(Document xmlDoc) throws ParserConfigurationException, XPathExpressionException {
-        LOG.debug("Resolve TypeName out of GetCapabilities Document");
-        List<String> donwloadLinks = new ArrayList<String>();
-        String xPathString="/a:feed/a:entry/a:link[@title=\"Download\"]/@href";
-        XPathExpression expression = this.xpath.compile(xPathString);
-        NodeList result = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
-        NodeList downloadLinkNodes = (NodeList) result;
 
-        for (int i = 0; i < downloadLinkNodes.getLength(); i++) {
-            Node node = downloadLinkNodes.item(i);
-            donwloadLinks.add(node.getNodeValue());
+    public String getDownloadLink(Node entryNode) throws XPathExpressionException {
+        /*
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document newDocument = builder.newDocument();
+        Node importedNode = newDocument.importNode(entryNode, true);
+        newDocument.appendChild(importedNode);
+
+        DOMSource domSource = new DOMSource(newDocument);
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.transform(domSource, result);
+        System.out.println("XML IN String format is: \n" + writer.toString());
+        */
+
+        LOG.debug("Resolve DownloadLink out of the OpenSearch Response Document");
+        String xPathString="/a:link[@title=\"Download\"]/@href";
+        XPathExpression expression = this.xpath.compile(xPathString);
+        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
+        String downloadLink = (String) expression.evaluate(entryNode, XPathConstants.STRING);
+
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            downloadLink = node.getTextContent();
         }
 
-            return donwloadLinks;
+        return downloadLink;
     }
 
-    public List<String> getMetaDataLinks(Document xmlDoc) throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
+    public List<String> getMetaDataLinks(Node entryNode) throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
         // request metadatalinks
         List<String> metadataLinks = new ArrayList<String>();
-        String xPathStringMetadata="/a:feed/a:entry/a:link[@title=\"O&M 1.1 metadata\"]/@href";
+        String xPathStringMetadata="/a:link[@title=\"O&M 1.1 metadata\"]/@href";
         XPathExpression expressionMetadata = this.xpath.compile(xPathStringMetadata);
-        NodeList resultMetadata = (NodeList)expressionMetadata.evaluate(xmlDoc, XPathConstants.NODESET);
-        NodeList metadataLinkNodes = (NodeList) resultMetadata;
-        for (int i = 0; i < metadataLinkNodes.getLength(); i++) {
-            String metadataLink = metadataLinkNodes.item(i).getNodeValue();
+        NodeList nodeList = (NodeList)expressionMetadata.evaluate(entryNode, XPathConstants.NODESET);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            String metadataLink = nodeList.item(i).getNodeValue();
             metadataLinks.add(metadataLink.replace("httpAccept=application/gml+xml&", ""));
-
         }
 
         return metadataLinks;
     }
 
 
-    public float getCloudCoverage(Document xmlDoc) throws XPathExpressionException {
+    public float getCloudCoverage(Node entryNode) throws XPathExpressionException {
         String xPathStringCloudCoverage="/a:feed/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expressionCloudCoverage = this.xpath.compile(xPathStringCloudCoverage);
-        String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(xmlDoc, XPathConstants.STRING);
+        String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(entryNode, XPathConstants.STRING);
         float cloudCoverage = Float.parseFloat(resultCloudCoverage);
         return cloudCoverage;
     }
