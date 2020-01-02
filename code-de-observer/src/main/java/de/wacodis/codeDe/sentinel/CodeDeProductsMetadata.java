@@ -5,6 +5,13 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Metadata for the CODE-DE products.
+ *
+ * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ */
+
 public class CodeDeProductsMetadata {
 
     // required

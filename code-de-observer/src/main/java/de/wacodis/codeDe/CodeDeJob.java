@@ -15,6 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 
+/**
+ * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ */
+
 public class CodeDeJob implements Job {
 
     // Class varibles for Request
@@ -70,9 +75,6 @@ public class CodeDeJob implements Job {
         area.add(2, upperRightY);
         area.add(3, upperRightX);
 
-
-
-
         Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 
         DateTime endDate = DateTime.now();
@@ -89,11 +91,6 @@ public class CodeDeJob implements Job {
         dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
         //this.createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
-
-
-
-
-
 
     }
 }

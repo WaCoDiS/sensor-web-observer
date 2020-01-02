@@ -21,11 +21,28 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is responsible for requesting CODE-DE Orthorectified images of the Sentinal satellites.
+ *
+ *@author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ */
+
 public class CodeDeOpenSearchRequestor {
 
 
-
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
+
+    /**
+     * Performs a query with the given paramerters.
+     *
+     * @param params all necessary parameters for the OpenSearch request
+     * @return metadata for the found satellite images
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @throws XPathExpressionException
+     */
 
     public static List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         List<CodeDeProductsMetadata> resultMetadata = new ArrayList<CodeDeProductsMetadata>();
@@ -54,10 +71,6 @@ public class CodeDeOpenSearchRequestor {
             Document getMetadataDoc = docBuilder.parse(getResponse);
             float cloudCoverage = resolver.getCloudCoverage(getMetadataDoc);
             metadata.setCloudCover(cloudCoverage);
-
-
-
-
             resultMetadata.add(metadata);
         }
 
@@ -68,6 +81,13 @@ public class CodeDeOpenSearchRequestor {
         return resultMetadata;
     }
 
+    /**
+     *  Delivers the content of the GET response.
+     * @param getRequestUrl string containing the URL of the GET request
+     * @return content of the GET response as an Inputstream
+     * @throws ClientProtocolException
+     * @throws IOException
+     */
     public static InputStream sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
 
         // contact http-client

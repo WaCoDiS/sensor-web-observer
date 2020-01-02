@@ -4,12 +4,25 @@ import de.wacodis.codeDe.CodeDeJob;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+/**
+ * Helps building the CODE-DE OpenSeaurch request for certain request parameters.
+ *
+ * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ */
+
 public class CodeDeOpenSearchRequestorBuilder {
 
     public static final String SERVICE_URL = "https://catalog.code-de.org/opensearch/request/?";
     public static final String HTTP_ACCEPT = "httpAccept=application/atom%2Bxml";
     public static final String PARENT_IDENTIFIER_PREFIX = "EOP:CODE-DE:";
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    /**
+     * Builds the String containing the URL of the GET request.
+     * @param params all necessary parameters for the OpenSearch request
+     * @return url of the GET request
+     */
 
     public String buildGetRequestUrl(CodeDeRequestParams params){
         // parentIdentifier

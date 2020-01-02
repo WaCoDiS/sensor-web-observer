@@ -14,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
+/**
+ * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ */
+
 public class CodeDeJobFactory  implements JobFactory {
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJobFactory.class);
 

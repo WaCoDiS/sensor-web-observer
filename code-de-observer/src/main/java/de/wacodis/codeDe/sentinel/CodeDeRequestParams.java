@@ -4,6 +4,13 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
+/**
+ * Encapuslates parameters for requesting CODE-DE OpenSearch services.
+ *
+ * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ */
+
 public class CodeDeRequestParams {
 
     public String parentIdentifier;
