@@ -30,13 +30,9 @@ import java.util.List;
  *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 
-<<<<<<< HEAD
 public class CodeDeOpenSearchRequestor {
-=======
+    
     private final XPath xpath = null;
->>>>>>> e0155c5e33fc39699efd3d0f4bd10ad00fdfc13c
-
-
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
     /**
