@@ -40,6 +40,7 @@ public class CodeDeResponseResolver {
         this.xpath = factory.newXPath();
         Map<String, String> prefMap = new HashMap<String, String>(){
             {
+                put("a", "http://www.w3.org/2005/Atom");
                 put("opt", "http://www.opengis.net/opt/2.1");
                 put("om", "http://www.opengis.net/om/2.0");
                 put("georss", "http://www.georss.org/georss");
@@ -53,7 +54,7 @@ public class CodeDeResponseResolver {
     public List<String> getDownloadLink(Document xmlDoc) throws ParserConfigurationException, XPathExpressionException {
         LOG.debug("Resolve TypeName out of GetCapabilities Document");
         List<String> donwloadLinks = new ArrayList<String>();
-        String xPathString="/feed/entry/link[@title=\"Download\"]/@href";
+        String xPathString="/a:feed/a:entry/a:link[@title=\"Download\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);
         NodeList result = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
         NodeList downloadLinkNodes = (NodeList) result;
@@ -69,7 +70,7 @@ public class CodeDeResponseResolver {
     public List<String> getMetaDataLinks(Document xmlDoc) throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
         // request metadatalinks
         List<String> metadataLinks = new ArrayList<String>();
-        String xPathStringMetadata="/feed/entry/link[@title=\"O&M 1.1 metadata\"]/@href";
+        String xPathStringMetadata="/a:feed/a:entry/a:link[@title=\"O&M 1.1 metadata\"]/@href";
         XPathExpression expressionMetadata = this.xpath.compile(xPathStringMetadata);
         NodeList resultMetadata = (NodeList)expressionMetadata.evaluate(xmlDoc, XPathConstants.NODESET);
         NodeList metadataLinkNodes = (NodeList) resultMetadata;
@@ -84,7 +85,7 @@ public class CodeDeResponseResolver {
 
 
     public float getCloudCoverage(Document xmlDoc) throws XPathExpressionException {
-        String xPathStringCloudCoverage="/feed/entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
+        String xPathStringCloudCoverage="/a:feed/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expressionCloudCoverage = this.xpath.compile(xPathStringCloudCoverage);
         String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(xmlDoc, XPathConstants.STRING);
         float cloudCoverage = Float.parseFloat(resultCloudCoverage);
@@ -103,16 +104,15 @@ public class CodeDeResponseResolver {
 
     public List<List<DateTime>> getTimeFrame(Document xmlDoc) throws XPathExpressionException {
         List<List<DateTime>> timeFrames = new ArrayList<List<DateTime>>();
-        String xPathString="/feed/entry/dc:date";
-        XPathExpression expressionBbox= this.xpath.compile(xPathString);
-        NodeList resultBbox = (NodeList)expressionBbox.evaluate(xmlDoc, XPathConstants.NODESET);
-        NodeList nodeList = (NodeList) resultBbox;
+        String xPathString="/a:feed/a:entry/dc:date";
+        XPathExpression expression= this.xpath.compile(xPathString);
+        NodeList nodeList = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
         for (int i = 0; i < nodeList.getLength(); i++) {
-            String[] timeFrame = nodeList.item(i).getNodeValue().split("/");
+            String[] timeFrame = nodeList.item(i).getTextContent().split("/");
             List<DateTime> timeStamp = new ArrayList<DateTime>();
-            for(int k = 0; k < timeFrame.length; i++){
-                DateTime expectedStartDate = DateTime.parse(timeFrame[k], FORMATTER);
-                timeStamp.add(expectedStartDate);
+            for(int k = 0; k < timeFrame.length; k++){
+                DateTime date = DateTime.parse(timeFrame[k], FORMATTER);
+                timeStamp.add(date);
             }
             timeFrames.add(timeStamp);
         }
@@ -121,14 +121,13 @@ public class CodeDeResponseResolver {
 
     public List<List<Float>> getBbox(Document xmlDoc) throws XPathExpressionException {
         List<List<Float>> bboxForAll = new ArrayList<List<Float>>();
-        String xPathStringBbox="/feed/entry/georss:box";
-        XPathExpression expressionBbox= this.xpath.compile(xPathStringBbox);
-        NodeList resultBbox = (NodeList)expressionBbox.evaluate(xmlDoc, XPathConstants.NODESET);
-        NodeList bboxNodes = (NodeList) resultBbox;
-        for (int i = 0; i < bboxNodes.getLength(); i++) {
-            String[] bboxCoordinates = bboxNodes.item(i).getNodeValue().split(" ");
+        String xPathString="/a:feed/a:entry/georss:box";
+        XPathExpression expression= this.xpath.compile(xPathString);
+        NodeList nodeList = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            String[] bboxCoordinates = nodeList.item(i).getTextContent().split(" ");
             List<Float> bboxForOne = new ArrayList<Float>();
-            for(int k = 0; k < bboxCoordinates.length; i++){
+            for(int k = 0; k < bboxCoordinates.length; k++){
                 bboxForOne.add(Float.parseFloat(bboxCoordinates[k]));
             }
             bboxForAll.add(bboxForOne);

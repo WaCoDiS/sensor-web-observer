@@ -39,6 +39,7 @@ public class CodeDeOpenSearchRequestor {
         // create xml-Document
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+        dbf.setNamespaceAware(true);
         Document getResponseDoc = docBuilder.parse(getResponse);
 
         // analyze xml-Document

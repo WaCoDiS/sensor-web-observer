@@ -34,7 +34,9 @@ class CodeDeResponseResolverTest {
     static void setup() throws ParserConfigurationException {
 
         resolver = new CodeDeResponseResolver();
+        dbf.setNamespaceAware(true);
         db = dbf.newDocumentBuilder();
+
 
     }
     @Test
@@ -47,7 +49,7 @@ class CodeDeResponseResolverTest {
         expectedDownloadLinks.add("https://code-de.org/download/S2B_MSIL2A_20191012T103029_N0213_R108_T31UGS_20191012T135838.SAFE.zip");
 
         // actual downloadLinks
-        InputStream openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.txt");
+        InputStream openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(openSearchResponseStream);
         List<String> actualDownloadLinks = resolver.getDownloadLink(xmlDoc);
 
@@ -60,7 +62,7 @@ class CodeDeResponseResolverTest {
         float expectedCloudCoverage = 29.141719f;
 
         // actual cloud coverage
-        InputStream cloudCoverageDoc1 = this.getClass().getResourceAsStream("/metadata_1_picture.txt");
+        InputStream cloudCoverageDoc1 = this.getClass().getResourceAsStream("/metadata_1_picture.xml");
         xmlDoc = db.parse(cloudCoverageDoc1);
         resolver = new CodeDeResponseResolver();
         float actualCloudCoverage = resolver.getCloudCoverage(xmlDoc);
@@ -101,7 +103,7 @@ class CodeDeResponseResolverTest {
         expectedbbox.add(secondPicture);
         expectedbbox.add(thirdPicture);
         // actual cloud coverage
-        InputStream bboxDoc1 = this.getClass().getResourceAsStream("/catalog.code-de.org.txt");
+        InputStream bboxDoc1 = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(bboxDoc1);
         resolver = new CodeDeResponseResolver();
         List<List<Float>> actualBBox = resolver.getBbox(xmlDoc);
@@ -135,7 +137,7 @@ class CodeDeResponseResolverTest {
         expectedTimeFrames.add(secondPicture);
         expectedTimeFrames.add(thirdPicture);
         // actual cloud coverage
-        InputStream document = this.getClass().getResourceAsStream("/catalog.code-de.org.txt");
+        InputStream document = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(document);
         resolver = new CodeDeResponseResolver();
         List<List<DateTime>> actualTimeFrames = resolver.getTimeFrame(xmlDoc);
