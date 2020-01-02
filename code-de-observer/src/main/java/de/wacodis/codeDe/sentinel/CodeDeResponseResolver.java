@@ -22,6 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ *  Helper class to resolve required product metadata from the OpenSearch Response
+ *
+ *
+ *@author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ */
 public class CodeDeResponseResolver {
 
     private static final String ENTRY_TAG = "entry";
@@ -49,7 +57,13 @@ public class CodeDeResponseResolver {
         xpath.setNamespaceContext(namespaces);
     }
 
-
+    /**
+     * Delivers the Downloadlink of one specfic sentinel product (<entry>-Tag)
+     *
+     * @param entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
+     * @return URL as String
+     * @throws XPathExpressionException
+     */
     public String getDownloadLink(Node entryNode) throws XPathExpressionException {
         /*
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -82,21 +96,35 @@ public class CodeDeResponseResolver {
         return downloadLink;
     }
 
-    public List<String> getMetaDataLinks(Node entryNode) throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
+    /**
+     * Delivers the URL which links to a seperate XML-Document which contains the metadata of one specfic sentinel product
+     *
+     * @param entryNode <entry>-Tag of the OpenSearch Response and consists one sentinel product
+     * @return URL as String
+     * @throws XPathExpressionException
+     */
+    public String getMetaDataLinks(Node entryNode) throws XPathExpressionException {
         // request metadatalinks
-        List<String> metadataLinks = new ArrayList<String>();
+        String metadataLink = null;
         String xPathStringMetadata="/a:link[@title=\"O&M 1.1 metadata\"]/@href";
         XPathExpression expressionMetadata = this.xpath.compile(xPathStringMetadata);
         NodeList nodeList = (NodeList)expressionMetadata.evaluate(entryNode, XPathConstants.NODESET);
+        /*
         for (int i = 0; i < nodeList.getLength(); i++) {
             String metadataLink = nodeList.item(i).getNodeValue();
-            metadataLinks.add(metadataLink.replace("httpAccept=application/gml+xml&", ""));
+            //metadataLinks.add(metadataLink.replace("httpAccept=application/gml+xml&", ""));
         }
-
-        return metadataLinks;
+        */
+        return metadataLink;
     }
 
-
+    /**
+     * Returns the cloud coverage percentage of the product
+     *
+     * @param entryNode <entry>-Tag of the OpenSearch Response and consists one sentinel product
+     * @return float number (percentage)
+     * @throws XPathExpressionException
+     */
     public float getCloudCoverage(Node entryNode) throws XPathExpressionException {
         String xPathStringCloudCoverage="/a:feed/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expressionCloudCoverage = this.xpath.compile(xPathStringCloudCoverage);
@@ -106,20 +134,30 @@ public class CodeDeResponseResolver {
     }
 
 
-
-
-
-
+    /**
+     *  Returns the identifier of the sentinel layer
+     *
+     * @param xmlDoc the xml document which contains the metadata of one sentinel product
+     * @return identifier of a sentinel layer
+     */
     public String getParentIdentifier(Document xmlDoc){
         String parentIdentifier = null;
         return parentIdentifier;
     }
 
-    public List<List<DateTime>> getTimeFrame(Document xmlDoc) throws XPathExpressionException {
-        List<List<DateTime>> timeFrames = new ArrayList<List<DateTime>>();
+    /**
+     * Returns the Date of recording as a list of two dates which are the same
+     *
+     * @param entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
+     * @return DateTime list which contains the start and enddate
+     * @throws XPathExpressionException
+     */
+    public List<DateTime> getTimeFrame(Node entryNode) throws XPathExpressionException {
+        List<DateTime> timeFrame = new ArrayList<DateTime>();
         String xPathString="/a:feed/a:entry/dc:date";
         XPathExpression expression= this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
+        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
+        /*
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] timeFrame = nodeList.item(i).getTextContent().split("/");
             List<DateTime> timeStamp = new ArrayList<DateTime>();
@@ -127,16 +165,26 @@ public class CodeDeResponseResolver {
                 DateTime date = DateTime.parse(timeFrame[k], FORMATTER);
                 timeStamp.add(date);
             }
-            timeFrames.add(timeStamp);
+            //timeFrames.add(timeStamp);
         }
-        return timeFrames;
+        */
+
+        return timeFrame;
     }
 
-    public List<List<Float>> getBbox(Document xmlDoc) throws XPathExpressionException {
-        List<List<Float>> bboxForAll = new ArrayList<List<Float>>();
+    /**
+     * Returns the Bounding Box
+     *
+     * @param  entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
+     * @return Boundingbox of the sentinel product - Schema [minLat, minLon, maxLat, maxLon]
+     * @throws XPathExpressionException
+     */
+    public List<Float> getBbox(Node entryNode) throws XPathExpressionException {
+        ArrayList<Float> bbox= new ArrayList<Float>();
         String xPathString="/a:feed/a:entry/georss:box";
         XPathExpression expression= this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
+        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
+        /*
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] bboxCoordinates = nodeList.item(i).getTextContent().split(" ");
             List<Float> bboxForOne = new ArrayList<Float>();
@@ -145,6 +193,7 @@ public class CodeDeResponseResolver {
             }
             bboxForAll.add(bboxForOne);
         }
-        return bboxForAll;
+        */
+        return bbox;
     }
 }
