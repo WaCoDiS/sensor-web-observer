@@ -10,12 +10,14 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,7 +30,11 @@ import java.util.List;
  *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 
+
 public class CodeDeOpenSearchRequestor {
+
+    private final XPath xpath = null;
+
 
 
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
@@ -45,6 +51,7 @@ public class CodeDeOpenSearchRequestor {
      */
 
     public static List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+
         List<CodeDeProductsMetadata> resultMetadata = new ArrayList<CodeDeProductsMetadata>();
 
         LOG.debug("Start building connection parameters for GET-request");
@@ -59,12 +66,27 @@ public class CodeDeOpenSearchRequestor {
         dbf.setNamespaceAware(true);
         Document getResponseDoc = docBuilder.parse(getResponse);
 
+        String xPathString="/feed/entry";
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xpath = factory.newXPath();
+        XPathExpression expression = xpath.compile(xPathString);
+        NodeList nodeList = (NodeList)expression.evaluate(getResponseDoc, XPathConstants.NODESET);
+
+        List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();
         // analyze xml-Document
         CodeDeResponseResolver resolver = new CodeDeResponseResolver();
-        List<String> downloadLinks = resolver.getDownloadLink(getResponseDoc);
+        for(int i = 0; i < nodeList.getLength(); i++){
+           CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
+           Node node = nodeList.item(i);
+           String downloadLink = resolver.getDownloadLink(node);
+           //String metadataLink = resolver.getMetaDataLinks(node);
+           //getResponse = sendOpenSearchRequest(metadataLink);
+        }
 
-        List<String> metadataLinks = resolver.getMetaDataLinks(getResponseDoc);
+
+        //List<String> metadataLinks = resolver.getMetaDataLinks(getResponseDoc);
         // request links
+        /*
         for (int i=0; i<metadataLinks.size(); i++) {
             CodeDeProductsMetadata metadata = new CodeDeProductsMetadata();
             getResponse = sendOpenSearchRequest(metadataLinks.get(i));
@@ -73,10 +95,7 @@ public class CodeDeOpenSearchRequestor {
             metadata.setCloudCover(cloudCoverage);
             resultMetadata.add(metadata);
         }
-
-        //metadata.setParentIdentifier();
-
-
+        */
 
         return resultMetadata;
     }

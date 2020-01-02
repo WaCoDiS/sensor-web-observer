@@ -7,23 +7,29 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import de.wacodis.sentinel.apihub.decode.SimpleNamespaceContext;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import javax.xml.xpath.*;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ *  Helper class to resolve required product metadata from the OpenSearch Response
+ *
+ *
+ *@author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ */
 public class CodeDeResponseResolver {
 
     private static final String ENTRY_TAG = "entry";
@@ -51,62 +57,107 @@ public class CodeDeResponseResolver {
         xpath.setNamespaceContext(namespaces);
     }
 
-    public List<String> getDownloadLink(Document xmlDoc) throws ParserConfigurationException, XPathExpressionException {
-        LOG.debug("Resolve TypeName out of GetCapabilities Document");
-        List<String> donwloadLinks = new ArrayList<String>();
-        String xPathString="/a:feed/a:entry/a:link[@title=\"Download\"]/@href";
+    /**
+     * Delivers the Downloadlink of one specfic sentinel product (<entry>-Tag)
+     *
+     * @param entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
+     * @return URL as String
+     * @throws XPathExpressionException
+     */
+    public String getDownloadLink(Node entryNode) throws XPathExpressionException {
+        /*
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document newDocument = builder.newDocument();
+        Node importedNode = newDocument.importNode(entryNode, true);
+        newDocument.appendChild(importedNode);
+
+        DOMSource domSource = new DOMSource(newDocument);
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.transform(domSource, result);
+        System.out.println("XML IN String format is: \n" + writer.toString());
+        */
+
+        LOG.debug("Resolve DownloadLink out of the OpenSearch Response Document");
+        String xPathString="/a:link[@title=\"Download\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);
-        NodeList result = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
-        NodeList downloadLinkNodes = (NodeList) result;
+        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
+        String downloadLink = (String) expression.evaluate(entryNode, XPathConstants.STRING);
 
-        for (int i = 0; i < downloadLinkNodes.getLength(); i++) {
-            Node node = downloadLinkNodes.item(i);
-            donwloadLinks.add(node.getNodeValue());
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            downloadLink = node.getTextContent();
         }
 
-            return donwloadLinks;
+        return downloadLink;
     }
 
-    public List<String> getMetaDataLinks(Document xmlDoc) throws XPathExpressionException, IOException, ParserConfigurationException, SAXException {
+    /**
+     * Delivers the URL which links to a seperate XML-Document which contains the metadata of one specfic sentinel product
+     *
+     * @param entryNode <entry>-Tag of the OpenSearch Response and consists one sentinel product
+     * @return URL as String
+     * @throws XPathExpressionException
+     */
+    public String getMetaDataLinks(Node entryNode) throws XPathExpressionException {
         // request metadatalinks
-        List<String> metadataLinks = new ArrayList<String>();
-        String xPathStringMetadata="/a:feed/a:entry/a:link[@title=\"O&M 1.1 metadata\"]/@href";
+        String metadataLink = null;
+        String xPathStringMetadata="/a:link[@title=\"O&M 1.1 metadata\"]/@href";
         XPathExpression expressionMetadata = this.xpath.compile(xPathStringMetadata);
-        NodeList resultMetadata = (NodeList)expressionMetadata.evaluate(xmlDoc, XPathConstants.NODESET);
-        NodeList metadataLinkNodes = (NodeList) resultMetadata;
-        for (int i = 0; i < metadataLinkNodes.getLength(); i++) {
-            String metadataLink = metadataLinkNodes.item(i).getNodeValue();
-            metadataLinks.add(metadataLink.replace("httpAccept=application/gml+xml&", ""));
-
+        NodeList nodeList = (NodeList)expressionMetadata.evaluate(entryNode, XPathConstants.NODESET);
+        /*
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            String metadataLink = nodeList.item(i).getNodeValue();
+            //metadataLinks.add(metadataLink.replace("httpAccept=application/gml+xml&", ""));
         }
-
-        return metadataLinks;
+        */
+        return metadataLink;
     }
 
-
-    public float getCloudCoverage(Document xmlDoc) throws XPathExpressionException {
+    /**
+     * Returns the cloud coverage percentage of the product
+     *
+     * @param entryNode <entry>-Tag of the OpenSearch Response and consists one sentinel product
+     * @return float number (percentage)
+     * @throws XPathExpressionException
+     */
+    public float getCloudCoverage(Node entryNode) throws XPathExpressionException {
         String xPathStringCloudCoverage="/a:feed/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expressionCloudCoverage = this.xpath.compile(xPathStringCloudCoverage);
-        String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(xmlDoc, XPathConstants.STRING);
+        String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(entryNode, XPathConstants.STRING);
         float cloudCoverage = Float.parseFloat(resultCloudCoverage);
         return cloudCoverage;
     }
 
 
-
-
-
-
+    /**
+     *  Returns the identifier of the sentinel layer
+     *
+     * @param xmlDoc the xml document which contains the metadata of one sentinel product
+     * @return identifier of a sentinel layer
+     */
     public String getParentIdentifier(Document xmlDoc){
         String parentIdentifier = null;
         return parentIdentifier;
     }
 
-    public List<List<DateTime>> getTimeFrame(Document xmlDoc) throws XPathExpressionException {
-        List<List<DateTime>> timeFrames = new ArrayList<List<DateTime>>();
+    /**
+     * Returns the Date of recording as a list of two dates which are the same
+     *
+     * @param entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
+     * @return DateTime list which contains the start and enddate
+     * @throws XPathExpressionException
+     */
+    public List<DateTime> getTimeFrame(Node entryNode) throws XPathExpressionException {
+        List<DateTime> timeFrame = new ArrayList<DateTime>();
         String xPathString="/a:feed/a:entry/dc:date";
         XPathExpression expression= this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
+        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
+        /*
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] timeFrame = nodeList.item(i).getTextContent().split("/");
             List<DateTime> timeStamp = new ArrayList<DateTime>();
@@ -114,16 +165,26 @@ public class CodeDeResponseResolver {
                 DateTime date = DateTime.parse(timeFrame[k], FORMATTER);
                 timeStamp.add(date);
             }
-            timeFrames.add(timeStamp);
+            //timeFrames.add(timeStamp);
         }
-        return timeFrames;
+        */
+
+        return timeFrame;
     }
 
-    public List<List<Float>> getBbox(Document xmlDoc) throws XPathExpressionException {
-        List<List<Float>> bboxForAll = new ArrayList<List<Float>>();
+    /**
+     * Returns the Bounding Box
+     *
+     * @param  entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
+     * @return Boundingbox of the sentinel product - Schema [minLat, minLon, maxLat, maxLon]
+     * @throws XPathExpressionException
+     */
+    public List<Float> getBbox(Node entryNode) throws XPathExpressionException {
+        ArrayList<Float> bbox= new ArrayList<Float>();
         String xPathString="/a:feed/a:entry/georss:box";
         XPathExpression expression= this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(xmlDoc, XPathConstants.NODESET);
+        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
+        /*
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] bboxCoordinates = nodeList.item(i).getTextContent().split(" ");
             List<Float> bboxForOne = new ArrayList<Float>();
@@ -132,6 +193,7 @@ public class CodeDeResponseResolver {
             }
             bboxForAll.add(bboxForOne);
         }
-        return bboxForAll;
+        */
+        return bbox;
     }
 }
