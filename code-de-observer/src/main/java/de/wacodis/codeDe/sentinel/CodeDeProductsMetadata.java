@@ -67,4 +67,27 @@ public class CodeDeProductsMetadata {
         this.cloudCover = cloudCover;
     }
 
+    public String getDatasetId() {
+        return datasetId;
+    }
+
+    public void setDatasetId(String datasetId) {
+        this.datasetId = datasetId;
+    }
+
+    public String getSatellite() {
+        return satellite;
+    }
+
+    public void setSatellite(String satellite) {
+        this.satellite = satellite;
+    }
+
+    public String getPortal() {
+        return portal;
+    }
+
+    public void setPortal(String portal) {
+        this.portal = portal;
+    }
 }
