@@ -1,6 +1,7 @@
 package de.wacodis.codeDe.sentinel;
 
 import de.wacodis.codeDe.CodeDeJob;
+import de.wacodis.sentinel.apihub.decode.SimpleNamespaceContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -9,14 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import de.wacodis.sentinel.apihub.decode.SimpleNamespaceContext;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import javax.xml.xpath.*;
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,35 +59,11 @@ public class CodeDeResponseResolver {
      * @return URL as String
      * @throws XPathExpressionException
      */
-    public String getDownloadLink(Node entryNode) throws XPathExpressionException {
-        /*
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document newDocument = builder.newDocument();
-        Node importedNode = newDocument.importNode(entryNode, true);
-        newDocument.appendChild(importedNode);
-
-        DOMSource domSource = new DOMSource(newDocument);
-        StringWriter writer = new StringWriter();
-        StreamResult result = new StreamResult(writer);
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
-        transformer.transform(domSource, result);
-        System.out.println("XML IN String format is: \n" + writer.toString());
-        */
-
-        LOG.debug("Resolve DownloadLink out of the OpenSearch Response Document");
-        String xPathString="/a:link[@title=\"Download\"]/@href";
+    public String getDownloadLink(Document entryNode) throws XPathExpressionException {
+        LOG.debug("Resolve DownloadLink out of one entry Node of the OpenSearch Response Document");
+        String xPathString="/a:entry/a:link[@title=\"Download\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
         String downloadLink = (String) expression.evaluate(entryNode, XPathConstants.STRING);
-
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node = nodeList.item(i);
-            downloadLink = node.getTextContent();
-        }
-
         return downloadLink;
     }
 
@@ -103,18 +74,11 @@ public class CodeDeResponseResolver {
      * @return URL as String
      * @throws XPathExpressionException
      */
-    public String getMetaDataLinks(Node entryNode) throws XPathExpressionException {
-        // request metadatalinks
-        String metadataLink = null;
-        String xPathStringMetadata="/a:link[@title=\"O&M 1.1 metadata\"]/@href";
-        XPathExpression expressionMetadata = this.xpath.compile(xPathStringMetadata);
-        NodeList nodeList = (NodeList)expressionMetadata.evaluate(entryNode, XPathConstants.NODESET);
-        /*
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            String metadataLink = nodeList.item(i).getNodeValue();
-            //metadataLinks.add(metadataLink.replace("httpAccept=application/gml+xml&", ""));
-        }
-        */
+    public String getMetaDataLinks(Document entryNode) throws XPathExpressionException {
+        LOG.debug("Resolve MetadataLink out of one entry Node the OpenSearch Response Document");
+        String xPathString="/a:entry/a:link[@title=\"O&M 1.1 metadata\"]/@href";
+        XPathExpression expression = this.xpath.compile(xPathString);
+        String metadataLink = (String) expression.evaluate(entryNode, XPathConstants.STRING);
         return metadataLink;
     }
 

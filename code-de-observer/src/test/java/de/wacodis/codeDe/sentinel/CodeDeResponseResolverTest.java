@@ -13,10 +13,15 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,6 +42,7 @@ class CodeDeResponseResolverTest {
 
         resolver = new CodeDeResponseResolver();
         dbf.setNamespaceAware(true);
+        //dbf.setCoalescing(true);
         db = dbf.newDocumentBuilder();
         XPathFactory factory = XPathFactory.newInstance();
         xpath = factory.newXPath();
@@ -66,8 +72,8 @@ class CodeDeResponseResolverTest {
         // actual downloadLinks
         InputStream openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(openSearchResponseStream);
-        xmlDoc.normalizeDocument();
-
+        //xmlDoc.normalizeDocument();
+        //NodeList nodeList = xmlDoc.getElementsByTagName("feed");
         CodeDeResponseResolver test = new CodeDeResponseResolver();
         String xPathString="/a:feed/a:entry";
         XPathExpression expression = xpath.compile(xPathString);
@@ -77,16 +83,16 @@ class CodeDeResponseResolverTest {
         for(int i = 0; i < nodeList.getLength(); i++){
             CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
             Node node = nodeList.item(i);
-            String downloadLink = resolver.getDownloadLink(node);
+            Document newDocument = db.newDocument();
+            Node importedNode = newDocument.importNode(node, true);
+            newDocument.appendChild(importedNode);
+            String downloadLink = resolver.getDownloadLink(newDocument);
             actualDownloadLinks.add(downloadLink);
-
         }
-
         Assertions.assertEquals(expectedDownloadLinks, actualDownloadLinks);
     }
     @Test
     void testGetCloudCoverage() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
-
         // expected cloud coverage
         float expectedCloudCoverage = 29.141719f;
 

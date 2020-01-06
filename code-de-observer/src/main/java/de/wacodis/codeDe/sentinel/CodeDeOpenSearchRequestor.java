@@ -60,6 +60,7 @@ public class CodeDeOpenSearchRequestor {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         dbf.setNamespaceAware(true);
+
         Document getResponseDoc = docBuilder.parse(getResponse);
 
         String xPathString="/feed/entry";
@@ -74,8 +75,11 @@ public class CodeDeOpenSearchRequestor {
         for(int i = 0; i < nodeList.getLength(); i++){
            CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
            Node node = nodeList.item(i);
-           String downloadLink = resolver.getDownloadLink(node);
-           //String metadataLink = resolver.getMetaDataLinks(node);
+           Document newDocument = docBuilder.newDocument();
+           Node importedNode = newDocument.importNode(node, true);
+           newDocument.appendChild(importedNode);
+           String downloadLink = resolver.getDownloadLink(newDocument);
+           String metadataLink = resolver.getMetaDataLinks(newDocument);
            //getResponse = sendOpenSearchRequest(metadataLink);
         }
 
