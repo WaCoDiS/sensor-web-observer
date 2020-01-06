@@ -131,7 +131,6 @@ class CodeDeResponseResolverTest {
     void testGetCloudCoverage() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         // expected cloud coverage
         float expectedCloudCoverage = 29.141719f;
-
         // actual cloud coverage
         InputStream cloudCoverageDoc1 = this.getClass().getResourceAsStream("/metadata_1_picture.xml");
         xmlDoc = db.parse(cloudCoverageDoc1);
@@ -141,7 +140,7 @@ class CodeDeResponseResolverTest {
         Assertions.assertEquals(expectedCloudCoverage, actualCloudCoverage);
     }
 
-    //@Test
+    @Test
     void testGetBbox() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
         // expected cloud coverage
@@ -171,20 +170,33 @@ class CodeDeResponseResolverTest {
             }
         };
         expectedbbox.add(firstPicture);
-        //expectedbbox.add(secondPicture);
-        //expectedbbox.add(thirdPicture);
+        expectedbbox.add(secondPicture);
+        expectedbbox.add(thirdPicture);
+
         // actual cloud coverage
         InputStream bboxDoc1 = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(bboxDoc1);
-        resolver = new CodeDeResponseResolver();
-        List<Float> actualBBox = resolver.getBbox(xmlDoc);
+        String xPathString="/a:feed/a:entry";
+        XPathExpression expression = xpath.compile(xPathString);
+        NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
 
-        Assertions.assertEquals(expectedbbox, actualBBox);
+        List<List<Float>> actualBbox = new ArrayList<List<Float>>();
+        for(int i = 0; i < nodeList.getLength(); i++){
+            Node node = nodeList.item(i);
+            Document newDocument = db.newDocument();
+            Node importedNode = newDocument.importNode(node, true);
+            newDocument.appendChild(importedNode);
+            List<Float> bbox = resolver.getBbox(newDocument);
+            actualBbox.add(bbox);
+        }
+
+        Assertions.assertEquals(expectedbbox, actualBbox);
     }
-    //@Test
+    @Test
     void testGetTimeFrame() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
         // expected cloud coverage
+        List<List<DateTime>> expectedTimeFrames = new ArrayList<List<DateTime>>();
         List<DateTime> firstPicture = new ArrayList<DateTime>(){
             {
                 add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
@@ -203,26 +215,27 @@ class CodeDeResponseResolverTest {
                 add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
             }
         };
+        expectedTimeFrames.add(firstPicture);
+        expectedTimeFrames.add(secondPicture);
+        expectedTimeFrames.add(thirdPicture);
 
         // actual cloud coverage
         InputStream document = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(document);
-
         String xPathString="/a:feed/a:entry";
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
 
+        List<List<DateTime>> actualTimeFrames = new ArrayList<List<DateTime>>();
+        for(int i = 0; i < nodeList.getLength(); i++){
+            Node node = nodeList.item(i);
+            Document newDocument = db.newDocument();
+            Node importedNode = newDocument.importNode(node, true);
+            newDocument.appendChild(importedNode);
+            List<DateTime> timeFrame = resolver.getTimeFrame(newDocument);
+            actualTimeFrames.add(timeFrame);
+        }
 
-        // schleife fehlt noch
-
-
-        resolver = new CodeDeResponseResolver();
-        List<DateTime> actualTimeFrame1 = resolver.getTimeFrame(xmlDoc);
-        List<DateTime> actualTimeFrame2 = resolver.getTimeFrame(xmlDoc);
-        List<DateTime> actualTimeFrame3 = resolver.getTimeFrame(xmlDoc);
-
-        Assertions.assertEquals(firstPicture, actualTimeFrame1);
-        Assertions.assertEquals(secondPicture, actualTimeFrame2);
-        Assertions.assertEquals(thirdPicture, actualTimeFrame3);
+        Assertions.assertEquals(expectedTimeFrames, actualTimeFrames);
     }
 }

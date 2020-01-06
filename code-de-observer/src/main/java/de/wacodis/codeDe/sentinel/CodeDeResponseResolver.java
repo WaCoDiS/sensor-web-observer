@@ -112,52 +112,47 @@ public class CodeDeResponseResolver {
     /**
      * Returns the Date of recording as a list of two dates which are the same
      *
-     * @param entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
+     * @param entryNode One specific sentinel Product which corresponds to an <entry>-Tag
      * @return DateTime list which contains the start and enddate
      * @throws XPathExpressionException
      */
-    public List<DateTime> getTimeFrame(Node entryNode) throws XPathExpressionException {
-        List<DateTime> timeFrame = new ArrayList<DateTime>();
-        String xPathString="/a:feed/a:entry/dc:date";
+    public List<DateTime> getTimeFrame(Document entryNode) throws XPathExpressionException {
+        List<DateTime> result = new ArrayList<DateTime>();
+        String xPathString="/a:entry/dc:date";
         XPathExpression expression= this.xpath.compile(xPathString);
         NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
-        /*
+
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] timeFrame = nodeList.item(i).getTextContent().split("/");
-            List<DateTime> timeStamp = new ArrayList<DateTime>();
             for(int k = 0; k < timeFrame.length; k++){
                 DateTime date = DateTime.parse(timeFrame[k], FORMATTER);
-                timeStamp.add(date);
+                result.add(date);
             }
-            //timeFrames.add(timeStamp);
         }
-        */
 
-        return timeFrame;
+        return result;
     }
 
     /**
      * Returns the Bounding Box
      *
-     * @param  entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
-     * @return Boundingbox of the sentinel product - Schema [minLat, minLon, maxLat, maxLon]
+     * @param  entryNode One specific sentinel Product which corresponds to an <entry>-Tag
+     * @return Bounding Box of the sentinel product - Schema [minLat, minLon, maxLat, maxLon]
      * @throws XPathExpressionException
      */
-    public List<Float> getBbox(Node entryNode) throws XPathExpressionException {
+    public List<Float> getBbox(Document entryNode) throws XPathExpressionException {
         ArrayList<Float> bbox= new ArrayList<Float>();
-        String xPathString="/a:feed/a:entry/georss:box";
+        String xPathString="/a:entry/georss:box";
         XPathExpression expression= this.xpath.compile(xPathString);
         NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
-        /*
+
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] bboxCoordinates = nodeList.item(i).getTextContent().split(" ");
-            List<Float> bboxForOne = new ArrayList<Float>();
             for(int k = 0; k < bboxCoordinates.length; k++){
-                bboxForOne.add(Float.parseFloat(bboxCoordinates[k]));
+                bbox.add(Float.parseFloat(bboxCoordinates[k]));
             }
-            bboxForAll.add(bboxForOne);
         }
-        */
+
         return bbox;
     }
 }
