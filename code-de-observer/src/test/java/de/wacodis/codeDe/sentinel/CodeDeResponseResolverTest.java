@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -21,7 +22,10 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,9 +76,6 @@ class CodeDeResponseResolverTest {
         // actual downloadLinks
         InputStream openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(openSearchResponseStream);
-        //xmlDoc.normalizeDocument();
-        //NodeList nodeList = xmlDoc.getElementsByTagName("feed");
-        CodeDeResponseResolver test = new CodeDeResponseResolver();
         String xPathString="/a:feed/a:entry";
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
@@ -91,6 +92,41 @@ class CodeDeResponseResolverTest {
         }
         Assertions.assertEquals(expectedDownloadLinks, actualDownloadLinks);
     }
+
+    @Test
+    void testGetMetadataLink() throws IOException, SAXException, XPathExpressionException, URISyntaxException {
+
+        // expected download links
+        expectedDownloadLinks = new ArrayList<>();
+        expectedDownloadLinks.add("https://catalog.code-de.org/opensearch/request/?httpAccept=application/gml%2Bxml&amp;parentIdentifier=EOP:CODE-DE:S2_MSI_L2A&amp;uid=EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838&amp;recordSchema=om");
+        expectedDownloadLinks.add("https://catalog.code-de.org/opensearch/request/?httpAccept=application/gml%2Bxml&amp;parentIdentifier=EOP:CODE-DE:S2_MSI_L2A&amp;uid=EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32UMB_20191012T135838&amp;recordSchema=om");
+        expectedDownloadLinks.add("https://catalog.code-de.org/opensearch/request/?httpAccept=application/gml%2Bxml&amp;parentIdentifier=EOP:CODE-DE:S2_MSI_L2A&amp;uid=EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T31UGS_20191012T135838&amp;recordSchema=om");
+
+        // actual metadataLinks
+        InputStream openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
+        xmlDoc = db.parse(openSearchResponseStream);
+        CodeDeResponseResolver test = new CodeDeResponseResolver();
+        String xPathString="/a:feed/a:entry";
+        XPathExpression expression = xpath.compile(xPathString);
+        NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
+
+        List<String> actualMetadataLinks = new ArrayList<String>();
+        for(int i = 0; i < nodeList.getLength(); i++){
+            CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
+            Node node = nodeList.item(i);
+            Document newDocument = db.newDocument();
+            Node importedNode = newDocument.importNode(node, true);
+            newDocument.appendChild(importedNode);
+            String metadataLink = resolver.getMetaDataLink(newDocument);
+            String metadataLinkModified = metadataLink.replaceAll("&", "&amp;");
+            actualMetadataLinks.add(metadataLinkModified);
+
+        }
+        Assertions.assertEquals(expectedDownloadLinks, actualMetadataLinks);
+
+    }
+
+
     @Test
     void testGetCloudCoverage() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         // expected cloud coverage

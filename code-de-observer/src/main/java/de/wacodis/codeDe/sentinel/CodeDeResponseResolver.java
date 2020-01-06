@@ -74,7 +74,7 @@ public class CodeDeResponseResolver {
      * @return URL as String
      * @throws XPathExpressionException
      */
-    public String getMetaDataLinks(Document entryNode) throws XPathExpressionException {
+    public String getMetaDataLink(Document entryNode) throws XPathExpressionException {
         LOG.debug("Resolve MetadataLink out of one entry Node the OpenSearch Response Document");
         String xPathString="/a:entry/a:link[@title=\"O&M 1.1 metadata\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);

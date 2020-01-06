@@ -1,6 +1,5 @@
 package de.wacodis.codeDe.sentinel;
 
-import de.wacodis.codeDe.CodeDeJob;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -79,7 +78,7 @@ public class CodeDeOpenSearchRequestor {
            Node importedNode = newDocument.importNode(node, true);
            newDocument.appendChild(importedNode);
            String downloadLink = resolver.getDownloadLink(newDocument);
-           String metadataLink = resolver.getMetaDataLinks(newDocument);
+           String metadataLink = resolver.getMetaDataLink(newDocument);
            //getResponse = sendOpenSearchRequest(metadataLink);
         }
 
