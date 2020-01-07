@@ -24,7 +24,7 @@ public class CodeDeOpenSearchRequestorBuilder {
      * @return url of the GET request
      */
 
-    public String buildGetRequestUrl(CodeDeRequestParams params){
+    public static String buildGetRequestUrl(CodeDeRequestParams params){
         // parentIdentifier
         String parentIdentifier = CodeDeJob.PARENT_IDENTIFIER_KEY + "=" + PARENT_IDENTIFIER_PREFIX + params.getParentIdentifier();
         // dates

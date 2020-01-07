@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 class CodeDeResponseResolverTest {
-
-
+    
     private static ArrayList<String> expectedDownloadLinks;
     private static CodeDeResponseResolver resolver;
     private static Document xmlDoc;

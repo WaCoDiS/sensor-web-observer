@@ -15,16 +15,17 @@ import java.util.List;
 public class CodeDeProductsMetadata {
 
     // required
-    public String datasetId;
-    public String satellite;
-    public float cloudCover;
-    public String portal;
+    private String datasetId;
+    private String satellite;
+    private float cloudCover;
+    private String portal;
+    private String downloadLink;
 
     // optional
-    public String parentIdentifier;
-    public DateTime startDate;
-    public DateTime endDate;
-    public ArrayList<Float> areaOfInterest = new ArrayList<Float>();
+    private String parentIdentifier;
+    private DateTime startDate;
+    private DateTime endDate;
+    private ArrayList<Float> areaOfInterest = new ArrayList<Float>();
 
 
     public String getParentIdentifier() {
@@ -96,5 +97,13 @@ public class CodeDeProductsMetadata {
 
     public void setPortal(String portal) {
         this.portal = portal;
+    }
+
+    public String getDownloadLink() {
+        return downloadLink;
+    }
+
+    public void setDownloadLink(String downloadLink) {
+        this.downloadLink = downloadLink;
     }
 }

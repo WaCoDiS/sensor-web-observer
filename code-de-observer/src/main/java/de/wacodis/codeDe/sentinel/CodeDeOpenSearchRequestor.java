@@ -6,6 +6,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -45,30 +46,22 @@ public class CodeDeOpenSearchRequestor {
      * @throws XPathExpressionException
      */
 
-    public static List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
-
-        List<CodeDeProductsMetadata> resultMetadata = new ArrayList<CodeDeProductsMetadata>();
+    public List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
 
         LOG.debug("Start building connection parameters for GET-request");
-        String getRequestUrl = null;
+        String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params);
         LOG.debug("Start GET-request");
-        InputStream getResponse = sendOpenSearchRequest(getRequestUrl);
-        LOG.debug("Analyze InputStream");
-
-        // create xml-Document
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-        dbf.setNamespaceAware(true);
-
-        Document getResponseDoc = docBuilder.parse(getResponse);
-
+        Document getResponseDoc = this.getDocument(getRequestUrl);
         String xPathString="/feed/entry";
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList)expression.evaluate(getResponseDoc, XPathConstants.NODESET);
 
-        List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();
+        // prepare loop
+        List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();    // result
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         // analyze xml-Document
         CodeDeResponseResolver resolver = new CodeDeResponseResolver();
         for(int i = 0; i < nodeList.getLength(); i++){
@@ -79,24 +72,23 @@ public class CodeDeOpenSearchRequestor {
            newDocument.appendChild(importedNode);
            String downloadLink = resolver.getDownloadLink(newDocument);
            String metadataLink = resolver.getMetaDataLink(newDocument);
-           //getResponse = sendOpenSearchRequest(metadataLink);
+           Document metadataDocument = this.getDocument(metadataLink);
+           float cloudCoverage = resolver.getCloudCoverage(metadataDocument);
+           String parentIdentifier = resolver.getParentIdentifier(metadataDocument);
+           List<DateTime> timeFrame = resolver.getTimeFrame(newDocument);
+           List<Float> bbox = resolver.getBbox(newDocument);
+
+           metadataObject.setDownloadLink(downloadLink);
+           metadataObject.setCloudCover(cloudCoverage);
+           metadataObject.setParentIdentifier(parentIdentifier);
+           metadataObject.setStartDate(timeFrame.get(0));
+           metadataObject.setEndDate(timeFrame.get(1));
+           metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
+
+           productsMetadata.add(metadataObject);
         }
 
-
-        //List<String> metadataLinks = resolver.getMetaDataLinks(getResponseDoc);
-        // request links
-        /*
-        for (int i=0; i<metadataLinks.size(); i++) {
-            CodeDeProductsMetadata metadata = new CodeDeProductsMetadata();
-            getResponse = sendOpenSearchRequest(metadataLinks.get(i));
-            Document getMetadataDoc = docBuilder.parse(getResponse);
-            float cloudCoverage = resolver.getCloudCoverage(getMetadataDoc);
-            metadata.setCloudCover(cloudCoverage);
-            resultMetadata.add(metadata);
-        }
-        */
-
-        return resultMetadata;
+        return productsMetadata;
     }
 
     /**
@@ -116,4 +108,25 @@ public class CodeDeOpenSearchRequestor {
         InputStream httpcontent = entity.getContent(); // ask for content
         return httpcontent;
     }
+
+    /**
+     *  Delivers the xml-Document from an url
+     * @param url link to the xml document
+     * @return xml document
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     */
+    public Document getDocument(String url) throws IOException, ParserConfigurationException, SAXException {
+        InputStream getResponse = sendOpenSearchRequest(url);
+        LOG.debug("Analyze InputStream");
+
+        // create xml-Document
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+        dbf.setNamespaceAware(true);
+
+        return docBuilder.parse(getResponse);
+    }
+
 }
