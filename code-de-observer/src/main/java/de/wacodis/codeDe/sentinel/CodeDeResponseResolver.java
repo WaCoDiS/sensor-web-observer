@@ -33,9 +33,9 @@ public class CodeDeResponseResolver {
     private static final String HYPER_REFERENCE = "href";
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
     private final XPath xpath;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-    private CodeDeResponseResolver(){
+    public CodeDeResponseResolver(){
         // enables namespaces with the xpath-library
         XPathFactory factory = XPathFactory.newInstance();
         this.xpath = factory.newXPath();
