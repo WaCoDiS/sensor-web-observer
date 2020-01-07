@@ -8,33 +8,23 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class CodeDeResponseResolverTest {
 
 
     private static ArrayList<String> expectedDownloadLinks;
-    private static ArrayList<Float> cloudCoverage;
     private static CodeDeResponseResolver resolver;
     private static Document xmlDoc;
     private static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -65,7 +55,7 @@ class CodeDeResponseResolverTest {
 
     }
     @Test
-    void testGetDownloadLink() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException, TransformerException {
+    void testGetDownloadLink() throws IOException, SAXException, XPathExpressionException {
 
         // expected download links
         expectedDownloadLinks = new ArrayList<>();
@@ -80,9 +70,8 @@ class CodeDeResponseResolverTest {
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
 
-        List<String> actualDownloadLinks = new ArrayList<String>();
+        List<String> actualDownloadLinks = new ArrayList<>();
         for(int i = 0; i < nodeList.getLength(); i++){
-            CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
             Node node = nodeList.item(i);
             Document newDocument = db.newDocument();
             Node importedNode = newDocument.importNode(node, true);
@@ -94,7 +83,7 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetMetadataLink() throws IOException, SAXException, XPathExpressionException, URISyntaxException {
+    void testGetMetadataLink() throws IOException, SAXException, XPathExpressionException {
 
         // expected download links
         expectedDownloadLinks = new ArrayList<>();
@@ -105,14 +94,12 @@ class CodeDeResponseResolverTest {
         // actual metadataLinks
         InputStream openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(openSearchResponseStream);
-        CodeDeResponseResolver test = new CodeDeResponseResolver();
         String xPathString="/a:feed/a:entry";
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
 
-        List<String> actualMetadataLinks = new ArrayList<String>();
+        List<String> actualMetadataLinks = new ArrayList<>();
         for(int i = 0; i < nodeList.getLength(); i++){
-            CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
             Node node = nodeList.item(i);
             Document newDocument = db.newDocument();
             Node importedNode = newDocument.importNode(node, true);
@@ -127,7 +114,7 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetCloudCoverage() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    void testGetCloudCoverage() throws IOException, SAXException, XPathExpressionException {
         // expected cloud coverage
         float expectedCloudCoverage = 29.141719f;
         // actual cloud coverage
@@ -140,10 +127,10 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetTimeFrame() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    void testGetTimeFrame() throws IOException, SAXException, XPathExpressionException {
 
         // expected cloud coverage
-        List<List<DateTime>> expectedTimeFrames = new ArrayList<List<DateTime>>();
+        List<List<DateTime>> expectedTimeFrames = new ArrayList<>();
         List<DateTime> firstPicture = new ArrayList<DateTime>(){
             {
                 add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
@@ -173,7 +160,7 @@ class CodeDeResponseResolverTest {
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
 
-        List<List<DateTime>> actualTimeFrames = new ArrayList<List<DateTime>>();
+        List<List<DateTime>> actualTimeFrames = new ArrayList<>();
         for(int i = 0; i < nodeList.getLength(); i++){
             Node node = nodeList.item(i);
             Document newDocument = db.newDocument();
@@ -187,10 +174,10 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetBbox() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    void testGetBbox() throws IOException, SAXException, XPathExpressionException {
 
         // expected cloud coverage
-        List<List<Float>> expectedbbox = new ArrayList<List<Float>>();
+        List<List<Float>> expectedbbox = new ArrayList<>();
         List<Float> firstPicture = new ArrayList<Float>(){
             {
                 add(50.4368368428495f);
@@ -226,7 +213,7 @@ class CodeDeResponseResolverTest {
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
 
-        List<List<Float>> actualBbox = new ArrayList<List<Float>>();
+        List<List<Float>> actualBbox = new ArrayList<>();
         for(int i = 0; i < nodeList.getLength(); i++){
             Node node = nodeList.item(i);
             Document newDocument = db.newDocument();

@@ -8,7 +8,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.*;
@@ -34,9 +33,9 @@ public class CodeDeResponseResolver {
     private static final String HYPER_REFERENCE = "href";
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
     private final XPath xpath;
-    public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-    public CodeDeResponseResolver(){
+    private CodeDeResponseResolver(){
         // enables namespaces with the xpath-library
         XPathFactory factory = XPathFactory.newInstance();
         this.xpath = factory.newXPath();
