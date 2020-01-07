@@ -48,6 +48,7 @@ public class CodeDeResponseResolver {
                 put("om", "http://www.opengis.net/om/2.0");
                 put("georss", "http://www.georss.org/georss");
                 put("dc", "http://purl.org/dc/elements/1.1/");
+                put("eop", "http://www.opengis.net/eop/2.1");
             }
         };
         SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
@@ -92,9 +93,9 @@ public class CodeDeResponseResolver {
      * @throws XPathExpressionException
      */
     public float getCloudCoverage(Document xmlDoc) throws XPathExpressionException {
-        String xPathStringCloudCoverage="/a:feed/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
-        XPathExpression expressionCloudCoverage = this.xpath.compile(xPathStringCloudCoverage);
-        String resultCloudCoverage = (String)expressionCloudCoverage.evaluate(xmlDoc, XPathConstants.STRING);
+        String xpathString="/a:feed/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
+        XPathExpression expression = this.xpath.compile(xpathString);
+        String resultCloudCoverage = (String)expression.evaluate(xmlDoc, XPathConstants.STRING);
         float cloudCoverage = Float.parseFloat(resultCloudCoverage);
         return cloudCoverage;
     }
@@ -106,8 +107,10 @@ public class CodeDeResponseResolver {
      * @param xmlDoc the xml document which contains the metadata of one sentinel product
      * @return identifier of a sentinel layer
      */
-    public String getParentIdentifier(Document xmlDoc){
-        String parentIdentifier = null;
+    public String getParentIdentifier(Document xmlDoc) throws XPathExpressionException {
+        String xpathString = "/a:feed/a:entry/opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:parentIdentifier";
+        XPathExpression expression = this.xpath.compile(xpathString);
+        String parentIdentifier = (String) expression.evaluate(xmlDoc, XPathConstants.STRING);
         return parentIdentifier;
     }
 
@@ -126,8 +129,8 @@ public class CodeDeResponseResolver {
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] timeFrame = nodeList.item(i).getTextContent().split("/");
-            for(int k = 0; k < timeFrame.length; k++){
-                DateTime date = DateTime.parse(timeFrame[k], FORMATTER);
+            for (String s : timeFrame) {
+                DateTime date = DateTime.parse(s, FORMATTER);
                 result.add(date);
             }
         }
@@ -143,15 +146,15 @@ public class CodeDeResponseResolver {
      * @throws XPathExpressionException
      */
     public List<Float> getBbox(Document entryNode) throws XPathExpressionException {
-        ArrayList<Float> bbox= new ArrayList<Float>();
+        ArrayList<Float> bbox= new ArrayList<>();
         String xPathString="/a:entry/georss:box";
         XPathExpression expression= this.xpath.compile(xPathString);
         NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] bboxCoordinates = nodeList.item(i).getTextContent().split(" ");
-            for(int k = 0; k < bboxCoordinates.length; k++){
-                bbox.add(Float.parseFloat(bboxCoordinates[k]));
+            for (String bboxCoordinate : bboxCoordinates) {
+                bbox.add(Float.parseFloat(bboxCoordinate));
             }
         }
 

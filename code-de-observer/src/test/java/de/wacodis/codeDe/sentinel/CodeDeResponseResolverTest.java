@@ -43,10 +43,6 @@ class CodeDeResponseResolverTest {
         Map<String, String> prefMap = new HashMap<String, String>(){
             {
                 put("a", "http://www.w3.org/2005/Atom");
-                put("opt", "http://www.opengis.net/opt/2.1");
-                put("om", "http://www.opengis.net/om/2.0");
-                put("georss", "http://www.georss.org/georss");
-                put("dc", "http://purl.org/dc/elements/1.1/");
             }
         };
         SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
@@ -124,6 +120,19 @@ class CodeDeResponseResolverTest {
         float actualCloudCoverage = resolver.getCloudCoverage(xmlDoc);
 
         Assertions.assertEquals(expectedCloudCoverage, actualCloudCoverage);
+    }
+
+    @Test
+    void testGetParentIdentifier() throws IOException, SAXException, XPathExpressionException {
+        // expected parent identifier
+        String expectedParentIdentifier = "EOP:CODE-DE:S2_MSI_L2A";
+        // actual parent identifier
+        InputStream parentIdentifierDoc1 = this.getClass().getResourceAsStream("/metadata_1_picture.xml");
+        xmlDoc = db.parse(parentIdentifierDoc1);
+        resolver = new CodeDeResponseResolver();
+        String actualParentIdentifier = resolver.getParentIdentifier(xmlDoc);
+
+        Assertions.assertEquals(expectedParentIdentifier, actualParentIdentifier);
     }
 
     @Test
