@@ -37,11 +37,14 @@ public class CodeDeResponseResolver {
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     public CodeDeResponseResolver(){
+        // enables namespaces with the xpath-library
         XPathFactory factory = XPathFactory.newInstance();
         this.xpath = factory.newXPath();
         Map<String, String> prefMap = new HashMap<String, String>(){
             {
+                // default namespace
                 put("a", "http://www.w3.org/2005/Atom");
+                // namespaces used in the xml documents
                 put("opt", "http://www.opengis.net/opt/2.1");
                 put("om", "http://www.opengis.net/om/2.0");
                 put("georss", "http://www.georss.org/georss");

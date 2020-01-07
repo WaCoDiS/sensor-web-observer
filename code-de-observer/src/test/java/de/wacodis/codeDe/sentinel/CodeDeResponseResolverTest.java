@@ -126,7 +126,6 @@ class CodeDeResponseResolverTest {
 
     }
 
-
     @Test
     void testGetCloudCoverage() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         // expected cloud coverage
@@ -138,6 +137,53 @@ class CodeDeResponseResolverTest {
         float actualCloudCoverage = resolver.getCloudCoverage(xmlDoc);
 
         Assertions.assertEquals(expectedCloudCoverage, actualCloudCoverage);
+    }
+
+    @Test
+    void testGetTimeFrame() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+
+        // expected cloud coverage
+        List<List<DateTime>> expectedTimeFrames = new ArrayList<List<DateTime>>();
+        List<DateTime> firstPicture = new ArrayList<DateTime>(){
+            {
+                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
+                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
+            }
+        };
+        List<DateTime> secondPicture = new ArrayList<DateTime>(){
+            {
+                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
+                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
+            }
+        };
+        List<DateTime> thirdPicture = new ArrayList<DateTime>(){
+            {
+                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
+                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
+            }
+        };
+        expectedTimeFrames.add(firstPicture);
+        expectedTimeFrames.add(secondPicture);
+        expectedTimeFrames.add(thirdPicture);
+
+        // actual cloud coverage
+        InputStream document = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
+        xmlDoc = db.parse(document);
+        String xPathString="/a:feed/a:entry";
+        XPathExpression expression = xpath.compile(xPathString);
+        NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
+
+        List<List<DateTime>> actualTimeFrames = new ArrayList<List<DateTime>>();
+        for(int i = 0; i < nodeList.getLength(); i++){
+            Node node = nodeList.item(i);
+            Document newDocument = db.newDocument();
+            Node importedNode = newDocument.importNode(node, true);
+            newDocument.appendChild(importedNode);
+            List<DateTime> timeFrame = resolver.getTimeFrame(newDocument);
+            actualTimeFrames.add(timeFrame);
+        }
+
+        Assertions.assertEquals(expectedTimeFrames, actualTimeFrames);
     }
 
     @Test
@@ -192,50 +238,5 @@ class CodeDeResponseResolverTest {
 
         Assertions.assertEquals(expectedbbox, actualBbox);
     }
-    @Test
-    void testGetTimeFrame() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
-        // expected cloud coverage
-        List<List<DateTime>> expectedTimeFrames = new ArrayList<List<DateTime>>();
-        List<DateTime> firstPicture = new ArrayList<DateTime>(){
-            {
-                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
-                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
-            }
-        };
-        List<DateTime> secondPicture = new ArrayList<DateTime>(){
-            {
-                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
-                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
-            }
-        };
-        List<DateTime> thirdPicture = new ArrayList<DateTime>(){
-            {
-                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
-                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
-            }
-        };
-        expectedTimeFrames.add(firstPicture);
-        expectedTimeFrames.add(secondPicture);
-        expectedTimeFrames.add(thirdPicture);
-
-        // actual cloud coverage
-        InputStream document = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
-        xmlDoc = db.parse(document);
-        String xPathString="/a:feed/a:entry";
-        XPathExpression expression = xpath.compile(xPathString);
-        NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
-
-        List<List<DateTime>> actualTimeFrames = new ArrayList<List<DateTime>>();
-        for(int i = 0; i < nodeList.getLength(); i++){
-            Node node = nodeList.item(i);
-            Document newDocument = db.newDocument();
-            Node importedNode = newDocument.importNode(node, true);
-            newDocument.appendChild(importedNode);
-            List<DateTime> timeFrame = resolver.getTimeFrame(newDocument);
-            actualTimeFrames.add(timeFrame);
-        }
-
-        Assertions.assertEquals(expectedTimeFrames, actualTimeFrames);
-    }
 }
