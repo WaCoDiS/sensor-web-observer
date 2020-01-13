@@ -27,6 +27,10 @@ public class CodeDeRequestParams {
         this.cloudCover = cloudCover;
     }
 
+    public CodeDeRequestParams() {
+
+    }
+
     public String getParentIdentifier() {
         return parentIdentifier;
     }
