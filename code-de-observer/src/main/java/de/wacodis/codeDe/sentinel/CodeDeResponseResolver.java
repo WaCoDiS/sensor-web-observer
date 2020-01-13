@@ -107,8 +107,8 @@ public class CodeDeResponseResolver {
      * @param xmlDoc the xml document which contains the metadata of one sentinel product
      * @return identifier of a sentinel layer
      */
-    public String getParentIdentifier(Document xmlDoc) throws XPathExpressionException {
-        String xpathString = "/a:feed/a:entry/opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:parentIdentifier";
+    public String getIdentifier(Document xmlDoc) throws XPathExpressionException {
+        String xpathString = "/a:feed/a:entry/opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:identifier";
         XPathExpression expression = this.xpath.compile(xpathString);
         String parentIdentifier = (String) expression.evaluate(xmlDoc, XPathConstants.STRING);
         return parentIdentifier;

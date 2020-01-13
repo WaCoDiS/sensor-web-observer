@@ -122,16 +122,16 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetParentIdentifier() throws IOException, SAXException, XPathExpressionException {
-        // expected parent identifier
-        String expectedParentIdentifier = "EOP:CODE-DE:S2_MSI_L2A";
-        // actual parent identifier
-        InputStream parentIdentifierDoc1 = this.getClass().getResourceAsStream("/metadata_1_picture.xml");
-        xmlDoc = db.parse(parentIdentifierDoc1);
+    void testGetIdentifier() throws IOException, SAXException, XPathExpressionException {
+        // expected identifier
+        String expectedIdentifier = "EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838";
+        // actual identifier
+        InputStream identifierDoc1 = this.getClass().getResourceAsStream("/metadata_1_picture.xml");
+        xmlDoc = db.parse(identifierDoc1);
         resolver = new CodeDeResponseResolver();
-        String actualParentIdentifier = resolver.getParentIdentifier(xmlDoc);
+        String actualIdentifier = resolver.getIdentifier(xmlDoc);
 
-        Assertions.assertEquals(expectedParentIdentifier, actualParentIdentifier);
+        Assertions.assertEquals(expectedIdentifier, actualIdentifier);
     }
 
     @Test

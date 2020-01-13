@@ -16,24 +16,22 @@ public class CodeDeProductsMetadata {
 
     // required
     private String datasetId;
-    private String satellite;
     private float cloudCover;
-    private String portal;
     private String downloadLink;
 
     // optional
-    private String parentIdentifier;
+    private String identifier;
     private DateTime startDate;
     private DateTime endDate;
     private ArrayList<Float> areaOfInterest = new ArrayList<Float>();
 
 
-    public String getParentIdentifier() {
-        return parentIdentifier;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setParentIdentifier(String parentIdentifier) {
-        this.parentIdentifier = parentIdentifier;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public DateTime getStartDate() {
@@ -81,22 +79,6 @@ public class CodeDeProductsMetadata {
 
     public void setDatasetId(String datasetId) {
         this.datasetId = datasetId;
-    }
-
-    public String getSatellite() {
-        return satellite;
-    }
-
-    public void setSatellite(String satellite) {
-        this.satellite = satellite;
-    }
-
-    public String getPortal() {
-        return portal;
-    }
-
-    public void setPortal(String portal) {
-        this.portal = portal;
     }
 
     public String getDownloadLink() {

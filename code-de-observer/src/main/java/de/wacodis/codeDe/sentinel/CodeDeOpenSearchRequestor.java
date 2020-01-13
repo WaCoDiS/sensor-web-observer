@@ -74,13 +74,13 @@ public class CodeDeOpenSearchRequestor {
            String metadataLink = resolver.getMetaDataLink(newDocument);
            Document metadataDocument = this.getDocument(metadataLink);
            float cloudCoverage = resolver.getCloudCoverage(metadataDocument);
-           String parentIdentifier = resolver.getParentIdentifier(metadataDocument);
+           String parentIdentifier = resolver.getIdentifier(metadataDocument);
            List<DateTime> timeFrame = resolver.getTimeFrame(newDocument);
            List<Float> bbox = resolver.getBbox(newDocument);
 
            metadataObject.setDownloadLink(downloadLink);
            metadataObject.setCloudCover(cloudCoverage);
-           metadataObject.setParentIdentifier(parentIdentifier);
+           metadataObject.setIdentifier(parentIdentifier);
            metadataObject.setStartDate(timeFrame.get(0));
            metadataObject.setEndDate(timeFrame.get(1));
            metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
