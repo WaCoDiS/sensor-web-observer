@@ -42,7 +42,7 @@ public class CodeDeOpenSearchRequestorBuilder {
         String cloudCover = CodeDeJob.CLOUD_COVER_KEY + "=" + cloudCoverContent;
         // put together
         String getRequestUrl = SERVICE_URL
-                + HTTP_ACCEPT + "&"
+                //+ HTTP_ACCEPT + "&"
                 + parentIdentifier + "&"
                 + startDate + "&"
                 + endDate + "&"

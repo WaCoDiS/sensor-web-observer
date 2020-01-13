@@ -13,14 +13,14 @@ import java.util.List;
 
 public class CodeDeRequestParams {
 
-    public String identifier;
+    public String parentIdentifier;
     public DateTime startDate;
     public DateTime endDate;
     public List<Float> bbox;
     public List<Float> cloudCover;
 
     public CodeDeRequestParams(String parentIdentifier, DateTime startDate, DateTime endDate, List<Float> bbox, List<Float> cloudCover) {
-        this.identifier = parentIdentifier;
+        this.parentIdentifier = parentIdentifier;
         this.startDate = startDate;
         this.endDate = endDate;
         this.bbox = bbox;
@@ -31,12 +31,12 @@ public class CodeDeRequestParams {
 
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getParentIdentifier() {
+        return parentIdentifier;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setParentIdentifier(String parentIdentifier) {
+        this.parentIdentifier = parentIdentifier;
     }
 
     public DateTime getStartDate() {

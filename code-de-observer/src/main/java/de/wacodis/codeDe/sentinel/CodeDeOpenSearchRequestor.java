@@ -1,5 +1,6 @@
 package de.wacodis.codeDe.sentinel;
 
+import de.wacodis.sentinel.apihub.decode.SimpleNamespaceContext;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,7 +22,9 @@ import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class is responsible for requesting CODE-DE Orthorectified images of the Sentinal satellites.
@@ -32,7 +35,8 @@ import java.util.List;
 
 public class CodeDeOpenSearchRequestor {
     
-    private final XPath xpath = null;
+
+
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
     /**
@@ -46,21 +50,34 @@ public class CodeDeOpenSearchRequestor {
      * @throws XPathExpressionException
      */
 
-    public List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public static List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+
+
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xpath = factory.newXPath();
+        xpath = factory.newXPath();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        Map<String, String> prefMap = new HashMap<String, String>(){
+            {
+                put("a", "http://www.w3.org/2005/Atom");
+            }
+        };
+        SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
+        xpath.setNamespaceContext(namespaces);
+
 
         LOG.debug("Start building connection parameters for GET-request");
         String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params);
         LOG.debug("Start GET-request");
-        Document getResponseDoc = this.getDocument(getRequestUrl);
-        String xPathString="/feed/entry";
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xpath = factory.newXPath();
+        Document getResponseDoc = getDocument(getRequestUrl);
+        String xPathString="/a:feed/a:entry";
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList)expression.evaluate(getResponseDoc, XPathConstants.NODESET);
 
         // prepare loop
         List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();    // result
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
         DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         // analyze xml-Document
         CodeDeResponseResolver resolver = new CodeDeResponseResolver();
@@ -72,15 +89,15 @@ public class CodeDeOpenSearchRequestor {
            newDocument.appendChild(importedNode);
            String downloadLink = resolver.getDownloadLink(newDocument);
            String metadataLink = resolver.getMetaDataLink(newDocument);
-           Document metadataDocument = this.getDocument(metadataLink);
+           Document metadataDocument = getDocument(metadataLink);
            float cloudCoverage = resolver.getCloudCoverage(metadataDocument);
-           String parentIdentifier = resolver.getIdentifier(metadataDocument);
+           String identifier = resolver.getIdentifier(metadataDocument);
            List<DateTime> timeFrame = resolver.getTimeFrame(newDocument);
            List<Float> bbox = resolver.getBbox(newDocument);
 
            metadataObject.setDownloadLink(downloadLink);
            metadataObject.setCloudCover(cloudCoverage);
-           metadataObject.setIdentifier(parentIdentifier);
+           metadataObject.setDatasetId(identifier);
            metadataObject.setStartDate(timeFrame.get(0));
            metadataObject.setEndDate(timeFrame.get(1));
            metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
@@ -117,7 +134,7 @@ public class CodeDeOpenSearchRequestor {
      * @throws ParserConfigurationException
      * @throws SAXException
      */
-    public Document getDocument(String url) throws IOException, ParserConfigurationException, SAXException {
+    public static Document getDocument(String url) throws IOException, ParserConfigurationException, SAXException {
         InputStream getResponse = sendOpenSearchRequest(url);
         LOG.debug("Analyze InputStream");
 
