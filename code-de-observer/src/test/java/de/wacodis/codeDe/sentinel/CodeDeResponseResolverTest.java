@@ -132,16 +132,13 @@ class CodeDeResponseResolverTest {
         // actual time frame
         InputStream document = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(document);
-        String xPathString="/a:feed/a:entry";
+        String xPathString="/a:feed/a:entry[1]";
         XPathExpression expression = xpath.compile(xPathString);
-        NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
-
-            Node node = nodeList.item(0);
-            Document newDocument = db.newDocument();
-            Node importedNode = newDocument.importNode(node, true);
-            newDocument.appendChild(importedNode);
-            List<DateTime> actualTimeFrame = resolver.getTimeFrame(newDocument);
-
+        Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
+        Document newDocument = db.newDocument();
+        Node importedNode = newDocument.importNode(node, true);
+        newDocument.appendChild(importedNode);
+        List<DateTime> actualTimeFrame = resolver.getTimeFrame(newDocument);
         Assertions.assertEquals(expectedTimeFrame, actualTimeFrame);
     }
 
