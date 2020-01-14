@@ -54,27 +54,18 @@ public class CodeDeOpenSearchRequestor {
 
 
         XPathFactory factory = XPathFactory.newInstance();
-        XPath xpath = factory.newXPath();
+        XPath xpath;
         xpath = factory.newXPath();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
-        Map<String, String> prefMap = new HashMap<String, String>(){
-            {
-                put("a", "http://www.w3.org/2005/Atom");
-            }
-        };
-        SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
-        xpath.setNamespaceContext(namespaces);
-
 
         LOG.debug("Start building connection parameters for GET-request");
         String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params);
         LOG.debug("Start GET-request");
         Document getResponseDoc = getDocument(getRequestUrl);
-        String xPathString="/a:feed/a:entry";
+        String xPathString="/feed/entry";
         XPathExpression expression = xpath.compile(xPathString);
         NodeList nodeList = (NodeList)expression.evaluate(getResponseDoc, XPathConstants.NODESET);
-
         // prepare loop
         List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();    // result
 

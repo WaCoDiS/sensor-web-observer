@@ -1,6 +1,7 @@
 package de.wacodis.codeDe;
 
-import de.wacodis.codeDe.sentinel.CodeDeOpenSearchRequestor;
+import de.wacodis.codeDe.sentinel.*;
+import de.wacodis.observer.model.CopernicusDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -12,17 +13,25 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.support.MessageBuilder;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
+ *
+ *
  * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 
 public class CodeDeJob implements Job {
 
-    // Class varibles for Request
+    // Class variables for Request
     public static final String PARENT_IDENTIFIER_KEY = "parentIdentifier";
     public static final String START_DATE_KEY = "startDate";
     public static final String END_DATE_KEY = "endDate";
@@ -44,9 +53,11 @@ public class CodeDeJob implements Job {
     @Autowired
     private PublisherChannel pub;
 
-    @Autowired
-    private CodeDeOpenSearchRequestor requestor;
-
+    /**
+     * executes the job
+     * @param context all necessary parameters for a request
+     * @throws JobExecutionException
+     */
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         LOG.debug("Start CodeDeJob's execute()");
@@ -90,7 +101,70 @@ public class CodeDeJob implements Job {
         }
         dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
-        //this.createDwdDataEnvelope(version, layerName, serviceUrl, area, startDate, endDate);
+        //this.publishDataEnvelopes(parentIdentifier, startDate, endDate, area, cloudCover);
+    }
 
+    /**
+     * Publish the {@link CopernicusDataEnvelope} for a set of request parameters
+     *
+     * @param parentIdentifier    id of the requested satallitesensor
+     * @param startDate  start date of the request timeframe
+     * @param endDate end date of the request timeframe
+     * @param bbox       bbox (minLon, minLat, maxLon, maxLat)
+     * @param cloudCover requested cloud cover
+     * @param endDate
+     */
+    private void publishDataEnvelopes(String parentIdentifier, DateTime startDate, DateTime endDate, List<Float> bbox, List<Float>cloudCover){
+        CodeDeRequestParamsEncoder encoder = new CodeDeRequestParamsEncoder();
+        //TODO: split the requests
+        // List<DateTime[]> interval = DwdTemporalResolutionHelper.getRequestIntervals(startDate, endDate, layerName);
+
+        /*LOG.info("Start requesting DWD data iteratively if the amount of data is too large.");
+
+        if (interval != null) {
+            for (int i = 0; i < interval.size(); i++) {
+                CodeDeRequestParams params = CodeDeRequestParamsEncoder.encode(parentIdentifier, startDate, endDate, bbox, cloudCover);
+                DwdDataEnvelope dataEnvelope = this.requestDwdMetadata(serviceUrl, params);
+                if (dataEnvelope != null) {
+                    // Publish DwdDataEnvelope message
+                    pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
+                    LOG.info("Successfully created and published new DwdDataEnvelope: {}", dataEnvelope);
+                } else {
+                    LOG.warn("Failed creation and publishing of new DwdDataEnvelope for request params: {}", params);
+                }
+            }
+        }*/
+
+        CodeDeRequestParams params = encoder.encode(parentIdentifier, startDate, endDate, bbox, cloudCover);
+        List<CopernicusDataEnvelope> dataEnvelopes = this.createDataEnvelopes(params);
+        for (CopernicusDataEnvelope copDE:dataEnvelopes) {
+            pub.sendDataEnvelope().send(MessageBuilder.withPayload(copDE).build());
+        }
+
+    }
+
+    /**
+     * Request CodeDe metadata from an Opensearch API and create a {@link CopernicusDataEnvelope}
+     *
+     * @param params parameters from CodeDeRequestParams
+     * @return all requested dataEnvelopes
+     */
+    private List<CopernicusDataEnvelope> createDataEnvelopes(CodeDeRequestParams params) {
+        List<CopernicusDataEnvelope> dataEnvelopes = null;
+        try {
+            // Request CodeDe Opensearch API with request paramaters
+            List<CodeDeProductsMetadata> metadata = CodeDeOpenSearchRequestor.request(params);
+
+            // Decode CodeDeProductsMetadata to CopernicusDataEnvelope
+            for (CodeDeProductsMetadata object:metadata) {
+                CopernicusDataEnvelope dataEnvelope = CodeDeProductsMetadataDecoder.decode(object);
+                dataEnvelopes.add(dataEnvelope);
+                LOG.debug("new dataEnvelope:\n{" + dataEnvelope.toString() + "}");
+            }
+
+        } catch (IOException | ParserConfigurationException | SAXException | XPathExpressionException e) {
+            LOG.error("Error while performing CodeDe Opensearch request for CodeDe product metadata.");
+        }
+        return dataEnvelopes;
     }
 }
