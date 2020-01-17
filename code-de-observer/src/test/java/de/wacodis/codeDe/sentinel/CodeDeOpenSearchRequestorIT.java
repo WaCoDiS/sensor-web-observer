@@ -18,10 +18,12 @@ class CodeDeOpenSearchRequestorIT {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private static CodeDeRequestParams params;
+    private static CodeDeOpenSearchRequestor requestor;
 
     @BeforeAll
     static void setUp() {
         params = new CodeDeRequestParams();
+        requestor = new CodeDeOpenSearchRequestor();
         params.setParentIdentifier("S2_MSI_L2A");
         params.setStartDate(DateTime.parse("2019-10-01T00:00:00Z", FORMATTER));
         params.setEndDate(DateTime.parse("2019-10-31T00:00:00Z", FORMATTER));
@@ -41,7 +43,7 @@ class CodeDeOpenSearchRequestorIT {
     }
 
     @Test
-    void request() throws SAXException, ParserConfigurationException, XPathExpressionException, IOException {
+    void request() throws Exception {
         // expected metadata object
         CodeDeProductsMetadata expectedMetadataObject = new CodeDeProductsMetadata();
         expectedMetadataObject.setDownloadLink("https://code-de.org/download/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838.SAFE.zip");
@@ -51,7 +53,7 @@ class CodeDeOpenSearchRequestorIT {
         expectedMetadataObject.setEndDate(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
         expectedMetadataObject.setBbox(50.4368368428495f, 6.589443020581445f, 51.44399790803582f, 7.729300891794365f );
 
-        List<CodeDeProductsMetadata> metadataList = CodeDeOpenSearchRequestor.request(params);
+        List<CodeDeProductsMetadata> metadataList = requestor.request(params);
         CodeDeProductsMetadata actualMetadataObject = metadataList.get(0);
 
         Assertions.assertEquals(expectedMetadataObject.getDownloadLink(), actualMetadataObject.getDownloadLink());

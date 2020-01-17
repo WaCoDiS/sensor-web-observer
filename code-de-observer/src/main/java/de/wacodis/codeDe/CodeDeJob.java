@@ -53,6 +53,9 @@ public class CodeDeJob implements Job {
     @Autowired
     private PublisherChannel pub;
 
+    @Autowired
+    private CodeDeOpenSearchRequestor requestor;
+
     /**
      * executes the job
      * @param context all necessary parameters for a request
@@ -114,7 +117,7 @@ public class CodeDeJob implements Job {
      * @param cloudCover requested cloud cover
      * @param endDate
      */
-    private void publishDataEnvelopes(String parentIdentifier, DateTime startDate, DateTime endDate, List<Float> bbox, List<Float>cloudCover){
+    private void publishDataEnvelopes(String parentIdentifier, DateTime startDate, DateTime endDate, List<Float> bbox, List<Float>cloudCover) throws Exception {
         CodeDeRequestParamsEncoder encoder = new CodeDeRequestParamsEncoder();
         //TODO: split the requests
         // List<DateTime[]> interval = DwdTemporalResolutionHelper.getRequestIntervals(startDate, endDate, layerName);
@@ -149,11 +152,11 @@ public class CodeDeJob implements Job {
      * @param params parameters from CodeDeRequestParams
      * @return all requested dataEnvelopes
      */
-    private List<CopernicusDataEnvelope> createDataEnvelopes(CodeDeRequestParams params) {
+    private List<CopernicusDataEnvelope> createDataEnvelopes(CodeDeRequestParams params) throws Exception {
         List<CopernicusDataEnvelope> dataEnvelopes = null;
         try {
             // Request CodeDe Opensearch API with request paramaters
-            List<CodeDeProductsMetadata> metadata = CodeDeOpenSearchRequestor.request(params);
+            List<CodeDeProductsMetadata> metadata = requestor.request(params);
 
             // Decode CodeDeProductsMetadata to CopernicusDataEnvelope
             for (CodeDeProductsMetadata object:metadata) {

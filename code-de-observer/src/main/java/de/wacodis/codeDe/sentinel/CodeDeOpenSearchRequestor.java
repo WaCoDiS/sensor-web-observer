@@ -10,6 +10,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -32,12 +34,16 @@ import java.util.Map;
  *@author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
  *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
-
-public class CodeDeOpenSearchRequestor {
+@Component
+public class CodeDeOpenSearchRequestor implements InitializingBean {
     
 
 
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
+    private static DocumentBuilder docBuilder;
+    private static DocumentBuilderFactory dbf;
+    private static XPathFactory factory;
+    private static XPath xpath;
 
     /**
      * Performs a query with the given paramerters.
@@ -49,16 +55,8 @@ public class CodeDeOpenSearchRequestor {
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
      */
-
-    public static List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
-
-
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xpath;
-        xpath = factory.newXPath();
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-
+    public List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws Exception {
+        this.afterPropertiesSet();
         LOG.debug("Start building connection parameters for GET-request");
         String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params);
         LOG.debug("Start GET-request");
@@ -69,15 +67,16 @@ public class CodeDeOpenSearchRequestor {
         // prepare loop
         List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();    // result
 
-        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
         // analyze xml-Document
         CodeDeResponseResolver resolver = new CodeDeResponseResolver();
         for(int i = 0; i < nodeList.getLength(); i++){
            CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
            Node node = nodeList.item(i);
+
            Document newDocument = docBuilder.newDocument();
            Node importedNode = newDocument.importNode(node, true);
            newDocument.appendChild(importedNode);
+
            String downloadLink = resolver.getDownloadLink(newDocument);
            String metadataLink = resolver.getMetaDataLink(newDocument);
            Document metadataDocument = getDocument(metadataLink);
@@ -106,7 +105,7 @@ public class CodeDeOpenSearchRequestor {
      * @throws ClientProtocolException
      * @throws IOException
      */
-    public static InputStream sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
+    public InputStream sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
 
         // contact http-client
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -125,16 +124,23 @@ public class CodeDeOpenSearchRequestor {
      * @throws ParserConfigurationException
      * @throws SAXException
      */
-    public static Document getDocument(String url) throws IOException, ParserConfigurationException, SAXException {
+    public Document getDocument(String url) throws IOException, ParserConfigurationException, SAXException {
         InputStream getResponse = sendOpenSearchRequest(url);
         LOG.debug("Analyze InputStream");
-
-        // create xml-Document
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-        dbf.setNamespaceAware(true);
-
+        //DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        //dbf.setNamespaceAware(true);
+        //DocumentBuilder db = dbf.newDocumentBuilder();
+        //Document doc = db.parse(getResponse);
         return docBuilder.parse(getResponse);
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // create xml-Document
+        dbf = DocumentBuilderFactory.newInstance();
+        docBuilder = dbf.newDocumentBuilder();
+        dbf.setNamespaceAware(true);
+        factory = XPathFactory.newInstance();
+        xpath = factory.newXPath();
+    }
 }
