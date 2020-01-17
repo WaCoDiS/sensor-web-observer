@@ -47,7 +47,7 @@ public class CodeDeJobFactory  implements JobFactory {
             // Put all required request parameters into JobDataMap
 
             // data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
-            data.put(CodeDeJob.SATELLITE, def.getSatellite());
+            data.put(CodeDeJob.SATELLITEPRODUCT, def.getSatellite());
             data.put(CodeDeJob.TEMPORAL_COVERAGE_KEY, job.getTemporalCoverage().getDuration());
             data.put(CodeDeJob.CLOUD_COVER_KEY, def.getMaximumCloudCoverage());
             data.put(CodeDeJob.LATEST_REQUEST_END_DATE, null);

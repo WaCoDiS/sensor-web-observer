@@ -41,7 +41,7 @@ public class CodeDeJob implements Job {
 
     //Class variables for Job
     public static final String TEMPORAL_COVERAGE_KEY = "temporalCoverage";
-    public static final String SATELLITE = "satellite";
+    public static final String SATELLITEPRODUCT = "S2_MSI_L2A";
     public static final String LATEST_REQUEST_END_DATE = "endDate";
 
 
@@ -68,9 +68,15 @@ public class CodeDeJob implements Job {
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
         // 1) Get all required request parameters stored in the JobDataMap
-        String satellite = dataMap.getString(SATELLITE);
+        String satelliteProduct = dataMap.getString(SATELLITEPRODUCT);
         String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY);
-        String cloudCover = dataMap.getString(CLOUD_COVER_KEY);
+        String maxCloudCover = dataMap.getString(CLOUD_COVER_KEY);
+        List<Float> cloudCover = new ArrayList() {
+            {
+                add(0);
+                add(maxCloudCover);
+            }
+        };
         String[] executionAreaJSON = dataMap.getString(BBOX_KEY).split(",");
 
         // parse executionAreaJSON into Float list
@@ -104,7 +110,11 @@ public class CodeDeJob implements Job {
         }
         dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
-        //this.publishDataEnvelopes(parentIdentifier, startDate, endDate, area, cloudCover);
+        try {
+            this.publishDataEnvelopes(satelliteProduct, startDate, endDate, area, cloudCover);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
