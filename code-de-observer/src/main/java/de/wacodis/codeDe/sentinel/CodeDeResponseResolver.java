@@ -131,14 +131,17 @@ public class CodeDeResponseResolver {
     /**
      * Returns the cloud coverage percentage of the product
      *
-     * @param xmlDoc the xml document which contains the metadata of one sentinel product
+     * @param entryNode the xml document which contains the metadata of one sentinel product
      * @return float number (percentage)
      * @throws XPathExpressionException
      */
-    public float getCloudCoverage(Document xmlDoc) throws XPathExpressionException {
-        String xpathString="/a:feed/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
+    public float getCloudCoverage(Node entryNode) throws XPathExpressionException {
+        Document newDocument = db.newDocument();
+        Node importedNode = newDocument.importNode(entryNode, true);
+        newDocument.appendChild(importedNode);
+        String xpathString="/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expression = this.xpath.compile(xpathString);
-        String resultCloudCoverage = (String)expression.evaluate(xmlDoc, XPathConstants.STRING);
+        String resultCloudCoverage = (String)expression.evaluate(newDocument, XPathConstants.STRING);
         float cloudCoverage = Float.parseFloat(resultCloudCoverage);
         return cloudCoverage;
     }
@@ -147,13 +150,16 @@ public class CodeDeResponseResolver {
     /**
      *  Returns the identifier of the sentinel layer
      *
-     * @param xmlDoc the xml document which contains the metadata of one sentinel product
+     * @param entryNode the xml document which contains the metadata of one sentinel product
      * @return identifier of a sentinel layer
      */
-    public String getIdentifier(Document xmlDoc) throws XPathExpressionException {
-        String xpathString = "/a:feed/a:entry/opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:identifier";
+    public String getIdentifier(Node entryNode) throws XPathExpressionException {
+        Document newDocument = db.newDocument();
+        Node importedNode = newDocument.importNode(entryNode, true);
+        newDocument.appendChild(importedNode);
+        String xpathString = "a:entry/opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:identifier";
         XPathExpression expression = this.xpath.compile(xpathString);
-        String parentIdentifier = (String) expression.evaluate(xmlDoc, XPathConstants.STRING);
+        String parentIdentifier = (String) expression.evaluate(newDocument, XPathConstants.STRING);
         return parentIdentifier;
     }
 

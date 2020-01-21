@@ -27,9 +27,10 @@ class CodeDeResponseResolverTest {
     private static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     private static DocumentBuilder db;
     private static XPath xpath;
+    private static Node node;
 
     @BeforeAll
-    static void setup() throws ParserConfigurationException {
+    static void setup() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
         resolver = new CodeDeResponseResolver();
         dbf.setNamespaceAware(true);
@@ -45,6 +46,11 @@ class CodeDeResponseResolverTest {
         SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
         xpath.setNamespaceContext(namespaces);
 
+        InputStream openSearchResponseStream = CodeDeResponseResolverTest.class.getClassLoader().getResourceAsStream("catalog.code-de.org.xml");
+        xmlDoc = db.parse(openSearchResponseStream);
+        String xPathString="/a:feed/a:entry[1]";
+        XPathExpression expression = xpath.compile(xPathString);
+        node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
 
     }
     @Test
@@ -52,13 +58,7 @@ class CodeDeResponseResolverTest {
 
         // expected download links
         String expectedDownloadLink = "https://code-de.org/download/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838.SAFE.zip";
-
         // actual download link
-        InputStream openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
-        xmlDoc = db.parse(openSearchResponseStream);
-        String xPathString="/a:feed/a:entry[1]";
-        XPathExpression expression = xpath.compile(xPathString);
-        Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
         String actualDownloadLink = resolver.getDownloadLink(node);
 
         Assertions.assertEquals(expectedDownloadLink, actualDownloadLink);
@@ -71,14 +71,8 @@ class CodeDeResponseResolverTest {
         String expectedMetadataLink = "https://catalog.code-de.org/opensearch/request/?httpAccept=application/gml%2Bxml&amp;parentIdentifier=EOP:CODE-DE:S2_MSI_L2A&amp;uid=EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838&amp;recordSchema=om";
 
         // actual metadataLink
-        InputStream openSearchResponseStream = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
-        xmlDoc = db.parse(openSearchResponseStream);
-        String xPathString="/a:feed/a:entry[1]";
-        XPathExpression expression = xpath.compile(xPathString);
-        Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
         String metadataLink = resolver.getMetaDataLink(node);
         String actualMetadataLink = metadataLink.replaceAll("&", "&amp;");
-
         Assertions.assertEquals(expectedMetadataLink, actualMetadataLink);
 
     }
@@ -88,10 +82,7 @@ class CodeDeResponseResolverTest {
         // expected cloud coverage
         float expectedCloudCoverage = 29.141719f;
         // actual cloud coverage
-        InputStream cloudCoverageDoc1 = this.getClass().getResourceAsStream("/metadata_1_picture.xml");
-        xmlDoc = db.parse(cloudCoverageDoc1);
-        resolver = new CodeDeResponseResolver();
-        float actualCloudCoverage = resolver.getCloudCoverage(xmlDoc);
+        float actualCloudCoverage = resolver.getCloudCoverage(node);
 
         Assertions.assertEquals(expectedCloudCoverage, actualCloudCoverage);
     }
@@ -101,10 +92,7 @@ class CodeDeResponseResolverTest {
         // expected identifier
         String expectedIdentifier = "EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838";
         // actual identifier
-        InputStream identifierDoc1 = this.getClass().getResourceAsStream("/metadata_1_picture.xml");
-        xmlDoc = db.parse(identifierDoc1);
-        resolver = new CodeDeResponseResolver();
-        String actualIdentifier = resolver.getIdentifier(xmlDoc);
+        String actualIdentifier = resolver.getIdentifier(node);
 
         Assertions.assertEquals(expectedIdentifier, actualIdentifier);
     }
@@ -121,11 +109,6 @@ class CodeDeResponseResolverTest {
         };
 
         // actual time frame
-        InputStream document = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
-        xmlDoc = db.parse(document);
-        String xPathString="/a:feed/a:entry[1]";
-        XPathExpression expression = xpath.compile(xPathString);
-        Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
         List<DateTime> actualTimeFrame = resolver.getTimeFrame(node);
 
         Assertions.assertEquals(expectedTimeFrame, actualTimeFrame);
@@ -145,11 +128,6 @@ class CodeDeResponseResolverTest {
         };
 
         // actual bbox
-        InputStream bboxDoc = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
-        xmlDoc = db.parse(bboxDoc);
-        String xPathString="/a:feed/a:entry[1]";
-        XPathExpression expression = xpath.compile(xPathString);
-        Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
         List<Float> actualBbox = resolver.getBbox(node);
 
         Assertions.assertEquals(expectedbbox, actualBbox);

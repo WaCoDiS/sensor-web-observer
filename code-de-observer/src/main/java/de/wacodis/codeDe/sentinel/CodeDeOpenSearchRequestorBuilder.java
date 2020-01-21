@@ -17,6 +17,8 @@ public class CodeDeOpenSearchRequestorBuilder {
     public static final String HTTP_ACCEPT = "httpAccept=application/atom%2Bxml";
     public static final String PARENT_IDENTIFIER_PREFIX = "EOP:CODE-DE:";
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    public static final String MAXIMUM_RECORDS= "50";
+    public static final String RECORD_SCHEMA = "om";
 
     /**
      * Builds the String containing the URL of the GET request.
@@ -40,6 +42,14 @@ public class CodeDeOpenSearchRequestorBuilder {
         String cloudCoverContent = params.getCloudCover().toString();
         cloudCoverContent = cloudCoverContent.replace(" ", "");
         String cloudCover = CodeDeJob.CLOUD_COVER_KEY + "=" + cloudCoverContent;
+
+        // maximum records
+        String maxRecords = CodeDeJob.MAXIMUM_RECORDS_KEY + "=" + MAXIMUM_RECORDS;
+        // record schema
+        String recordSchema = CodeDeJob.RECORD_SCHEMA_KEY + "=" + RECORD_SCHEMA;
+        // start page
+        String startPage = CodeDeJob.START_PAGE_KEY + "=" + "1";
+
         // put together
         String getRequestUrl = SERVICE_URL
                 //+ HTTP_ACCEPT + "&"
@@ -47,7 +57,10 @@ public class CodeDeOpenSearchRequestorBuilder {
                 + startDate + "&"
                 + endDate + "&"
                 + bbox + "&"
-                + cloudCover;
+                + cloudCover + "&"
+                + maxRecords + "&"
+                + recordSchema + "&"
+                + startPage;
         return getRequestUrl;
     }
 

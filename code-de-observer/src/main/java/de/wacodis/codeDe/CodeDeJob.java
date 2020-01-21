@@ -43,6 +43,9 @@ public class CodeDeJob implements Job {
     public static final String TEMPORAL_COVERAGE_KEY = "temporalCoverage";
     public static final String SATELLITEPRODUCT = "S2_MSI_L2A";
     public static final String LATEST_REQUEST_END_DATE = "endDate";
+    public static final String MAXIMUM_RECORDS_KEY = "maximumRecords";
+    public static final String RECORD_SCHEMA_KEY = "recordSchema";
+    public static final String START_PAGE_KEY = "startPage";
 
 
 

@@ -67,23 +67,21 @@ public class CodeDeOpenSearchRequestor implements InitializingBean {
 
            String downloadLink = resolver.getDownloadLink(node);
            String metadataLink = resolver.getMetaDataLink(node);
-            /*
-           InputStream inputStream2 = sendOpenSearchRequest(metadataLink);
-           Document metadataDocument = resolver.getDocument(inputStream2);
-           float cloudCoverage = resolver.getCloudCoverage(metadataDocument);
-           String identifier = resolver.getIdentifier(metadataDocument);
 
-             */
+           float cloudCoverage = resolver.getCloudCoverage(node);
+           String identifier = resolver.getIdentifier(node);
+
+
            List<DateTime> timeFrame = resolver.getTimeFrame(node);
            List<Float> bbox = resolver.getBbox(node);
-            /*
+
            metadataObject.setDownloadLink(downloadLink);
            metadataObject.setCloudCover(cloudCoverage);
            metadataObject.setDatasetId(identifier);
            metadataObject.setStartDate(timeFrame.get(0));
            metadataObject.setEndDate(timeFrame.get(1));
            metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
-            */
+
            productsMetadata.add(metadataObject);
         }
 
