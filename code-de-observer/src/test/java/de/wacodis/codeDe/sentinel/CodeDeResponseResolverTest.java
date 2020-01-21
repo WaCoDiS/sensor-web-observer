@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -60,11 +59,7 @@ class CodeDeResponseResolverTest {
         String xPathString="/a:feed/a:entry[1]";
         XPathExpression expression = xpath.compile(xPathString);
         Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
-
-            Document newDocument = db.newDocument();
-            Node importedNode = newDocument.importNode(node, true);
-            newDocument.appendChild(importedNode);
-            String actualDownloadLink = resolver.getDownloadLink(newDocument);
+        String actualDownloadLink = resolver.getDownloadLink(node);
 
         Assertions.assertEquals(expectedDownloadLink, actualDownloadLink);
     }
@@ -81,19 +76,15 @@ class CodeDeResponseResolverTest {
         String xPathString="/a:feed/a:entry[1]";
         XPathExpression expression = xpath.compile(xPathString);
         Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
-
-            Document newDocument = db.newDocument();
-            Node importedNode = newDocument.importNode(node, true);
-            newDocument.appendChild(importedNode);
-            String metadataLink = resolver.getMetaDataLink(newDocument);
-            String actualMetadataLink = metadataLink.replaceAll("&", "&amp;");
+        String metadataLink = resolver.getMetaDataLink(node);
+        String actualMetadataLink = metadataLink.replaceAll("&", "&amp;");
 
         Assertions.assertEquals(expectedMetadataLink, actualMetadataLink);
 
     }
 
     @Test
-    void testGetCloudCoverage() throws IOException, SAXException, XPathExpressionException {
+    void testGetCloudCoverage() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         // expected cloud coverage
         float expectedCloudCoverage = 29.141719f;
         // actual cloud coverage
@@ -106,7 +97,7 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetIdentifier() throws IOException, SAXException, XPathExpressionException {
+    void testGetIdentifier() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         // expected identifier
         String expectedIdentifier = "EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838";
         // actual identifier
@@ -132,15 +123,10 @@ class CodeDeResponseResolverTest {
         // actual time frame
         InputStream document = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(document);
-        String xPathString="/a:feed/a:entry";
+        String xPathString="/a:feed/a:entry[1]";
         XPathExpression expression = xpath.compile(xPathString);
-        NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
-
-            Node node = nodeList.item(0);
-            Document newDocument = db.newDocument();
-            Node importedNode = newDocument.importNode(node, true);
-            newDocument.appendChild(importedNode);
-            List<DateTime> actualTimeFrame = resolver.getTimeFrame(newDocument);
+        Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
+        List<DateTime> actualTimeFrame = resolver.getTimeFrame(node);
 
         Assertions.assertEquals(expectedTimeFrame, actualTimeFrame);
     }
@@ -161,15 +147,10 @@ class CodeDeResponseResolverTest {
         // actual bbox
         InputStream bboxDoc = this.getClass().getResourceAsStream("/catalog.code-de.org.xml");
         xmlDoc = db.parse(bboxDoc);
-        String xPathString="/a:feed/a:entry";
+        String xPathString="/a:feed/a:entry[1]";
         XPathExpression expression = xpath.compile(xPathString);
-        NodeList nodeList = (NodeList) expression.evaluate(xmlDoc, XPathConstants.NODESET);
-
-            Node node = nodeList.item(0);
-            Document newDocument = db.newDocument();
-            Node importedNode = newDocument.importNode(node, true);
-            newDocument.appendChild(importedNode);
-            List<Float> actualBbox = resolver.getBbox(newDocument);
+        Node node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
+        List<Float> actualBbox = resolver.getBbox(node);
 
         Assertions.assertEquals(expectedbbox, actualBbox);
     }

@@ -8,9 +8,16 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +41,14 @@ public class CodeDeResponseResolver {
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
     private final XPath xpath;
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    DocumentBuilder db;
 
-    public CodeDeResponseResolver(){
+    public CodeDeResponseResolver() throws ParserConfigurationException {
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        db = dbf.newDocumentBuilder();
+
         // enables namespaces with the xpath-library
         XPathFactory factory = XPathFactory.newInstance();
         this.xpath = factory.newXPath();
@@ -55,6 +68,30 @@ public class CodeDeResponseResolver {
         xpath.setNamespaceContext(namespaces);
     }
 
+
+    /**
+     *  Delivers the xml-Document from an InputStream
+     * @param getResponse link to the xml document
+     * @return xml document
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     */
+    public Document getDocument(InputStream getResponse) throws IOException, ParserConfigurationException, SAXException {
+        LOG.debug("Analyze InputStream");
+        return db.parse(getResponse);
+    }
+
+
+    public NodeList getEntryNodes(Document responseDoc) throws XPathExpressionException {
+        String xPathString="/a:feed/a:entry";
+        XPathExpression expression = xpath.compile(xPathString);
+        return (NodeList) expression.evaluate(responseDoc, XPathConstants.NODESET);
+    }
+
+
+
+
     /**
      * Delivers the Downloadlink of one specfic sentinel product (<entry>-Tag)
      *
@@ -62,11 +99,14 @@ public class CodeDeResponseResolver {
      * @return URL as String
      * @throws XPathExpressionException
      */
-    public String getDownloadLink(Document entryNode) throws XPathExpressionException {
+    public String getDownloadLink(Node entryNode) throws XPathExpressionException {
         LOG.debug("Resolve DownloadLink out of one entry Node of the OpenSearch Response Document");
+        Document newDocument = db.newDocument();
+        Node importedNode = newDocument.importNode(entryNode, true);
+        newDocument.appendChild(importedNode);
         String xPathString="/a:entry/a:link[@title=\"Download\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);
-        String downloadLink = (String) expression.evaluate(entryNode, XPathConstants.STRING);
+        String downloadLink = (String) expression.evaluate(newDocument, XPathConstants.STRING);
         return downloadLink;
     }
 
@@ -77,11 +117,14 @@ public class CodeDeResponseResolver {
      * @return URL as String
      * @throws XPathExpressionException
      */
-    public String getMetaDataLink(Document entryNode) throws XPathExpressionException {
+    public String getMetaDataLink(Node entryNode) throws XPathExpressionException {
         LOG.debug("Resolve MetadataLink out of one entry Node the OpenSearch Response Document");
+        Document newDocument = db.newDocument();
+        Node importedNode = newDocument.importNode(entryNode, true);
+        newDocument.appendChild(importedNode);
         String xPathString="/a:entry/a:link[@title=\"O&M 1.1 metadata\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);
-        String metadataLink = (String) expression.evaluate(entryNode, XPathConstants.STRING);
+        String metadataLink = (String) expression.evaluate(newDocument, XPathConstants.STRING);
         return metadataLink;
     }
 
@@ -121,11 +164,14 @@ public class CodeDeResponseResolver {
      * @return DateTime list which contains the start and enddate
      * @throws XPathExpressionException
      */
-    public List<DateTime> getTimeFrame(Document entryNode) throws XPathExpressionException {
+    public List<DateTime> getTimeFrame(Node entryNode) throws XPathExpressionException {
         List<DateTime> result = new ArrayList<DateTime>();
+        Document newDocument = db.newDocument();
+        Node importedNode = newDocument.importNode(entryNode, true);
+        newDocument.appendChild(importedNode);
         String xPathString="/a:entry/dc:date";
         XPathExpression expression= this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
+        NodeList nodeList = (NodeList)expression.evaluate(newDocument, XPathConstants.NODESET);
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] timeFrame = nodeList.item(i).getTextContent().split("/");
@@ -145,11 +191,14 @@ public class CodeDeResponseResolver {
      * @return Bounding Box of the sentinel product - Schema [minLat, minLon, maxLat, maxLon]
      * @throws XPathExpressionException
      */
-    public List<Float> getBbox(Document entryNode) throws XPathExpressionException {
+    public List<Float> getBbox(Node entryNode) throws XPathExpressionException {
         ArrayList<Float> bbox= new ArrayList<>();
+        Document newDocument = db.newDocument();
+        Node importedNode = newDocument.importNode(entryNode, true);
+        newDocument.appendChild(importedNode);
         String xPathString="/a:entry/georss:box";
         XPathExpression expression= this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(entryNode, XPathConstants.NODESET);
+        NodeList nodeList = (NodeList)expression.evaluate(newDocument, XPathConstants.NODESET);
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] bboxCoordinates = nodeList.item(i).getTextContent().split(" ");

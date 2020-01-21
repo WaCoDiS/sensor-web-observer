@@ -6,11 +6,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
