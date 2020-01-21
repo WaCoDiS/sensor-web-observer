@@ -4,7 +4,6 @@ import de.wacodis.observer.model.AbstractDataEnvelope;
 import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.observer.model.AbstractDataEnvelopeTimeFrame;
 import de.wacodis.observer.model.CopernicusDataEnvelope;
-import org.joda.time.DateTime;
 
 /**
  * Decodes CodeDeProductsMetadata into a CopernicusDataEnvelope
