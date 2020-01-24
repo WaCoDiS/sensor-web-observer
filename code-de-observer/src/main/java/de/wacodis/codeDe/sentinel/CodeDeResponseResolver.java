@@ -38,6 +38,7 @@ public class CodeDeResponseResolver {
     private static final String TITLE_ATTRIBUTE = "title";
     private static final String TITLE_VALUE = "Download";
     private static final String HYPER_REFERENCE = "href";
+    private static final int ITEMS_PER_PAGE = 50;
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
     private final XPath xpath;
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -62,6 +63,7 @@ public class CodeDeResponseResolver {
                 put("georss", "http://www.georss.org/georss");
                 put("dc", "http://purl.org/dc/elements/1.1/");
                 put("eop", "http://www.opengis.net/eop/2.1");
+                put("os", "http://a9.com/-/spec/opensearch/1.1/");
             }
         };
         SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
@@ -196,5 +198,20 @@ public class CodeDeResponseResolver {
         }
 
         return bbox;
+    }
+
+    public int getNumberOfPages(Document responseDoc) throws XPathExpressionException {
+        String xPathString="/a:feed/os:totalResults";
+        XPathExpression expression = this.xpath.compile(xPathString);
+        int totalResults = (int)((double) expression.evaluate(responseDoc, XPathConstants.NUMBER));
+        return numberOfPagesCalculation(totalResults);
+    }
+
+    private int numberOfPagesCalculation(int totalResults){
+        int modulo = totalResults%ITEMS_PER_PAGE;
+        int nop = (totalResults-modulo)/ITEMS_PER_PAGE;
+        if (modulo > 0)
+            nop += 1;
+        return nop;
     }
 }

@@ -21,7 +21,7 @@ class CodeDeOpenSearchRequestorIT {
         params = new CodeDeRequestParams();
         requestor = new CodeDeOpenSearchRequestor();
         params.setParentIdentifier("S2_MSI_L2A");
-        params.setStartDate(DateTime.parse("2019-10-01T00:00:00Z", FORMATTER));
+        params.setStartDate(DateTime.parse("2018-10-01T00:00:00Z", FORMATTER));
         params.setEndDate(DateTime.parse("2019-10-31T00:00:00Z", FORMATTER));
         params.setBbox(new ArrayList<Float>(){
             {

@@ -19,7 +19,7 @@ public class CodeDeOpenSearchRequestorBuilder {
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     public static final String MAXIMUM_RECORDS= "50";
     public static final String RECORD_SCHEMA = "om";
-    public static String START_PAGE ="1";
+    public static int START_PAGE =1;
 
     /**
      * Builds the String containing the URL of the GET request.
@@ -27,7 +27,7 @@ public class CodeDeOpenSearchRequestorBuilder {
      * @return url of the GET request
      */
 
-    public static String buildGetRequestUrl(CodeDeRequestParams params){
+    public static String buildGetRequestUrl(CodeDeRequestParams params, int page){
         // parentIdentifier
         String parentIdentifier = CodeDeJob.PARENT_IDENTIFIER_KEY + "=" + PARENT_IDENTIFIER_PREFIX + params.getParentIdentifier();
         // dates
@@ -49,7 +49,7 @@ public class CodeDeOpenSearchRequestorBuilder {
         // record schema
         String recordSchema = CodeDeJob.RECORD_SCHEMA_KEY + "=" + RECORD_SCHEMA;
         // start page
-        String startPage = CodeDeJob.START_PAGE_KEY + "=" + START_PAGE;
+        String startPage = CodeDeJob.START_PAGE_KEY + "=" + page;
 
         // put together
         String getRequestUrl = SERVICE_URL
@@ -63,6 +63,10 @@ public class CodeDeOpenSearchRequestorBuilder {
                 + recordSchema + "&"
                 + startPage;
         return getRequestUrl;
+    }
+
+    public static String buildGetRequestUrl(CodeDeRequestParams params){
+        return buildGetRequestUrl(params, START_PAGE);
     }
 
 }
