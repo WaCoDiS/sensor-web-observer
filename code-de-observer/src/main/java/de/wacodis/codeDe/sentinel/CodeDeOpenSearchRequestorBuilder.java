@@ -19,6 +19,7 @@ public class CodeDeOpenSearchRequestorBuilder {
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     public static final String MAXIMUM_RECORDS= "50";
     public static final String RECORD_SCHEMA = "om";
+    public static String START_PAGE ="1";
 
     /**
      * Builds the String containing the URL of the GET request.
@@ -48,7 +49,7 @@ public class CodeDeOpenSearchRequestorBuilder {
         // record schema
         String recordSchema = CodeDeJob.RECORD_SCHEMA_KEY + "=" + RECORD_SCHEMA;
         // start page
-        String startPage = CodeDeJob.START_PAGE_KEY + "=" + "1";
+        String startPage = CodeDeJob.START_PAGE_KEY + "=" + START_PAGE;
 
         // put together
         String getRequestUrl = SERVICE_URL
