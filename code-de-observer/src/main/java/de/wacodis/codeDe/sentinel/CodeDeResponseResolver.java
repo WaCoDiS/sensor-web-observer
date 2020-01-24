@@ -111,24 +111,6 @@ public class CodeDeResponseResolver {
     }
 
     /**
-     * Delivers the URL which links to a seperate XML-Document which contains the metadata of one specfic sentinel product
-     *
-     * @param entryNode <entry>-Tag of the OpenSearch Response and consists one sentinel product
-     * @return URL as String
-     * @throws XPathExpressionException
-     */
-    public String getMetaDataLink(Node entryNode) throws XPathExpressionException {
-        LOG.debug("Resolve MetadataLink out of one entry Node the OpenSearch Response Document");
-        Document newDocument = db.newDocument();
-        Node importedNode = newDocument.importNode(entryNode, true);
-        newDocument.appendChild(importedNode);
-        String xPathString="/a:entry/a:link[@title=\"O&M 1.1 metadata\"]/@href";
-        XPathExpression expression = this.xpath.compile(xPathString);
-        String metadataLink = (String) expression.evaluate(newDocument, XPathConstants.STRING);
-        return metadataLink;
-    }
-
-    /**
      * Returns the cloud coverage percentage of the product
      *
      * @param entryNode the xml document which contains the metadata of one sentinel product

@@ -66,7 +66,6 @@ public class CodeDeOpenSearchRequestor implements InitializingBean {
 
 
            String downloadLink = resolver.getDownloadLink(node);
-           String metadataLink = resolver.getMetaDataLink(node);
 
            float cloudCoverage = resolver.getCloudCoverage(node);
            String identifier = resolver.getIdentifier(node);

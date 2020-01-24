@@ -65,19 +65,6 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetMetadataLink() throws IOException, SAXException, XPathExpressionException {
-
-        // expected metadata link
-        String expectedMetadataLink = "https://catalog.code-de.org/opensearch/request/?httpAccept=application/gml%2Bxml&amp;parentIdentifier=EOP:CODE-DE:S2_MSI_L2A&amp;uid=EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838&amp;recordSchema=om";
-
-        // actual metadataLink
-        String metadataLink = resolver.getMetaDataLink(node);
-        String actualMetadataLink = metadataLink.replaceAll("&", "&amp;");
-        Assertions.assertEquals(expectedMetadataLink, actualMetadataLink);
-
-    }
-
-    @Test
     void testGetCloudCoverage() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         // expected cloud coverage
         float expectedCloudCoverage = 29.141719f;
