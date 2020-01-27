@@ -84,7 +84,12 @@ public class CodeDeResponseResolver {
         return db.parse(getResponse);
     }
 
-
+    /**
+     * Delivers the single entry nodes from the requested sentinel products (all <entry>-tags)
+     * @param responseDoc requested document
+     * @return entry nodes as NodeList
+     * @throws XPathExpressionException
+     */
     public NodeList getEntryNodes(Document responseDoc) throws XPathExpressionException {
         String xPathString="/a:feed/a:entry";
         XPathExpression expression = xpath.compile(xPathString);
@@ -92,14 +97,13 @@ public class CodeDeResponseResolver {
     }
 
     /**
-     * Delivers the Downloadlink of one specfic sentinel product (<entry>-Tag)
+     * Delivers the Downloadlink of one specific sentinel product (<entry>-Tag)
      *
-     * @param entryNode One spezific sentinel Product which corresponds to an <entry>-Tag
+     * @param entryNode One specific sentinel Product which corresponds to an <entry>-Tag
      * @return URL as String
      * @throws XPathExpressionException
      */
     public String getDownloadLink(Node entryNode) throws XPathExpressionException {
-        LOG.debug("Resolve DownloadLink out of one entry Node of the OpenSearch Response Document");
         Document newDocument = db.newDocument();
         Node importedNode = newDocument.importNode(entryNode, true);
         newDocument.appendChild(importedNode);
@@ -129,7 +133,7 @@ public class CodeDeResponseResolver {
 
 
     /**
-     *  Returns the identifier of the sentinel layer
+     *  Returns the identifier/datasetID of the sentinel layer
      *
      * @param entryNode the xml document which contains the metadata of one sentinel product
      * @return identifier of a sentinel layer
@@ -145,7 +149,7 @@ public class CodeDeResponseResolver {
     }
 
     /**
-     * Returns the Date of recording as a list of two dates which are the same
+     * Returns the Date of recording as a list of two dates which are equal
      *
      * @param entryNode One specific sentinel Product which corresponds to an <entry>-Tag
      * @return DateTime list which contains the start and enddate
@@ -172,7 +176,7 @@ public class CodeDeResponseResolver {
     }
 
     /**
-     * Returns the Bounding Box
+     * Returns the Bounding Box of the product
      *
      * @param  entryNode One specific sentinel Product which corresponds to an <entry>-Tag
      * @return Bounding Box of the sentinel product - Schema [minLat, minLon, maxLat, maxLon]
@@ -197,6 +201,13 @@ public class CodeDeResponseResolver {
         return bbox;
     }
 
+    /**
+     * Delivers the number of pages of the product.
+     *
+     * @param  responseDoc requested document
+     * @return number of pages (int)
+     * @throws XPathExpressionException
+     */
     public int getNumberOfPages(Document responseDoc) throws XPathExpressionException {
         String xPathString="/a:feed/os:totalResults";
         XPathExpression expression = this.xpath.compile(xPathString);
@@ -204,6 +215,12 @@ public class CodeDeResponseResolver {
         return numberOfPagesCalculation(totalResults);
     }
 
+    /**
+     * Calculates the number of pages. Each page contains 50 <entry>-Tags
+     *
+     * @param totalResults number of total <entry>-Tags
+     * @return number of pages (int)
+     */
     private int numberOfPagesCalculation(int totalResults){
         int modulo = totalResults%ITEMS_PER_PAGE;
         int nop = (totalResults-modulo)/ITEMS_PER_PAGE;

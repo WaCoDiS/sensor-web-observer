@@ -14,7 +14,7 @@ import de.wacodis.observer.model.CopernicusDataEnvelope;
 public class CodeDeProductsMetadataDecoder {
 
     /**
-     *delivers the content of a CodeDeProducrsMetadata-object into a dataEnvelope
+     *delivers the content of a CodeDeProductsMetadata-object into a dataEnvelope
      * @param metadata object containing the metadata informations of a code de request
      * @return
      */
