@@ -91,9 +91,6 @@ public class CodeDeResponseResolver {
         return (NodeList) expression.evaluate(responseDoc, XPathConstants.NODESET);
     }
 
-
-
-
     /**
      * Delivers the Downloadlink of one specfic sentinel product (<entry>-Tag)
      *
