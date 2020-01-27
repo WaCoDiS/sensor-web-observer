@@ -31,7 +31,7 @@ class CodeDeOpenSearchRequestorBuilderTest {
     @Test
     void testBuilder(){
         CodeDeOpenSearchRequestorBuilder requestorBuilder = new CodeDeOpenSearchRequestorBuilder();
-        String actualRequestUrl = requestorBuilder.buildGetRequestUrl(params);
+        String actualRequestUrl = requestorBuilder.buildGetRequestUrl(params, 1);
         String expectedRequestUrl = "https://catalog.code-de.org/opensearch/request/?" +
                 "parentIdentifier=EOP:CODE-DE:S2_MSI_L2A&" +
                 "startDate=2019-01-01T00:00:00Z&" +
