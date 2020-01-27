@@ -30,9 +30,7 @@ import java.util.List;
  *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 @Component
-public class CodeDeOpenSearchRequestor implements InitializingBean {
-    
-
+public class CodeDeOpenSearchRequestor{
 
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
@@ -48,43 +46,44 @@ public class CodeDeOpenSearchRequestor implements InitializingBean {
      */
     public List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws Exception {
         CodeDeResponseResolver resolver = new CodeDeResponseResolver();
-        LOG.debug("Start building connection parameters for GET-request");
-        String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params);
-        LOG.debug("Start GET-request");
-
-        InputStream inputStream = sendOpenSearchRequest(getRequestUrl);
-
-        Document getResponseDoc = resolver.getDocument(inputStream);
-        NodeList nodeList = resolver.getEntryNodes(getResponseDoc);
-        // prepare loop
+        int pages = 1;
         List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();    // result
+        for(int k=1; k<=pages; k++) {
+            LOG.debug("Building connection parameters for the "+ k + ". GET-request");
+            String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params, k);
+            LOG.debug("Start GET-request");
 
-        // analyze xml-Document
-        for(int i = 0; i < nodeList.getLength(); i++){
-           CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
-           Node node = nodeList.item(i);
+            InputStream inputStream = sendOpenSearchRequest(getRequestUrl);
+            Document getResponseDoc = resolver.getDocument(inputStream);
 
+            if(k==1)
+                pages = resolver.getNumberOfPages(getResponseDoc);
+            LOG.debug("Total number of pages is " + pages);
+            NodeList nodeList = resolver.getEntryNodes(getResponseDoc);
 
-           String downloadLink = resolver.getDownloadLink(node);
-           String metadataLink = resolver.getMetaDataLink(node);
+            LOG.debug("Start analyzing XML-Document");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                LOG.debug("Read node: " + i);
+                CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
+                Node node = nodeList.item(i);
 
-           float cloudCoverage = resolver.getCloudCoverage(node);
-           String identifier = resolver.getIdentifier(node);
+                String downloadLink = resolver.getDownloadLink(node);
+                float cloudCoverage = resolver.getCloudCoverage(node);
+                String identifier = resolver.getIdentifier(node);
+                List<DateTime> timeFrame = resolver.getTimeFrame(node);
+                List<Float> bbox = resolver.getBbox(node);
 
-
-           List<DateTime> timeFrame = resolver.getTimeFrame(node);
-           List<Float> bbox = resolver.getBbox(node);
-
-           metadataObject.setDownloadLink(downloadLink);
-           metadataObject.setCloudCover(cloudCoverage);
-           metadataObject.setDatasetId(identifier);
-           metadataObject.setStartDate(timeFrame.get(0));
-           metadataObject.setEndDate(timeFrame.get(1));
-           metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
-
-           productsMetadata.add(metadataObject);
+                LOG.debug("fill metadata object");
+                metadataObject.setDownloadLink(downloadLink);
+                metadataObject.setCloudCover(cloudCoverage);
+                metadataObject.setDatasetId(identifier);
+                metadataObject.setStartDate(timeFrame.get(0));
+                metadataObject.setEndDate(timeFrame.get(1));
+                metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
+                productsMetadata.add(metadataObject);
+            }
         }
-
+        LOG.debug("Publish result");
         return productsMetadata;
     }
 
@@ -106,9 +105,4 @@ public class CodeDeOpenSearchRequestor implements InitializingBean {
         return httpcontent;
     }
 
-
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-    }
 }

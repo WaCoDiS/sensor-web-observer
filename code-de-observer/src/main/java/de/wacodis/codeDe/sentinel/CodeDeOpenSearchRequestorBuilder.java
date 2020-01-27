@@ -23,10 +23,10 @@ public class CodeDeOpenSearchRequestorBuilder {
     /**
      * Builds the String containing the URL of the GET request.
      * @param params all necessary parameters for the OpenSearch request
+     * @param page number of page, first request should be 1
      * @return url of the GET request
      */
-
-    public static String buildGetRequestUrl(CodeDeRequestParams params){
+    public static String buildGetRequestUrl(CodeDeRequestParams params, int page){
         // parentIdentifier
         String parentIdentifier = CodeDeJob.PARENT_IDENTIFIER_KEY + "=" + PARENT_IDENTIFIER_PREFIX + params.getParentIdentifier();
         // dates
@@ -48,7 +48,7 @@ public class CodeDeOpenSearchRequestorBuilder {
         // record schema
         String recordSchema = CodeDeJob.RECORD_SCHEMA_KEY + "=" + RECORD_SCHEMA;
         // start page
-        String startPage = CodeDeJob.START_PAGE_KEY + "=" + "1";
+        String startPage = CodeDeJob.START_PAGE_KEY + "=" + page;
 
         // put together
         String getRequestUrl = SERVICE_URL

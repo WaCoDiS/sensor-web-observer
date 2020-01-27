@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -53,11 +54,12 @@ class CodeDeResponseResolverTest {
         node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
 
     }
+
     @Test
     void testGetDownloadLink() throws IOException, SAXException, XPathExpressionException {
 
         // expected download links
-        String expectedDownloadLink = "https://code-de.org/download/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838.SAFE.zip";
+        String expectedDownloadLink = "https://code-de.org/download/S2A_MSIL2A_20190120T103341_N0211_R108_T32ULB_20190120T131644.SAFE.zip";
         // actual download link
         String actualDownloadLink = resolver.getDownloadLink(node);
 
@@ -65,22 +67,9 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetMetadataLink() throws IOException, SAXException, XPathExpressionException {
-
-        // expected metadata link
-        String expectedMetadataLink = "https://catalog.code-de.org/opensearch/request/?httpAccept=application/gml%2Bxml&amp;parentIdentifier=EOP:CODE-DE:S2_MSI_L2A&amp;uid=EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838&amp;recordSchema=om";
-
-        // actual metadataLink
-        String metadataLink = resolver.getMetaDataLink(node);
-        String actualMetadataLink = metadataLink.replaceAll("&", "&amp;");
-        Assertions.assertEquals(expectedMetadataLink, actualMetadataLink);
-
-    }
-
-    @Test
     void testGetCloudCoverage() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         // expected cloud coverage
-        float expectedCloudCoverage = 29.141719f;
+        float expectedCloudCoverage = 2.175213f;
         // actual cloud coverage
         float actualCloudCoverage = resolver.getCloudCoverage(node);
 
@@ -90,7 +79,7 @@ class CodeDeResponseResolverTest {
     @Test
     void testGetIdentifier() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         // expected identifier
-        String expectedIdentifier = "EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20191012T103029_N0213_R108_T32ULB_20191012T135838";
+        String expectedIdentifier = "EOP:CODE-DE:S2_MSI_L2A:/S2A_MSIL2A_20190120T103341_N0211_R108_T32ULB_20190120T131644";
         // actual identifier
         String actualIdentifier = resolver.getIdentifier(node);
 
@@ -103,8 +92,8 @@ class CodeDeResponseResolverTest {
         // expected time frame
         List<DateTime> expectedTimeFrame = new ArrayList<DateTime>(){
             {
-                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
-                add(DateTime.parse("2019-10-12T10:30:29.024Z", CodeDeResponseResolver.FORMATTER));
+                add(DateTime.parse("2019-01-20T10:33:41.024Z", CodeDeResponseResolver.FORMATTER));
+                add(DateTime.parse("2019-01-20T10:33:41.024Z", CodeDeResponseResolver.FORMATTER));
             }
         };
 
@@ -120,8 +109,8 @@ class CodeDeResponseResolverTest {
         // expected bbox
         List<Float> expectedbbox = new ArrayList<Float>(){
             {
-                add(50.4368368428495f);
-                add(6.589443020581445f);
+                add(50.43685871745407f);
+                add(6.590688202965415f);
                 add(51.44399790803582f);
                 add(7.729300891794365f);
             }
@@ -131,6 +120,16 @@ class CodeDeResponseResolverTest {
         List<Float> actualBbox = resolver.getBbox(node);
 
         Assertions.assertEquals(expectedbbox, actualBbox);
+    }
+
+    @Test
+    void testGetNumberOfPages() throws XPathExpressionException {
+        // expected number of pages
+        int expectedNOP = 3;    // 114/50 and round result up
+        // actual number of pages
+        int actualNOP = resolver.getNumberOfPages(xmlDoc);
+
+        Assertions.assertEquals(expectedNOP, actualNOP);
     }
 
 }

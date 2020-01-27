@@ -15,8 +15,8 @@ class CodeDeOpenSearchRequestorBuilderTest {
     @BeforeAll
     static void setup(){
         String parentIdentifier = "S2_MSI_L2A";
-        DateTime startDate = DateTime.parse("2019-10-01T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
-        DateTime endDate = DateTime.parse("2019-10-31T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
+        DateTime startDate = DateTime.parse("2019-01-01T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
+        DateTime endDate = DateTime.parse("2020-01-17T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
         List<Float> bbox = new ArrayList<Float>();
         bbox.add(6.96f);
         bbox.add(50.9f);
@@ -31,16 +31,17 @@ class CodeDeOpenSearchRequestorBuilderTest {
     @Test
     void testBuilder(){
         CodeDeOpenSearchRequestorBuilder requestorBuilder = new CodeDeOpenSearchRequestorBuilder();
-        String actualRequestUrl = requestorBuilder.buildGetRequestUrl(params);
+        String actualRequestUrl = requestorBuilder.buildGetRequestUrl(params, 1);
         String expectedRequestUrl = "https://catalog.code-de.org/opensearch/request/?" +
-                "httpAccept=application/atom%2Bxml&" +
                 "parentIdentifier=EOP:CODE-DE:S2_MSI_L2A&" +
-                "startDate=2019-10-01T00:00:00Z&" +
-                "endDate=2019-10-31T00:00:00Z&" +
+                "startDate=2019-01-01T00:00:00Z&" +
+                "endDate=2020-01-17T00:00:00Z&" +
                 "bbox=6.96,50.9,8.02,51.2&" +
-                "cloudCover=[0.0,40.0]";
+                "cloudCover=[0.0,40.0]&" +
+                "maximumRecords=50&" +
+                "recordSchema=om&" +
+                "startPage=1";
         Assertions.assertEquals(expectedRequestUrl, actualRequestUrl);
     }
-
 
 }
