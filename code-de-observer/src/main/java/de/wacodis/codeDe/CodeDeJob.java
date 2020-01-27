@@ -99,7 +99,6 @@ public class CodeDeJob implements Job {
         area.add(3, upperRightX);
 
         Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
-
         DateTime endDate = DateTime.now();
         DateTime startDate = null;
         // If there was a Job execution before, consider the latest request
@@ -132,25 +131,6 @@ public class CodeDeJob implements Job {
      */
     private void publishDataEnvelopes(String parentIdentifier, DateTime startDate, DateTime endDate, List<Float> bbox, List<Float>cloudCover) throws Exception {
         CodeDeRequestParamsEncoder encoder = new CodeDeRequestParamsEncoder();
-        //TODO: split the requests
-        // List<DateTime[]> interval = DwdTemporalResolutionHelper.getRequestIntervals(startDate, endDate, layerName);
-
-        /*LOG.info("Start requesting DWD data iteratively if the amount of data is too large.");
-
-        if (interval != null) {
-            for (int i = 0; i < interval.size(); i++) {
-                CodeDeRequestParams params = CodeDeRequestParamsEncoder.encode(parentIdentifier, startDate, endDate, bbox, cloudCover);
-                DwdDataEnvelope dataEnvelope = this.requestDwdMetadata(serviceUrl, params);
-                if (dataEnvelope != null) {
-                    // Publish DwdDataEnvelope message
-                    pub.sendDataEnvelope().send(MessageBuilder.withPayload(dataEnvelope).build());
-                    LOG.info("Successfully created and published new DwdDataEnvelope: {}", dataEnvelope);
-                } else {
-                    LOG.warn("Failed creation and publishing of new DwdDataEnvelope for request params: {}", params);
-                }
-            }
-        }*/
-
         CodeDeRequestParams params = encoder.encode(parentIdentifier, startDate, endDate, bbox, cloudCover);
         List<CopernicusDataEnvelope> dataEnvelopes = this.createDataEnvelopes(params);
         for (CopernicusDataEnvelope copDE:dataEnvelopes) {
