@@ -11,7 +11,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -34,23 +33,21 @@ import java.util.List;
 @Component
 public class CodeDeOpenSearchRequestor {
 
-    final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
     /**
      * Performs a query with the given paramerters.
      *
      * @param params all necessary parameters for the OpenSearch request
      * @return metadata for the found satellite images
-     * @throws IOException
-     * @throws SAXException
-     * @throws ParserConfigurationException
-     * @throws XPathExpressionException
+     * @throws DecodingException
+     * @throws HttpConnectionException
      */
     public List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws DecodingException, HttpConnectionException {
         try {
             CodeDeResponseResolver resolver = new CodeDeResponseResolver();
             int pages = 1;
-            List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();    // result
+            List<CodeDeProductsMetadata> productsMetadata = new ArrayList<>();    // result
             for (int k = 1; k <= pages; k++) {
                 LOG.debug("Building connection parameters for the " + k + ". GET-request");
                 String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params, k);
@@ -105,15 +102,14 @@ public class CodeDeOpenSearchRequestor {
      * @throws ClientProtocolException
      * @throws IOException
      */
-    public InputStream sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
+    private InputStream sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
 
         // contact http-client
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(getRequestUrl);
         CloseableHttpResponse response = httpclient.execute(httpGet);
         HttpEntity entity = response.getEntity(); // fill http-Object (status, parameters, content)
-        InputStream httpcontent = entity.getContent(); // ask for content
-        return httpcontent;
+        return entity.getContent();
     }
 
 }

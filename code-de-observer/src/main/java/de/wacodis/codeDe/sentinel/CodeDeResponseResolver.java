@@ -75,7 +75,6 @@ public class CodeDeResponseResolver {
      * @param getResponse link to the xml document
      * @return xml document
      * @throws IOException
-     * @throws ParserConfigurationException
      * @throws SAXException
      */
     public Document getDocument(InputStream getResponse) throws IOException, SAXException {
@@ -108,8 +107,7 @@ public class CodeDeResponseResolver {
         newDocument.appendChild(importedNode);
         String xPathString="/a:entry/a:link[@title=\"Download\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);
-        String downloadLink = (String) expression.evaluate(newDocument, XPathConstants.STRING);
-        return downloadLink;
+        return (String) expression.evaluate(newDocument, XPathConstants.STRING);
     }
 
     /**
@@ -126,8 +124,7 @@ public class CodeDeResponseResolver {
         String xpathString="/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expression = this.xpath.compile(xpathString);
         String resultCloudCoverage = (String)expression.evaluate(newDocument, XPathConstants.STRING);
-        float cloudCoverage = Float.parseFloat(resultCloudCoverage);
-        return cloudCoverage;
+        return Float.parseFloat(resultCloudCoverage);
     }
 
 
@@ -143,8 +140,7 @@ public class CodeDeResponseResolver {
         newDocument.appendChild(importedNode);
         String xpathString = "a:entry/opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:identifier";
         XPathExpression expression = this.xpath.compile(xpathString);
-        String parentIdentifier = (String) expression.evaluate(newDocument, XPathConstants.STRING);
-        return parentIdentifier;
+        return (String) expression.evaluate(newDocument, XPathConstants.STRING);
     }
 
     /**
@@ -155,7 +151,7 @@ public class CodeDeResponseResolver {
      * @throws XPathExpressionException
      */
     public List<DateTime> getTimeFrame(Node entryNode) throws XPathExpressionException {
-        List<DateTime> result = new ArrayList<DateTime>();
+        List<DateTime> result = new ArrayList<>();
         Document newDocument = db.newDocument();
         Node importedNode = newDocument.importNode(entryNode, true);
         newDocument.appendChild(importedNode);

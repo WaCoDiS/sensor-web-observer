@@ -15,8 +15,8 @@ public class CodeDeProductsMetadataDecoder {
 
     /**
      *delivers the content of a CodeDeProductsMetadata-object into a dataEnvelope
-     * @param metadata object containing the metadata informations of a code de request
-     * @return
+     * @param metadata object containing the metadata information of a code de request
+     * @return CopernicusDataEnvelope, contains information about the product
      */
     public static CopernicusDataEnvelope decode(CodeDeProductsMetadata metadata){
 
