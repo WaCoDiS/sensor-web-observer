@@ -30,7 +30,7 @@ import java.util.List;
  *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 @Component
-public class CodeDeOpenSearchRequestor implements InitializingBean {
+public class CodeDeOpenSearchRequestor{
     
 
 
@@ -112,9 +112,4 @@ public class CodeDeOpenSearchRequestor implements InitializingBean {
         return httpcontent;
     }
 
-
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-    }
 }
