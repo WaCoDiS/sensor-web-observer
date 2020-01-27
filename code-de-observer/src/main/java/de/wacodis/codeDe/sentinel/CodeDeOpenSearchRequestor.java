@@ -1,5 +1,7 @@
 package de.wacodis.codeDe.sentinel;
 
+import de.wacodis.codeDe.sentinel.exception.HttpConnectionException;
+import de.wacodis.sentinel.apihub.DecodingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -26,11 +28,11 @@ import java.util.List;
 /**
  * This class is responsible for requesting CODE-DE Orthorectified images of the Sentinal satellites.
  *
- *@author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
- *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 @Component
-public class CodeDeOpenSearchRequestor{
+public class CodeDeOpenSearchRequestor {
 
     final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
@@ -44,51 +46,60 @@ public class CodeDeOpenSearchRequestor{
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
      */
-    public List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws Exception {
-        CodeDeResponseResolver resolver = new CodeDeResponseResolver();
-        int pages = 1;
-        List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();    // result
-        for(int k=1; k<=pages; k++) {
-            LOG.debug("Building connection parameters for the "+ k + ". GET-request");
-            String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params, k);
-            LOG.debug("Start GET-request");
+    public List<CodeDeProductsMetadata> request(CodeDeRequestParams params) throws DecodingException, HttpConnectionException {
+        try {
+            CodeDeResponseResolver resolver = new CodeDeResponseResolver();
+            int pages = 1;
+            List<CodeDeProductsMetadata> productsMetadata = new ArrayList<CodeDeProductsMetadata>();    // result
+            for (int k = 1; k <= pages; k++) {
+                LOG.debug("Building connection parameters for the " + k + ". GET-request");
+                String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params, k);
+                LOG.debug("Start GET-request");
 
-            InputStream inputStream = sendOpenSearchRequest(getRequestUrl);
-            Document getResponseDoc = resolver.getDocument(inputStream);
+                InputStream inputStream = sendOpenSearchRequest(getRequestUrl);
+                Document getResponseDoc = resolver.getDocument(inputStream);
 
-            if(k==1)
-                pages = resolver.getNumberOfPages(getResponseDoc);
-            LOG.debug("Total number of pages is " + pages);
-            NodeList nodeList = resolver.getEntryNodes(getResponseDoc);
+                if (k == 1) {
+                    pages = resolver.getNumberOfPages(getResponseDoc);
+                    LOG.debug("Total number of pages is " + pages);
+                }
+                NodeList nodeList = resolver.getEntryNodes(getResponseDoc);
 
-            LOG.debug("Start analyzing XML-Document");
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                LOG.debug("Read node: " + i);
-                CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
-                Node node = nodeList.item(i);
+                LOG.debug("Start analyzing XML-Document");
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    LOG.debug("Read node: " + i);
+                    CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
+                    Node node = nodeList.item(i);
 
-                String downloadLink = resolver.getDownloadLink(node);
-                float cloudCoverage = resolver.getCloudCoverage(node);
-                String identifier = resolver.getIdentifier(node);
-                List<DateTime> timeFrame = resolver.getTimeFrame(node);
-                List<Float> bbox = resolver.getBbox(node);
+                    String downloadLink = resolver.getDownloadLink(node);
+                    float cloudCoverage = resolver.getCloudCoverage(node);
+                    String identifier = resolver.getIdentifier(node);
+                    List<DateTime> timeFrame = resolver.getTimeFrame(node);
+                    List<Float> bbox = resolver.getBbox(node);
 
-                LOG.debug("fill metadata object");
-                metadataObject.setDownloadLink(downloadLink);
-                metadataObject.setCloudCover(cloudCoverage);
-                metadataObject.setDatasetId(identifier);
-                metadataObject.setStartDate(timeFrame.get(0));
-                metadataObject.setEndDate(timeFrame.get(1));
-                metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
-                productsMetadata.add(metadataObject);
+                    LOG.debug("fill metadata object");
+                    metadataObject.setDownloadLink(downloadLink);
+                    metadataObject.setCloudCover(cloudCoverage);
+                    metadataObject.setDatasetId(identifier);
+                    metadataObject.setStartDate(timeFrame.get(0));
+                    metadataObject.setEndDate(timeFrame.get(1));
+                    metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
+                    productsMetadata.add(metadataObject);
+                }
+                LOG.debug("Publish result");
+
             }
+            return productsMetadata;
+        } catch (XPathExpressionException | SAXException e) {
+            throw new DecodingException("Could not process OpenSearch response", e);
+        } catch (IOException e) {
+            throw new HttpConnectionException("Connection to server failed", e);
         }
-        LOG.debug("Publish result");
-        return productsMetadata;
     }
 
     /**
-     *  Delivers the content of the GET response.
+     * Delivers the content of the GET response.
+     *
      * @param getRequestUrl string containing the URL of the GET request
      * @return content of the GET response as an Inputstream
      * @throws ClientProtocolException

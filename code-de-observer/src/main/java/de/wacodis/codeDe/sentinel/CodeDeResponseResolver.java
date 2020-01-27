@@ -33,22 +33,21 @@ import java.util.Map;
  */
 public class CodeDeResponseResolver {
 
-    private static final String ENTRY_TAG = "entry";
-    private static final String LINK_TAG = "link";
-    private static final String TITLE_ATTRIBUTE = "title";
-    private static final String TITLE_VALUE = "Download";
-    private static final String HYPER_REFERENCE = "href";
     private static final int ITEMS_PER_PAGE = 50;
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
     private final XPath xpath;
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     DocumentBuilder db;
 
-    public CodeDeResponseResolver() throws ParserConfigurationException {
+    public CodeDeResponseResolver() {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
-        db = dbf.newDocumentBuilder();
+        try {
+            db = dbf.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            LOG.warn(e.getMessage());
+        }
 
         // enables namespaces with the xpath-library
         XPathFactory factory = XPathFactory.newInstance();
@@ -79,7 +78,7 @@ public class CodeDeResponseResolver {
      * @throws ParserConfigurationException
      * @throws SAXException
      */
-    public Document getDocument(InputStream getResponse) throws IOException, ParserConfigurationException, SAXException {
+    public Document getDocument(InputStream getResponse) throws IOException, SAXException {
         LOG.debug("Analyze InputStream");
         return db.parse(getResponse);
     }
