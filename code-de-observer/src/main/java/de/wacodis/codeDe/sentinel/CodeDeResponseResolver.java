@@ -33,22 +33,21 @@ import java.util.Map;
  */
 public class CodeDeResponseResolver {
 
-    private static final String ENTRY_TAG = "entry";
-    private static final String LINK_TAG = "link";
-    private static final String TITLE_ATTRIBUTE = "title";
-    private static final String TITLE_VALUE = "Download";
-    private static final String HYPER_REFERENCE = "href";
     private static final int ITEMS_PER_PAGE = 50;
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
     private final XPath xpath;
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     DocumentBuilder db;
 
-    public CodeDeResponseResolver() throws ParserConfigurationException {
+    public CodeDeResponseResolver() {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
-        db = dbf.newDocumentBuilder();
+        try {
+            db = dbf.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            LOG.warn(e.getMessage());
+        }
 
         // enables namespaces with the xpath-library
         XPathFactory factory = XPathFactory.newInstance();
@@ -76,10 +75,9 @@ public class CodeDeResponseResolver {
      * @param getResponse link to the xml document
      * @return xml document
      * @throws IOException
-     * @throws ParserConfigurationException
      * @throws SAXException
      */
-    public Document getDocument(InputStream getResponse) throws IOException, ParserConfigurationException, SAXException {
+    public Document getDocument(InputStream getResponse) throws IOException, SAXException {
         LOG.debug("Analyze InputStream");
         return db.parse(getResponse);
     }
@@ -109,8 +107,7 @@ public class CodeDeResponseResolver {
         newDocument.appendChild(importedNode);
         String xPathString="/a:entry/a:link[@title=\"Download\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);
-        String downloadLink = (String) expression.evaluate(newDocument, XPathConstants.STRING);
-        return downloadLink;
+        return (String) expression.evaluate(newDocument, XPathConstants.STRING);
     }
 
     /**
@@ -127,8 +124,7 @@ public class CodeDeResponseResolver {
         String xpathString="/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expression = this.xpath.compile(xpathString);
         String resultCloudCoverage = (String)expression.evaluate(newDocument, XPathConstants.STRING);
-        float cloudCoverage = Float.parseFloat(resultCloudCoverage);
-        return cloudCoverage;
+        return Float.parseFloat(resultCloudCoverage);
     }
 
 
@@ -144,8 +140,7 @@ public class CodeDeResponseResolver {
         newDocument.appendChild(importedNode);
         String xpathString = "a:entry/opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:identifier";
         XPathExpression expression = this.xpath.compile(xpathString);
-        String parentIdentifier = (String) expression.evaluate(newDocument, XPathConstants.STRING);
-        return parentIdentifier;
+        return (String) expression.evaluate(newDocument, XPathConstants.STRING);
     }
 
     /**
@@ -156,7 +151,7 @@ public class CodeDeResponseResolver {
      * @throws XPathExpressionException
      */
     public List<DateTime> getTimeFrame(Node entryNode) throws XPathExpressionException {
-        List<DateTime> result = new ArrayList<DateTime>();
+        List<DateTime> result = new ArrayList<>();
         Document newDocument = db.newDocument();
         Node importedNode = newDocument.importNode(entryNode, true);
         newDocument.appendChild(importedNode);

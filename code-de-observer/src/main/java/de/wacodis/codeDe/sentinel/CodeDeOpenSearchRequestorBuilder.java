@@ -51,7 +51,7 @@ public class CodeDeOpenSearchRequestorBuilder {
         String startPage = CodeDeJob.START_PAGE_KEY + "=" + page;
 
         // put together
-        String getRequestUrl = SERVICE_URL
+        return SERVICE_URL
                 //+ HTTP_ACCEPT + "&"
                 + parentIdentifier + "&"
                 + startDate + "&"
@@ -61,7 +61,6 @@ public class CodeDeOpenSearchRequestorBuilder {
                 + maxRecords + "&"
                 + recordSchema + "&"
                 + startPage;
-        return getRequestUrl;
     }
 
 }
