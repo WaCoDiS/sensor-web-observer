@@ -1,10 +1,11 @@
 package de.wacodis.codeDe.sentinel;
 
 import de.wacodis.observer.decode.SimpleNamespaceContext;
+
 import org.joda.time.DateTime;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class CodeDeResponseResolverTest {
+public class CodeDeResponseResolverTest {
 
     private static CodeDeResponseResolver resolver;
     private static Document xmlDoc;
@@ -30,8 +31,8 @@ class CodeDeResponseResolverTest {
     private static XPath xpath;
     private static Node node;
 
-    @BeforeAll
-    static void setup() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    @BeforeClass
+    public static void setup() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
         resolver = new CodeDeResponseResolver();
         dbf.setNamespaceAware(true);
@@ -56,38 +57,38 @@ class CodeDeResponseResolverTest {
     }
 
     @Test
-    void testGetDownloadLink() throws IOException, SAXException, XPathExpressionException {
+    public void testGetDownloadLink() throws IOException, SAXException, XPathExpressionException {
 
         // expected download links
         String expectedDownloadLink = "https://code-de.org/download/S2A_MSIL2A_20190120T103341_N0211_R108_T32ULB_20190120T131644.SAFE.zip";
         // actual download link
         String actualDownloadLink = resolver.getDownloadLink(node);
 
-        Assertions.assertEquals(expectedDownloadLink, actualDownloadLink);
+        Assert.assertEquals(expectedDownloadLink, actualDownloadLink);
     }
 
     @Test
-    void testGetCloudCoverage() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+    public void testGetCloudCoverage() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         // expected cloud coverage
         float expectedCloudCoverage = 2.175213f;
         // actual cloud coverage
         float actualCloudCoverage = resolver.getCloudCoverage(node);
 
-        Assertions.assertEquals(expectedCloudCoverage, actualCloudCoverage);
+        Assert.assertEquals(expectedCloudCoverage, actualCloudCoverage, 0.001);
     }
 
     @Test
-    void testGetIdentifier() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+    public void testGetIdentifier() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         // expected identifier
         String expectedIdentifier = "EOP:CODE-DE:S2_MSI_L2A:/S2A_MSIL2A_20190120T103341_N0211_R108_T32ULB_20190120T131644";
         // actual identifier
         String actualIdentifier = resolver.getIdentifier(node);
 
-        Assertions.assertEquals(expectedIdentifier, actualIdentifier);
+        Assert.assertEquals(expectedIdentifier, actualIdentifier);
     }
 
     @Test
-    void testGetTimeFrame() throws IOException, SAXException, XPathExpressionException {
+    public void testGetTimeFrame() throws IOException, SAXException, XPathExpressionException {
 
         // expected time frame
         List<DateTime> expectedTimeFrame = new ArrayList<DateTime>(){
@@ -100,11 +101,11 @@ class CodeDeResponseResolverTest {
         // actual time frame
         List<DateTime> actualTimeFrame = resolver.getTimeFrame(node);
 
-        Assertions.assertEquals(expectedTimeFrame, actualTimeFrame);
+        Assert.assertEquals(expectedTimeFrame, actualTimeFrame);
     }
 
     @Test
-    void testGetBbox() throws IOException, SAXException, XPathExpressionException {
+    public void testGetBbox() throws IOException, SAXException, XPathExpressionException {
 
         // expected bbox
         List<Float> expectedbbox = new ArrayList<Float>(){
@@ -119,17 +120,17 @@ class CodeDeResponseResolverTest {
         // actual bbox
         List<Float> actualBbox = resolver.getBbox(node);
 
-        Assertions.assertEquals(expectedbbox, actualBbox);
+        Assert.assertEquals(expectedbbox, actualBbox);
     }
 
     @Test
-    void testGetNumberOfPages() throws XPathExpressionException {
+    public void testGetNumberOfPages() throws XPathExpressionException {
         // expected number of pages
         int expectedNOP = 3;    // 114/50 and round result up
         // actual number of pages
         int actualNOP = resolver.getNumberOfPages(xmlDoc);
 
-        Assertions.assertEquals(expectedNOP, actualNOP);
+        Assert.assertEquals(expectedNOP, actualNOP);
     }
 
 }

@@ -3,21 +3,21 @@ package de.wacodis.codeDe.sentinel;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class CodeDeOpenSearchRequestorIT {
+public class CodeDeOpenSearchRequestorIT {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private static CodeDeRequestParams params;
     private static CodeDeOpenSearchRequestor requestor;
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeClass
+    public static void setUp() {
         params = new CodeDeRequestParams();
         requestor = new CodeDeOpenSearchRequestor();
         params.setParentIdentifier("S2_MSI_L2A");
@@ -39,7 +39,7 @@ class CodeDeOpenSearchRequestorIT {
     }
 
     @Test
-    void request() throws Exception {
+    public void request() throws Exception {
         // expected metadata object
         CodeDeProductsMetadata expectedMetadataObject = new CodeDeProductsMetadata();
         expectedMetadataObject.setDownloadLink("https://code-de.org/download/S2A_MSIL2A_20190120T103341_N0211_R108_T32ULB_20190120T131644.SAFE.zip");
@@ -52,12 +52,12 @@ class CodeDeOpenSearchRequestorIT {
         List<CodeDeProductsMetadata> metadataList = requestor.request(params);
         CodeDeProductsMetadata actualMetadataObject = metadataList.get(0);
 
-        Assertions.assertEquals(expectedMetadataObject.getDownloadLink(), actualMetadataObject.getDownloadLink());
-        Assertions.assertEquals(expectedMetadataObject.getCloudCover(), actualMetadataObject.getCloudCover());
-        Assertions.assertEquals(expectedMetadataObject.getDatasetId(), actualMetadataObject.getDatasetId());
-        Assertions.assertEquals(expectedMetadataObject.getStartDate(), actualMetadataObject.getStartDate());
-        Assertions.assertEquals(expectedMetadataObject.getEndDate(), actualMetadataObject.getEndDate());
-        Assertions.assertEquals(expectedMetadataObject.getAreaOfInterest(), actualMetadataObject.getAreaOfInterest());
+        Assert.assertEquals(expectedMetadataObject.getDownloadLink(), actualMetadataObject.getDownloadLink());
+        Assert.assertEquals(expectedMetadataObject.getCloudCover(), actualMetadataObject.getCloudCover(), 0.001);
+        Assert.assertEquals(expectedMetadataObject.getDatasetId(), actualMetadataObject.getDatasetId());
+        Assert.assertEquals(expectedMetadataObject.getStartDate(), actualMetadataObject.getStartDate());
+        Assert.assertEquals(expectedMetadataObject.getEndDate(), actualMetadataObject.getEndDate());
+        Assert.assertEquals(expectedMetadataObject.getAreaOfInterest(), actualMetadataObject.getAreaOfInterest());
     }
 
 }

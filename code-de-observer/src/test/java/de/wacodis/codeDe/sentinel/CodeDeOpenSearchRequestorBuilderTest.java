@@ -1,19 +1,19 @@
 package de.wacodis.codeDe.sentinel;
 
 import org.joda.time.DateTime;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class CodeDeOpenSearchRequestorBuilderTest {
+public class CodeDeOpenSearchRequestorBuilderTest {
 
     private static CodeDeRequestParams params;
 
-    @BeforeAll
-    static void setup(){
+    @BeforeClass
+    public static void setup(){
         String parentIdentifier = "S2_MSI_L2A";
         DateTime startDate = DateTime.parse("2019-01-01T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
         DateTime endDate = DateTime.parse("2020-01-17T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
@@ -29,7 +29,7 @@ class CodeDeOpenSearchRequestorBuilderTest {
     }
 
     @Test
-    void testBuilder(){
+    public void testBuilder(){
         CodeDeOpenSearchRequestorBuilder requestorBuilder = new CodeDeOpenSearchRequestorBuilder();
         String actualRequestUrl = requestorBuilder.buildGetRequestUrl(params, 1);
         String expectedRequestUrl = "https://catalog.code-de.org/opensearch/request/?" +
@@ -41,7 +41,7 @@ class CodeDeOpenSearchRequestorBuilderTest {
                 "maximumRecords=50&" +
                 "recordSchema=om&" +
                 "startPage=1";
-        Assertions.assertEquals(expectedRequestUrl, actualRequestUrl);
+        Assert.assertEquals(expectedRequestUrl, actualRequestUrl);
     }
 
 }
