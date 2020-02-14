@@ -1,7 +1,7 @@
 package de.wacodis.codeDe.sentinel;
 
 import de.wacodis.codeDe.sentinel.exception.HttpConnectionException;
-import de.wacodis.sentinel.apihub.DecodingException;
+import de.wacodis.observer.decode.DecodingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;

@@ -16,7 +16,7 @@
 
 package de.wacodis.sentinel.apihub.decode;
 
-import de.wacodis.sentinel.apihub.DecodingException;
+import de.wacodis.observer.decode.DecodingException;
 import de.wacodis.sentinel.apihub.ProductMetadata;
 import de.wacodis.sentinel.apihub.SearchResult;
 import java.io.IOException;

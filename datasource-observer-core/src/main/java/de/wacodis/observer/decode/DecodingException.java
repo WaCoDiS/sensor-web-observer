@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.wacodis.sentinel.apihub;
+package de.wacodis.observer.decode;
 
 
 /**

@@ -2,9 +2,9 @@ package de.wacodis.codeDe;
 
 import de.wacodis.codeDe.sentinel.*;
 import de.wacodis.codeDe.sentinel.exception.HttpConnectionException;
+import de.wacodis.observer.decode.DecodingException;
 import de.wacodis.observer.model.CopernicusDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
-import de.wacodis.sentinel.apihub.DecodingException;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;

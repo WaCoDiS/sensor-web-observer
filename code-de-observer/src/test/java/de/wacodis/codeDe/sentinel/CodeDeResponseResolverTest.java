@@ -1,6 +1,6 @@
 package de.wacodis.codeDe.sentinel;
 
-import de.wacodis.sentinel.apihub.decode.SimpleNamespaceContext;
+import de.wacodis.observer.decode.SimpleNamespaceContext;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
