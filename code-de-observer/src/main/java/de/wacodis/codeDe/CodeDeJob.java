@@ -8,9 +8,7 @@ import de.wacodis.observer.publisher.PublisherChannel;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,8 @@ import java.util.List;
  * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
-
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
 public class CodeDeJob implements Job {
 
     // Class variables for Request
@@ -55,7 +54,6 @@ public class CodeDeJob implements Job {
      * executes the job
      *
      * @param context all necessary parameters for a request
-     *
      */
     @Override
     public void execute(JobExecutionContext context) {
@@ -101,7 +99,7 @@ public class CodeDeJob implements Job {
         if (dataMap.get(LATEST_REQUEST_END_DATE) != null)
             startDate = (DateTime) dataMap.get(LATEST_REQUEST_END_DATE);
         else startDate = endDate.withPeriodAdded(period, -1);
-            dataMap.put(LATEST_REQUEST_END_DATE, endDate);
+        dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
         this.publishDataEnvelopes(satelliteProduct, startDate, endDate, area, cloudCover);
 
@@ -122,6 +120,8 @@ public class CodeDeJob implements Job {
         List<CopernicusDataEnvelope> dataEnvelopes = this.createDataEnvelopes(params);
         for (CopernicusDataEnvelope copDE : dataEnvelopes) {
             pub.sendDataEnvelope().send(MessageBuilder.withPayload(copDE).build());
+            LOG.info("Published new CodeDeDataEnvelope for Copernicus dataset: {}", copDE.getDatasetId());
+            LOG.debug("Published CodeDeDataEnvelope: {}", copDE);
         }
 
     }
@@ -134,17 +134,21 @@ public class CodeDeJob implements Job {
      */
     private List<CopernicusDataEnvelope> createDataEnvelopes(CodeDeRequestParams params) {
         ArrayList<CopernicusDataEnvelope> dataEnvelopes = new ArrayList<>();
+        // Request CodeDe Opensearch API with request paramaters
+        List<CodeDeProductsMetadata> metadata = new ArrayList<>();
         try {
-            // Request CodeDe Opensearch API with request paramaters
-            List<CodeDeProductsMetadata> metadata = requestor.request(params);
-            // Decode CodeDeProductsMetadata to CopernicusDataEnvelope
-            for (CodeDeProductsMetadata object : metadata) {
-                CopernicusDataEnvelope dataEnvelope = CodeDeProductsMetadataDecoder.decode(object);
-                dataEnvelopes.add(dataEnvelope);
-                LOG.debug("new dataEnvelope:\n{" + dataEnvelope.toString() + "}");
-            }
-        } catch (DecodingException | HttpConnectionException e) {
-            LOG.warn(e.getMessage());
+            metadata = requestor.request(params);
+        } catch (DecodingException ex) {
+            LOG.error("Error while decoding CODE-DE response: {}", ex.getMessage());
+            LOG.debug("Decoding error cause: ", ex);
+        } catch (HttpConnectionException ex) {
+            LOG.error("Error while requesting CODE-DE: {}", ex.getMessage());
+            LOG.debug("Requesting error cause: ", ex);
+        }
+        // Decode CodeDeProductsMetadata to CopernicusDataEnvelope
+        for (CodeDeProductsMetadata object : metadata) {
+            CopernicusDataEnvelope dataEnvelope = CodeDeProductsMetadataDecoder.decode(object);
+            dataEnvelopes.add(dataEnvelope);
         }
         return dataEnvelopes;
     }

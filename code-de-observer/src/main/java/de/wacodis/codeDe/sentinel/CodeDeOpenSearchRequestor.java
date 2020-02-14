@@ -17,7 +17,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,22 +48,20 @@ public class CodeDeOpenSearchRequestor {
             int pages = 1;
             List<CodeDeProductsMetadata> productsMetadata = new ArrayList<>();    // result
             for (int k = 1; k <= pages; k++) {
-                LOG.debug("Building connection parameters for the " + k + ". GET-request");
+                LOG.info("Building connection parameters for the " + k + ". GET-request");
                 String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params, k);
-                LOG.debug("Start GET-request");
+                LOG.info("Request CODE-DE API: {}", getRequestUrl);
 
                 InputStream inputStream = sendOpenSearchRequest(getRequestUrl);
                 Document getResponseDoc = resolver.getDocument(inputStream);
+                LOG.debug("CODE-DE response document: {}", getResponseDoc.getTextContent());
 
                 if (k == 1) {
                     pages = resolver.getNumberOfPages(getResponseDoc);
-                    LOG.debug("Total number of pages is " + pages);
                 }
                 NodeList nodeList = resolver.getEntryNodes(getResponseDoc);
 
-                LOG.debug("Start analyzing XML-Document");
                 for (int i = 0; i < nodeList.getLength(); i++) {
-                    LOG.debug("Read node: " + i);
                     CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
                     Node node = nodeList.item(i);
 
@@ -74,7 +71,6 @@ public class CodeDeOpenSearchRequestor {
                     List<DateTime> timeFrame = resolver.getTimeFrame(node);
                     List<Float> bbox = resolver.getBbox(node);
 
-                    LOG.debug("fill metadata object");
                     metadataObject.setDownloadLink(downloadLink);
                     metadataObject.setCloudCover(cloudCoverage);
                     metadataObject.setDatasetId(identifier);
@@ -83,7 +79,6 @@ public class CodeDeOpenSearchRequestor {
                     metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
                     productsMetadata.add(metadataObject);
                 }
-                LOG.debug("Publish result");
 
             }
             return productsMetadata;

@@ -11,6 +11,7 @@ import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -18,7 +19,7 @@ import java.util.Optional;
  * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
-
+@Component
 public class CodeDeJobFactory  implements JobFactory {
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJobFactory.class);
 

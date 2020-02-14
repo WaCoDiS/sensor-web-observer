@@ -15,6 +15,7 @@
  */
 package de.wacodis.sentinel.apihub;
 
+import de.wacodis.observer.decode.DecodingException;
 import de.wacodis.sentinel.apihub.decode.FeedDecoder;
 import java.io.IOException;
 import java.util.Arrays;
