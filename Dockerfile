@@ -7,7 +7,7 @@ COPY datasource-observer-app/src/main/resources/h2_Jobstore.mv.db /
 RUN mvn -f /pom.xml clean install -DskipTests -P download-generate-models
 
 # runnable image
-FROM openjdk:8-jdk-alpine
+FROM adoptopenjdk/openjdk8:alpine
 
 COPY --from=build /datasource-observer-app/target/datasource-observer-app-0.0.1-SNAPSHOT.jar /datasource-observer-app/datasource-observer-app-0.0.1-SNAPSHOT.jar 
 COPY --from=build /h2_Jobstore.mv.db /
