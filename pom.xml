@@ -20,6 +20,13 @@
 	 	<module>dwd-observer</module>
 	</modules>
 
+    <scm>
+		<url>https://github.com/WaCoDiS/datasource-observer/</url>
+		<connection>scm:git:git://github.com/WaCoDiS/datasource-observer.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/WaCoDiS/datasource-observer.git</developerConnection>
+		<tag>v1.0.0</tag>
+	</scm>
+    
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

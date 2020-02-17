@@ -13,6 +13,9 @@
     <name>WaCoDiS DatasourceObserverApp</name>
     <packaging>jar</packaging>
 
+    <properties>
+        <app.finalName>${project.artifactId}-${project.version}</app.finalName>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -76,6 +79,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>${app.finalName}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
