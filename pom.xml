@@ -4,7 +4,7 @@
 
 	<groupId>de.wacodis</groupId>
 	<artifactId>datasource-observer</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
 	<name>WaCoDiS DatasourceObserver</name>
@@ -93,7 +93,7 @@
 			<dependency>
 				<groupId>de.wacodis</groupId>
 				<artifactId>data-models</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<!-- Import dependency management from Spring Boot -->
