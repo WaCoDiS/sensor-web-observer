@@ -5,12 +5,11 @@
  */
 package de.wacodis.dwd.cdc.model;
 
-import de.wacodis.dwd.cdc.model.DwdProductsMetadata;
-import org.joda.time.DateTime;
-
+import de.wacodis.observer.model.AbstractDataEnvelope;
 import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.observer.model.AbstractDataEnvelopeTimeFrame;
 import de.wacodis.observer.model.DwdDataEnvelope;
+import org.joda.time.DateTime;
 
 import java.util.Arrays;
 
@@ -33,6 +32,7 @@ public class DwdProductsMetadataDecoder {
         DwdDataEnvelope dwdDE = new DwdDataEnvelope();
         AbstractDataEnvelopeAreaOfInterest extent = new AbstractDataEnvelopeAreaOfInterest();
 
+        dwdDE.setSourceType(AbstractDataEnvelope.SourceTypeEnum.DWDDATAENVELOPE);
         // serviceUrl
         dwdDE.setServiceUrl(metadata.getServiceUrl());
         // layername and clear text

@@ -35,6 +35,7 @@ public class DwdProductsMetadataDecoderTest {
     void testDecodeMetadata() {
         DwdDataEnvelope dataEnvelope = decoder.decode(metadata);
 
+        Assertions.assertEquals("DwdDataEnvelope", dataEnvelope.getSourceType().toString());
         Assertions.assertEquals(metadata.getLayerName(), dataEnvelope.getLayerName());
         Assertions.assertEquals(metadata.getParameter(), dataEnvelope.getParameter());
         Assertions.assertEquals(metadata.getStartDate(), dataEnvelope.getTimeFrame().getStartTime());
