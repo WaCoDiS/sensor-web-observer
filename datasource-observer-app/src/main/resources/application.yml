@@ -21,7 +21,7 @@ spring:
           type: rabbit
   datasource.quartz-data-source:
     name: quartzDataSource
-    jdbc-url: jdbc:h2:file:/usr/share/wacodis/data/h2_wacodis_core_jobs
+    jdbc-url: jdbc:h2:mem:quartzDB
     username: sa
     password:
     driver-class: org.h2.Driver
@@ -49,7 +49,8 @@ datasource-observer:
   execution:
     interval:
       sensorWeb: 3600
-      sentinel: 60  
+      sentinel: 60
+      dwd: 3600
   sentinelhub:
     base-url: https://scihub.copernicus.eu/apihub/
     user: testuser

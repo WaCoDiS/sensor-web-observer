@@ -1,0 +1,789 @@
+openapi: "3.0.0"
+info:
+  version: 0.1.0
+  title: WaCoDiS Schema Definitions
+  description: |
+    The data models for WaCoDiS
+  termsOfService: https://wacodis.fbg-hsbo.de/
+  contact:
+    name: WaCoDiS Dev Team
+    email: m.rieke@52north.org
+    url: https://github.com/WaCoDiS
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /:
+    get:
+      description: N/A
+      responses:
+        default:
+          description: N/A
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    AbstractDataEnvelope:
+      description: |
+        abstract type that describes basic metadata information about a dataset
+      required:
+        - sourceType
+      discriminator:
+        propertyName: sourceType
+      properties:
+        sourceType:
+          type: string
+          enum: ['SensorWebDataEnvelope', 'CopernicusDataEnvelope', 'GdiDeDataEnvelope', 'DwdDataEnvelope', 'WacodisProductDataEnvelope']
+          description: |
+            shall be used to determine the responsible data envelope
+        areaOfInterest:
+          type: object
+          required:
+            - extent
+          properties:
+            extent:
+              description: |
+                the coordinates, using EPSG:4326, (in analogy to GeoJSON bbox) in the order
+                "southwesterly point followed by more northeasterly point". Schema
+                is [minLon, minLat, maxLon, maxLat]
+              type: array
+              minItems: 4
+              maxItems: 4
+              items:
+                type: number
+                format: float
+                minimum: -180.0
+                maximum: 180.0
+        timeFrame:
+          type: object
+          description:
+            time frame the dataset covers/must intersect
+          required:
+            - startTime
+            - endTime
+          properties:
+            startTime:
+              type: string
+              format: date-time
+              description: |
+                the beginning of the time frame
+            endTime:
+              type: string
+              format: date-time
+              description: |
+                the ending of the time frame
+          format: date-time
+        created:
+          type: string
+          format: date-time
+          description: |
+            time on which the dataset was created or became available
+        modified:
+          type: string
+          format: date-time
+          description: |
+            time on which the dataset was modified last
+        identifier:
+          type: string
+          description: |
+            id assigned by data access, otherwise attribute non-existent
+    SensorWebDataEnvelope:
+      description:
+        describes specific metadata information about a Sensor Web dataset
+      allOf:
+        - $ref: '#/components/schemas/AbstractDataEnvelope'
+        - type: object
+          required:
+          - offering
+          - featureOfInterest
+          - observedProperty
+          - procedure
+          - serviceUrl
+          properties:
+            serviceUrl:
+              type: string
+            offering:
+              type: string
+            featureOfInterest:
+              type: string
+            observedProperty:
+              type: string
+            procedure:
+              type: string
+    CopernicusDataEnvelope:
+      description:
+        describes specific metadata information about a Copernicus dataset
+      allOf:
+        - $ref: '#/components/schemas/AbstractDataEnvelope'
+        - type: object
+          required:
+          - datasetId
+          - satellite
+          - cloudCoverage
+          - portal
+          properties:
+            datasetId:
+              description:
+                the id of the
+            satellite:
+              type: string
+              enum: [sentinel-1, sentinel-2, sentinel-3]
+            cloudCoverage:
+              type: number
+              format: float
+            portal:
+              type: string
+              enum: [Code-DE, Sentinel-Hub]
+    GdiDeDataEnvelope:
+      description:
+        describes specific metadata information about a dataset from a catalogue service that is part of a SDI
+      allOf:
+        - $ref: '#/components/schemas/AbstractDataEnvelope'
+        - type: object
+          required:
+          - recordRefId
+          properties:
+            catalougeUrl:
+              description: |
+                URL of the GDI-DE catalogue
+              type: string
+            recordRefId:
+              description: |
+                the id of the dataset within the GDI-DE catalogue
+              type: string
+    DwdDataEnvelope:
+      description:
+        describes specific information about a dataset from the German Weather Services
+      allOf:
+        - $ref: '#/components/schemas/AbstractDataEnvelope'
+        - type: object
+          required:
+          - serviceUrl
+          - layerName
+          - parameter
+          properties:
+            serviceUrl:
+              type: string
+            layerName:
+              description: |
+                the name of the queried layer
+              type: string
+            parameter:
+              description: |
+                designation of the layer as a clear name
+              type: string
+    WacodisProductDataEnvelope:
+      description:
+        describes specific metadata information about a product dataset created from the WaCoDiS System
+      allOf:
+        - $ref: '#/components/schemas/AbstractDataEnvelope'
+        - type: object
+          required:
+          - productType
+          - dataEnvelopeReferences
+          - process
+          - serviceDefinition
+          properties:
+            productType:
+              description: |
+                the type of the product (collection). e.g. "land cover classification"
+              type: string
+            dataEnvelopeReferences:
+              description: |
+                array of identifiers that reference data envelopes the WaCoDiS product results from
+              type: array
+              items:
+                type: string
+            dataEnvelopeServiceEndpoint:
+              description: |
+                contains the url of the service endpoint to retrieve DataEnvelopes that are included in the dataEnvelopeReferences attribute, for example http://localhost:8080/dataenvelopes/ (without the id)
+              type: string 
+            process:
+              description: |
+                name of the process that was responsible for creating the product
+              type: string
+            serviceDefinition:
+              type: object
+              $ref: '#/components/schemas/AbstractBackend'
+    AbstractBackend:
+      description: |
+        abstract type for a backend that provides WaCoDiS products
+      discriminator:
+        propertyName: backendType
+      required:
+        - backendType
+      properties:
+        backendType:
+          type: object
+          $ref: '#/components/schemas/ProductBackend'
+    ArcGISImageServerBackend:
+      description:
+        contains specific information about a ArcGIS Image Server product backend
+      allOf:
+        - $ref: '#/components/schemas/AbstractBackend'
+        - type: object
+          required:
+          - productCollection
+          - baseUrl
+          - serviceTypes
+          properties:
+            productCollection:
+              type: string
+              description:
+                name of the product collection
+            baseUrl:
+              type: string
+              description:
+                base URL of the ArcGIS Image Server backend
+            serviceTypes:
+              type: array
+              description: |
+                the supported ArcGIS Image Server services (e.g. ImageServer, WmsServer)
+              items:
+                type: string
+    AbstractResource:
+      description:
+        abstract type for a remote resource that can be identified by an URL
+      properties:
+        url:
+          type: string
+        method:
+          type: string
+          enum: ['GetResource', 'PostResource']
+        dataEnvelopeId: 
+          type: string
+          description: |
+            the ID (assigned by data access) of the DataEnvelope from which this resource was derived
+      discriminator:
+        propertyName: method
+      required:
+        - method
+        - url
+    PostResource:
+      description:
+        resource that can be fetched with a HTTP POST request
+      allOf:
+        - $ref: '#/components/schemas/AbstractResource'
+        - type: object
+          required:
+          - body
+          - contentType
+          properties:
+            body:
+              type: string
+            contentType:
+              type: string
+    GetResource:
+      description:
+        resource that can be fetched with a HTTP GET request
+      allOf:
+        - $ref: '#/components/schemas/AbstractResource'
+    PaginatedResponse:
+      description:
+        represents a paginated reponse
+      required:
+        - page
+        - size
+        - total
+      properties:
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int32
+    PaginatedWacodisJobDefinitionResponse:
+      description:
+        represents a paginated reponse for WaCoDiS job definitions
+      allOf:
+        - $ref: '#/components/schemas/PaginatedResponse'
+        - type: object
+          required:
+          - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/WacodisJobDefinition'
+    WacodisJobDefinition:
+      description:
+        contains information about a WaCoDiS Job that will be used for scheduling, preparing and executing certain processes
+      required:
+        - name
+        - areaOfInterest
+        - processingTool
+        - inputs
+        - productCollection
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: |
+            a human friendly short name
+        description:
+          type: string
+          description: |
+            a more verbose description of the WacodisJobDefinitions (e.g. purpose, inputs, ...)
+        useCase:
+          type: string
+          description: |
+            a generic use case reference. This can be used to refer to the use cases identified during the
+            initial phase of WaCoDiS
+        created:
+          type: string
+          format: date-time
+        lastFinishedExecution:
+          type: string
+          format: date-time
+        status:
+          type: object
+          $ref: '#/components/schemas/WacodisJobStatus'
+        execution:
+          type: object
+          description: |
+                if present, this describe the execution pattern of a WacodisJobDefinition. if not present,
+                the WacodisJobDefinition is treated as a one-time execution.
+                Only one of the properties shall be provided.
+          properties:
+            pattern:
+              type: string
+              description: |
+                The format follows the cron syntax with the first five fields
+                (see: http://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07)
+            event:
+              type: object
+              description: |
+                the execution is scheduled by the occurence of an event (e.g. new data available); WIP - format to be defined.
+        temporalCoverage:
+          type: object
+          description: |
+            definition of temporal coverage for which input data (see SubsetDefinitions) is of relevancy.
+            Only one of the properties shall be provided.
+          properties:
+            duration:
+              type: string
+              format: duration
+              description: |
+                the duration in ISO8601 duration format (https://en.wikipedia.org/wiki/ISO_8601#Durations)
+                the processing component will treat the duration as backwards. A duration of "P1M" will cover the last month before execution
+            previousExecution:
+              type: boolean
+              description: |
+                input data coverage since the last execution of the job. This is only valid in combination with pattern execution
+        areaOfInterest:
+          type: object
+          required:
+            - extent
+          properties:
+            extent:
+              description: |
+                the coordinates, using EPSG:4326, (in analogy to GeoJSON bbox) in the order
+                "southwesterly point followed by more northeasterly point". Schema
+                is [minLon, minLat, maxLon, maxLat]
+              type: array
+              minItems: 4
+              maxItems: 4
+              items:
+                type: number
+                format: float
+                minimum: -180.0
+                maximum: 180.0
+        processingTool:
+          type: string
+          description: |
+            the processingTool ID as provided by the WPS tool wrapper
+        productCollection:
+          type: string
+          description: |
+            collection to which the output data should be added when it becomes available
+        inputs:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AbstractSubsetDefinition'
+    AbstractSubsetDefinition:
+      description:
+        abstract type for job input subsets
+      properties:
+        sourceType:
+          type: string
+          # the discriminator needs to have the same value as the schema objects name. this works at least
+          # with spring generator and jackson deserialization
+          enum: ['SensorWebSubsetDefinition', 'CopernicusSubsetDefinition', 'CatalogueSubsetDefinition', 'DwdSubsetDefinition', 'StaticSubsetDefinition', 'WacodisProductSubsetDefinition']
+          description: |
+            shall be used to determine the responsible data backend
+        identifier:
+          type: string
+          description: |
+            identifier for matching analysis process inputs
+      discriminator:
+        propertyName: sourceType
+      required:
+        - sourceType
+        - identifier
+    SensorWebSubsetDefinition:
+      description:
+        contains information for defining a subset definition for Sensor Web process inputs
+      allOf:
+        - $ref: '#/components/schemas/AbstractSubsetDefinition'
+        - type: object
+          required:
+          - serviceUrl
+          - offering
+          - featureOfInterest
+          - observedProperty
+          - procedure
+          properties:
+            serviceUrl:
+              type: string
+            offering:
+              type: string
+            featureOfInterest:
+              type: string
+            observedProperty:
+              type: string
+            procedure:
+              type: string
+    CopernicusSubsetDefinition:
+      description:
+        contains information for defining a subset definition for Copernicus process inputs
+      allOf:
+        - $ref: '#/components/schemas/AbstractSubsetDefinition'
+        - type: object
+          required:
+          - satellite
+          - maximumCloudCoverage
+          properties:
+            satellite:
+              type: string
+              enum: [sentinel-1, sentinel-2, sentinel-3]
+            maximumCloudCoverage:
+              type: number
+              format: float
+    CatalogueSubsetDefinition:
+      description:
+        contains information for defining a subset definition for process inputs from catalogue service
+      allOf:
+        - $ref: '#/components/schemas/AbstractSubsetDefinition'
+        - type: object
+          required:
+          - datasetIdentifier
+          - serviceUrl
+          properties:
+            datasetIdentifier:
+              description: |
+                the id of the dataset within the catalogue
+              type: string
+            serviceUrl:
+              description: |
+                the base URL of the catalogue
+    DwdSubsetDefinition:
+      description:
+        contains information for defining a subset definition for German weather service process inputs
+      allOf:
+        - $ref: '#/components/schemas/AbstractSubsetDefinition'
+        - type: object
+          required:
+          - serviceUrl
+          - layerName
+          - timestamp
+          - bbox
+          properties:
+            serviceUrl:
+              description: |
+                the base URL of the service
+              type: string
+            layerName:
+              description: |
+                the name of the queried layer
+              type: string
+    WacodisProductSubsetDefinition:
+      description:
+        contains information for defining a subset definition for WaCoDiS product process inputs
+      allOf:
+        - $ref: '#/components/schemas/AbstractSubsetDefinition'
+        - type: object
+          required:
+          - productType
+          - backendType
+          properties:
+            productType:
+              description: |
+                the type of the product (collection). e.g. "land cover classification"
+              type: string
+            backendType:
+              type: object
+              $ref: '#/components/schemas/ProductBackend'
+    StaticSubsetDefinition:
+      description:
+        contains information for defining a subset definition for static process inputs
+      allOf:
+        - $ref: '#/components/schemas/AbstractSubsetDefinition'
+        - type: object
+          required:
+          - value
+          - dataType
+          properties:
+            value:
+              description: |
+                string encoded value
+              type: string
+            dataType:
+              description: |
+                determines how the value should be interpreted
+              type: string
+              enum: ['text', 'numeric']     
+    DataAccessResourceSearchBody:
+      description:
+        represents POST body parameters that will be used for requesting dataset resource from the DataAccess API
+      properties:
+        areaOfInterest: 
+          type: object
+          required:
+            - extent
+          properties:
+            extent:
+              description: |
+                the coordinates, using EPSG:4326, (in analogy to GeoJSON bbox) in the order
+                "southwesterly point followed by more northeasterly point". Schema
+                is [minLon, minLat, maxLon, maxLat]
+              type: array
+              minItems: 4
+              maxItems: 4
+              items:
+                type: number
+                format: float
+                minimum: -180.0
+                maximum: 180.0
+        timeFrame:
+          type: object
+          description:
+            time frame the dataset covers/must intersect
+          required:
+            - startTime
+            - endTime
+          properties:
+            startTime:
+              type: string
+              format: date-time
+              description: |
+                the beginning of the time frame
+            endTime:
+              type: string
+              format: date-time
+              description: |
+                the ending of the time frame
+          format: date-time
+        inputs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AbstractSubsetDefinition'
+      required:
+       -  areaOfInterest
+       -  timeFrame
+       -  inputs
+    ProcessingMetadata:
+      description: |
+        extensible datatype for metadata that describes the processing of a product
+      required: 
+        - areaOfInterest
+        - timeFrame
+        - created
+        - modified
+      properties:
+        areaOfInterest:
+            type: object
+            required:
+              - extent
+            properties:
+              extent:
+                description: |
+                  the coordinates, using EPSG:4326, (in analogy to GeoJSON bbox) in the order
+                  "southwesterly point followed by more northeasterly point". Schema
+                  is [minLon, minLat, maxLon, maxLat]
+                type: array
+                minItems: 4
+                maxItems: 4
+                items:
+                  type: number
+                  format: float
+                  minimum: -180.0
+                  maximum: 180.0
+        timeFrame:
+          type: object
+          description:
+            time frame the dataset covers/must intersect
+          required:
+            - startTime
+            - endTime
+          properties:
+            startTime:
+              type: string
+              format: date-time
+              description: |
+                the beginning of the time frame
+            endTime:
+              type: string
+              format: date-time
+              description: |
+                the ending of the time frame
+          format: date-time
+        created:
+          type: string
+          format: date-time
+          description: |
+            time on which the dataset was created
+    WacodisJobExecution:
+      description: |
+       message to indicate a job execution is being started
+      properties:
+        wacodisJobIdentifier:
+          type: string
+          format: uuid
+          description: |
+            wacodis job identifer (from WacodisJobDefinition, not wps job identifier!)
+        processingTool:
+          type: string
+          description: |
+            the processingTool ID as provided by the WPS tool wrapper
+        productCollection:
+          type: string
+          description: |
+            collection to which the output data will be added when it becomes available
+        created:
+          type: string
+          format: date-time
+          description: |
+            time on which the execution was invoked
+      required:
+        - jobIdentifier
+        - processingTool
+        - productCollection
+    WacodisJobFailed:
+      description: |
+       message to indicate a job execution failed
+      properties:
+        wpsJobIdentifier:
+          type: string
+          description: |
+            wps job identifier
+        reason:
+          type: string
+          description: |
+            status message describing the reason of failure
+        created:
+          type: string
+          format: date-time
+          description: |
+            time on which the execution has been identified as failed
+        wacodisJobIdentifier:
+          type: string
+          format: uuid
+          description: |
+            wacodis job identifer (from WacodisJobDefinition, not wps job identifier!)
+      required:
+        - jobIdentifier
+        - reason
+        - created
+        - wacodisJobIdentifier
+    WacodisJobFinished:
+      description: |
+        message to indicate that a job execution finished succesfully
+      properties:
+        wacodisJobIdentifier:
+          type: string
+          format: uuid
+          description: |
+            wacodis job identifer (from WacodisJobDefinition, not wps job identifier!)
+        executionFinished:
+          type: string
+          format: date-time
+          description: |
+            timestamp when message was published
+        productDescription:
+          description: |
+            contains description of the product that was produced by successfully finished job execution
+          type: object
+          $ref: '#/components/schemas/ProductDescription'
+      required:
+        - wacodisJobIdentifier
+        - executionFinished
+        - productDescription
+    WacodisJobStatusUpdate:
+      properties:
+        wacodisJobIdentifier:
+          type: string
+          format: uuid
+        executionFinished:
+          type: string
+          format: date-time
+          description: |
+            point in time when job execution finished successfully, only needed for updates after succesful job execution
+        newStatus:
+          type: object
+          $ref: '#/components/schemas/WacodisJobStatus'
+      required:
+        - wacodisJobIdentifier
+        - newStatus
+    ProductDescription:
+      description: |
+        message to indicate a finished wps job
+      properties:
+        wpsJobIdentifier:
+          type: string
+          description: |
+            wps job identifier
+        outputIdentifiers:
+          type: array
+          items: 
+            type: string 
+          minItems: 1
+          description: |
+            wps output identifiers
+        productCollection:
+          type: string
+          description: |
+           collection to which the output data should be added
+        dataEnvelopeReferences:
+          type: array
+          items:
+            type: string
+        processingTool:
+          type: string
+      required:
+        - jobIdentifier
+        - outputIdentifiers
+        - productCollection
+        - dataEnvelopeReferences
+        - processingTool
+        - executionFinished
+    WacodisJobStatus:
+      type: string
+      enum:
+        - waiting
+        - running
+        - deleted
+    ProductBackend:
+      type: string
+      enum: 
+        - ArcGISImageServerBackend
+        - GeoServerBackend
+      description: |
+            shall be used to determine the responsible product backend type
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

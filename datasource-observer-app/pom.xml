@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>datasource-observer</artifactId>
         <groupId>de.wacodis</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 	
     <artifactId>datasource-observer-app</artifactId>
     <name>WaCoDiS DatasourceObserverApp</name>
     <packaging>jar</packaging>
 
+    <properties>
+        <app.finalName>${project.artifactId}-${project.version}</app.finalName>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -37,17 +38,22 @@
         <dependency>
             <groupId>de.wacodis</groupId>
             <artifactId>datasource-observer-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.wacodis</groupId>
             <artifactId>sensor-web-observer</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.wacodis</groupId>
             <artifactId>sentinel-observer</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.wacodis</groupId>
+            <artifactId>dwd-observer</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- Test-Scope -->
@@ -71,6 +77,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>${app.finalName}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
