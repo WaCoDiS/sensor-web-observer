@@ -13,7 +13,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 public class CodeDeOpenSearchRequestorBuilder {
 
-    public static final String SERVICE_URL = "https://catalog.code-de.org/opensearch/request/?";
+    public static final String SERVICE_URL = "https://catalog.code-de.org/opensearch/request?";
     public static final String HTTP_ACCEPT = "httpAccept=application/atom%2Bxml";
     public static final String PARENT_IDENTIFIER_PREFIX = "EOP:CODE-DE:";
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");

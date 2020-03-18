@@ -3,9 +3,10 @@ package de.wacodis.codede.sentinel;
 import de.wacodis.observer.decode.SimpleNamespaceContext;
 
 import org.joda.time.DateTime;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -30,7 +31,7 @@ public class CodeDeResponseResolverTest {
     private static XPath xpath;
     private static Node node;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
         resolver = new CodeDeResponseResolver();
@@ -63,7 +64,7 @@ public class CodeDeResponseResolverTest {
         // actual download link
         String actualDownloadLink = resolver.getDownloadLink(node);
 
-        Assert.assertEquals(expectedDownloadLink, actualDownloadLink);
+        Assertions.assertEquals(expectedDownloadLink, actualDownloadLink);
     }
 
     @Test
@@ -73,7 +74,7 @@ public class CodeDeResponseResolverTest {
         // actual cloud coverage
         float actualCloudCoverage = resolver.getCloudCoverage(node);
 
-        Assert.assertEquals(expectedCloudCoverage, actualCloudCoverage, 0.001);
+        Assertions.assertEquals(expectedCloudCoverage, actualCloudCoverage, 0.001);
     }
 
     @Test
@@ -83,7 +84,7 @@ public class CodeDeResponseResolverTest {
         // actual identifier
         String actualIdentifier = resolver.getIdentifier(node);
 
-        Assert.assertEquals(expectedIdentifier, actualIdentifier);
+        Assertions.assertEquals(expectedIdentifier, actualIdentifier);
     }
 
     @Test
@@ -100,7 +101,7 @@ public class CodeDeResponseResolverTest {
         // actual time frame
         List<DateTime> actualTimeFrame = resolver.getTimeFrame(node);
 
-        Assert.assertEquals(expectedTimeFrame, actualTimeFrame);
+        Assertions.assertEquals(expectedTimeFrame, actualTimeFrame);
     }
 
     @Test
@@ -119,7 +120,7 @@ public class CodeDeResponseResolverTest {
         // actual bbox
         List<Float> actualBbox = resolver.getBbox(node);
 
-        Assert.assertEquals(expectedbbox, actualBbox);
+        Assertions.assertEquals(expectedbbox, actualBbox);
     }
 
     @Test
@@ -129,7 +130,7 @@ public class CodeDeResponseResolverTest {
         // actual number of pages
         int actualNOP = resolver.getNumberOfPages(xmlDoc);
 
-        Assert.assertEquals(expectedNOP, actualNOP);
+        Assertions.assertEquals(expectedNOP, actualNOP);
     }
 
 }
