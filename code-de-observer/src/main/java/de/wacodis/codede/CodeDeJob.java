@@ -35,11 +35,13 @@ public class CodeDeJob implements Job {
 
     //Class variables for Job
     public static final String TEMPORAL_COVERAGE_KEY = "temporalCoverage";
-    public static final String SATELLITEPRODUCT = "S2_MSI_L2A";
+    public static final String PRODUCT_IDENTIFIER = "productIdentifier";
     public static final String LATEST_REQUEST_END_DATE = "endDate";
     public static final String MAXIMUM_RECORDS_KEY = "maximumRecords";
     public static final String RECORD_SCHEMA_KEY = "recordSchema";
     public static final String START_PAGE_KEY = "startPage";
+
+    public static final String EXECUTION_INTERVAL_KEY = "executionInterval";
 
 
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
@@ -62,7 +64,7 @@ public class CodeDeJob implements Job {
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
         // 1) Get all required request parameters stored in the JobDataMap
-        String satelliteProduct = dataMap.getString(SATELLITEPRODUCT);
+        String satelliteProduct = dataMap.getString(PRODUCT_IDENTIFIER);
         String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY);
         String maxCloudCover = dataMap.getString(CLOUD_COVER_KEY);
         ArrayList cloudCover = new ArrayList() {
