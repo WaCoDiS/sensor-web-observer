@@ -47,7 +47,6 @@ public class ProductDescription  implements Serializable {
    * @return wpsJobIdentifier
   **/
   @ApiModelProperty(required = true, value = "wps job identifier ")
-  @NotNull
 
 
   public String getWpsJobIdentifier() {
