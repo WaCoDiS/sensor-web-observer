@@ -80,9 +80,11 @@ public class CodeDeJobFactory implements JobFactory {
 
     protected String buildProductIdentifier(CopernicusSubsetDefinition def) {
         String satelliteAbr = SATELLTIE_MAPPING.get(def.getSatellite().toString());
-        String productAbr = def.getProductType() != null ? def.getProductType() : "";
+        String productId = PRODUCT_IDENTIFIER_PREFIX
+                + String.join("_", satelliteAbr, def.getInstrument(), def.getProductLevel());
 
-        return PRODUCT_IDENTIFIER_PREFIX
-                + String.join("_", satelliteAbr, def.getInstrument(), def.getProductLevel(), productAbr);
+        return def.getProductType() != null && !def.getProductType().isEmpty()
+                ? String.join("_", productId, def.getProductType())
+                : productId;
     }
 }
