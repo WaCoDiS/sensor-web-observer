@@ -1,4 +1,4 @@
-package de.wacodis.codeDe.sentinel.exception;
+package de.wacodis.codede.sentinel.exception;
 
 public class HttpConnectionException extends Exception {
 

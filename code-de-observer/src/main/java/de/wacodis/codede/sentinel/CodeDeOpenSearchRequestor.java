@@ -1,6 +1,6 @@
-package de.wacodis.codeDe.sentinel;
+package de.wacodis.codede.sentinel;
 
-import de.wacodis.codeDe.sentinel.exception.HttpConnectionException;
+import de.wacodis.codede.sentinel.exception.HttpConnectionException;
 import de.wacodis.observer.decode.DecodingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;

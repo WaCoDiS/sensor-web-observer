@@ -1,6 +1,6 @@
-package de.wacodis.codeDe.sentinel;
+package de.wacodis.codede.sentinel;
 
-import de.wacodis.codeDe.CodeDeJob;
+import de.wacodis.codede.CodeDeJob;
 import de.wacodis.observer.decode.SimpleNamespaceContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

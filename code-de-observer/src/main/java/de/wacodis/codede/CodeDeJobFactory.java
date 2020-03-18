@@ -1,4 +1,4 @@
-package de.wacodis.codeDe;
+package de.wacodis.codede;
 
 import de.wacodis.observer.config.ExecutionIntervalConfig;
 import de.wacodis.observer.core.JobFactory;
@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -20,7 +23,18 @@ import java.util.Optional;
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 @Component
-public class CodeDeJobFactory  implements JobFactory {
+public class CodeDeJobFactory implements JobFactory {
+    private final static String PRODUCT_IDENTIFIER_PREFIX = "EOP:CODE-DE:";
+    private final static Map<String, String> SATELLTIE_MAPPING;
+
+    static {
+        Map<String, String> map = new HashMap<>();
+        map.put("sentinel-1", "S1");
+        map.put("sentinel-2", "S2");
+        map.put("sentinel-3", "S3");
+        SATELLTIE_MAPPING = Collections.unmodifiableMap(map);
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJobFactory.class);
 
     @Autowired
@@ -29,7 +43,7 @@ public class CodeDeJobFactory  implements JobFactory {
     @Override
     public boolean supportsJobDefinition(WacodisJobDefinition job) {
         Optional<AbstractSubsetDefinition> def = job.getInputs().stream()
-                .filter(in -> in instanceof CopernicusSubsetDefinition ).findAny();
+                .filter(in -> in instanceof CopernicusSubsetDefinition).findAny();
 
         return def.isPresent();
     }
@@ -39,16 +53,16 @@ public class CodeDeJobFactory  implements JobFactory {
         LOG.info("Preparing CodeDeJob JobDetail");
 
         Optional<AbstractSubsetDefinition> defOpt = job.getInputs().stream()
-                .filter((i -> i instanceof CopernicusSubsetDefinition )).findFirst();
+                .filter((i -> i instanceof CopernicusSubsetDefinition)).findFirst();
 
         // this should always be the case
         if (defOpt.isPresent()) {
-            CopernicusSubsetDefinition def = (CopernicusSubsetDefinition ) defOpt.get();
+            CopernicusSubsetDefinition def = (CopernicusSubsetDefinition) defOpt.get();
 
             // Put all required request parameters into JobDataMap
 
             // data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
-            data.put(CodeDeJob.SATELLITEPRODUCT, def.getSatellite());
+            data.put(CodeDeJob.SATELLITEPRODUCT, buildProductIdentifier(def));
             data.put(CodeDeJob.TEMPORAL_COVERAGE_KEY, job.getTemporalCoverage().getDuration());
             data.put(CodeDeJob.CLOUD_COVER_KEY, def.getMaximumCloudCoverage());
             data.put(CodeDeJob.LATEST_REQUEST_END_DATE, null);
@@ -61,5 +75,13 @@ public class CodeDeJobFactory  implements JobFactory {
         }
         return JobBuilder.newJob(CodeDeJob.class).withIdentity(job.getId().toString(), job.getName()).usingJobData(data)
                 .build();
+    }
+
+    protected String buildProductIdentifier(CopernicusSubsetDefinition def) {
+        String satelliteAbr = SATELLTIE_MAPPING.get(def.getSatellite().toString());
+        String productAbr = def.getProductType() != null ? def.getProductType() : "";
+
+        return PRODUCT_IDENTIFIER_PREFIX
+                + String.join("_", satelliteAbr, def.getInstrument(), def.getProductLevel(), productAbr);
     }
 }

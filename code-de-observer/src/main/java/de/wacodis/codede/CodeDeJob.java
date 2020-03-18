@@ -1,7 +1,7 @@
-package de.wacodis.codeDe;
+package de.wacodis.codede;
 
-import de.wacodis.codeDe.sentinel.*;
-import de.wacodis.codeDe.sentinel.exception.HttpConnectionException;
+import de.wacodis.codede.sentinel.*;
+import de.wacodis.codede.sentinel.exception.HttpConnectionException;
 import de.wacodis.observer.decode.DecodingException;
 import de.wacodis.observer.model.CopernicusDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;

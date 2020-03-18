@@ -1,4 +1,4 @@
-package de.wacodis.codeDe.sentinel;
+package de.wacodis.codede.sentinel;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

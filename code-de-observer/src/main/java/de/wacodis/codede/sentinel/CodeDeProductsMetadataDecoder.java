@@ -1,4 +1,4 @@
-package de.wacodis.codeDe.sentinel;
+package de.wacodis.codede.sentinel;
 
 import de.wacodis.observer.model.AbstractDataEnvelope;
 import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
