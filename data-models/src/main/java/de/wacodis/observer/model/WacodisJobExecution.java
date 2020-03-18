@@ -15,7 +15,7 @@ import javax.validation.constraints.*;
  * message to indicate a job execution is being started 
  */
 @ApiModel(description = "message to indicate a job execution is being started ")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-03-18T12:25:28.273+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-03-12T14:32:17.366+01:00[Europe/Berlin]")
 
 public class WacodisJobExecution  implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -41,8 +41,7 @@ public class WacodisJobExecution  implements Serializable {
    * wacodis job identifer (from WacodisJobDefinition, not wps job identifier!) 
    * @return wacodisJobIdentifier
   **/
-  @ApiModelProperty(required = true, value = "wacodis job identifer (from WacodisJobDefinition, not wps job identifier!) ")
-  @NotNull
+  @ApiModelProperty(value = "wacodis job identifer (from WacodisJobDefinition, not wps job identifier!) ")
 
   @Valid
 
