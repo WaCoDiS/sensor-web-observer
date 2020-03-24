@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.wacodis.observer.model.AbstractSubsetDefinition;
 import de.wacodis.observer.model.WacodisJobDefinition;
@@ -16,6 +18,8 @@ import de.wacodis.observer.model.WacodisJobDefinition;
  * Factory-Pattern Interface for SubsetDefinitionJobs
  */
 public interface JobFactory {
+	
+	static final Logger LOG = LoggerFactory.getLogger(JobFactory.class);
 
 	/**
 	 * Checks if a Job's inputDefinition is supported
@@ -70,6 +74,8 @@ public interface JobFactory {
 		
 		List<AbstractSubsetDefinition> inputList = wacodisJobInputs.collect(Collectors.toList());
 		
+		LOG.info("Build and inspect a total number of {} quartz jobs for WACODIS job with id {} and SubsetDefinition of type {}", inputList.size(), job.getId().toString(), inputList.get(0).getClass().getSimpleName().toString());
+		
 		Collection<JobDetail> quartzJobs = new ArrayList<JobDetail>(inputList.size());
 		
 		for (AbstractSubsetDefinition subsetDefinition : inputList) {
@@ -77,6 +83,8 @@ public interface JobFactory {
 			JobDataMap data_cloned = (JobDataMap) data.clone();
 			String jobId = generateSubsetSpecificIdentifier(subsetDefinition);
 			String jobGroupName = generateGroupName(job, subsetDefinition);
+			
+			LOG.debug("Initialize a potential quartz job with jobId '{}' and groupName '{}' for input subsetDefinition \n{}", jobId, jobGroupName, subsetDefinition);
 			quartzJobs.add(initializeJob(job, data_cloned, subsetDefinition, jobId, jobGroupName));
 		}
 		

@@ -47,6 +47,7 @@ public class JobScheduler {
         	// if job queries data from the past, then execute each job ONCE to ensure that queried data exists
         	if(queriesDataFromThePast(job)){
         		// execute each quartz job definition one single time
+        		LOG.info("WACODIS job has a duration temporalCoverage specification. Thus it queries data from the past. Hence each generated quartz job instance will be executed once before scheduling management in order to ensure that queried temporal coverage for associated data source is retrieved.");
         		
         		executeQuartzJobsOnce(quartzJobDefinitions);
         	}
@@ -95,6 +96,7 @@ public class JobScheduler {
 		
 		for (JobDetail jobDetail : quartzJobDefinitions) {
 			if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)){
+				LOG.info("Existing quartz job with the same parameters identified. Will add WACODIS job ID to its associated WACODIS jobs");
 				JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
 				wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId());
 				
@@ -104,6 +106,7 @@ public class JobScheduler {
 			}
 			else{
 				// initialize wacodisJobIdStorage in jobDataMap
+				LOG.info("No existing quartz job with the same parameters was found. Will create and schedule a new quartz job and add WACODIS job ID to its associated WACODIS jobs");
 				wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(jobDetail, job.getId());
 				
 				Trigger trigger = prepareTrigger(jobDetail);
@@ -133,9 +136,11 @@ public class JobScheduler {
 			JobKey key_singleTime = generateUniqueSingleTimeExecutionJobKey(key);
 			JobDetail jobDetail_singleTimeCopy = (JobDetail) jobDetail.clone();
 			
-			jobDetail_singleTimeCopy.getJobBuilder().withIdentity(key_singleTime);
+			jobDetail_singleTimeCopy = jobDetail_singleTimeCopy.getJobBuilder().withIdentity(key_singleTime).build();
 			
 			Trigger oneTimeTrigger = prepareSingleExecutionTrigger(jobDetail);
+			
+			LOG.info("Scheduling new one time execution job with jobID {} and groupName {}", key_singleTime.getName(), key_singleTime.getGroup());
 			wacodisQuartz.scheduleJob(jobDetail, oneTimeTrigger);			
 		}
 		
@@ -176,7 +181,7 @@ public class JobScheduler {
 		
 		// only "duration" is used to query data from the past. Hence existance of that property is sufficient
 		
-		if(temporalCoverage.getDuration() != null && !temporalCoverage.getDuration().isEmpty()){
+		if(temporalCoverage.getDuration() != null && !temporalCoverage.getDuration().isEmpty()){			
 			return true;
 		}
 		

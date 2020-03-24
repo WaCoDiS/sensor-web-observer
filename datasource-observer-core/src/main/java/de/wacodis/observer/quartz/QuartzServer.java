@@ -51,13 +51,14 @@ public class QuartzServer implements InitializingBean {
 
 	public void removeJobByKey(JobKey key) throws SchedulerException {
 		if(this.scheduler.checkExists(key)){
+			log.debug("Deleting quartz job for key '{}'", key);
 			this.scheduler.deleteJob(key);
 		}		
 		
 	}
 
-	public void removeJobsByKeys(List<JobKey> oneTimeJobKeys) throws SchedulerException {
-		for (JobKey jobKey : oneTimeJobKeys) {
+	public void removeJobsByKeys(List<JobKey> jobKeys) throws SchedulerException {
+		for (JobKey jobKey : jobKeys) {
 			this.removeJobByKey(jobKey);
 		}
 		
@@ -77,8 +78,11 @@ public class QuartzServer implements InitializingBean {
 		return this.scheduler.getJobDetail(key);		
 	}
 
-	public void addWacodisJobIdToQuartzJobDataMap(JobDetail existingQuartzJob, UUID wacodisJobId) {
-		JobDataMap jobDataMap = existingQuartzJob.getJobDataMap();
+	public void addWacodisJobIdToQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId) {
+		JobDataMap jobDataMap = quartzJob.getJobDataMap();
+		
+		log.info("Associated WACODIS job management: add WACODIS job ID '{}' to the associated jobs of quartz job with key '{}' .", wacodisJobId, quartzJob.getKey());
+		
 		
 		// implement a storage for associated WACODIS job ids than require the quartz job
 		
@@ -89,6 +93,7 @@ public class QuartzServer implements InitializingBean {
 			Object object = jobDataMap.get(WACODIS_JOB_ID_STORAGE);
 			if (object instanceof HashSet<?>){
 				wacodisJobIds = (HashSet<UUID>) object;
+				
 				wacodisJobIds.add(wacodisJobId);
 			}
 		}
@@ -96,6 +101,8 @@ public class QuartzServer implements InitializingBean {
 			wacodisJobIds = new HashSet<UUID>();
 			wacodisJobIds.add(wacodisJobId);			
 		}
+		
+		log.info("Associated WACODIS job management: the quartz job with key '{}' now has a total number of '{}' associated WACODIS jobs.", quartzJob.getKey(), wacodisJobIds.size());
 		
 		// modify element in quartz job data map
 		jobDataMap.put(WACODIS_JOB_ID_STORAGE, wacodisJobIds);		
