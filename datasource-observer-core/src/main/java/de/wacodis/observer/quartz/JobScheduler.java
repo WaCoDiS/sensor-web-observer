@@ -141,7 +141,7 @@ public class JobScheduler {
 			Trigger oneTimeTrigger = prepareSingleExecutionTrigger(jobDetail);
 			
 			LOG.info("Scheduling new one time execution job with jobID {} and groupName {}", key_singleTime.getName(), key_singleTime.getGroup());
-			wacodisQuartz.scheduleJob(jobDetail, oneTimeTrigger);			
+			wacodisQuartz.scheduleJob(jobDetail_singleTimeCopy, oneTimeTrigger);			
 		}
 		
 	}
