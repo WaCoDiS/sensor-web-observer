@@ -124,6 +124,14 @@ public interface JobFactory {
 	 * @return quartz job group name
 	 */
 	default String generateGroupName(WacodisJobDefinition job, AbstractSubsetDefinition subsetDefinition) {
-		return job.getName();
+		
+		// we only return a constant value here as we want to construct quartz job keys that are build only from subsetDefinition specific properties
+		
+		// that is necessary in order to compare different jobKeys fr different WACODIS jobs with same subsetDefinitions 
+		
+		// the overall goal is to only have one quartz job per unique subsetDefinition
+		
+		// a WACODIS job specific group name (e.g. job.getName()) would destroy the possibility to only have one quartz job per unique subsetDefinition
+		return "GROUP";
 	};
 }
