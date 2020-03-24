@@ -98,7 +98,7 @@ public class JobScheduler {
 			if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)){
 				LOG.info("Existing quartz job with the same parameters identified. Will add WACODIS job ID to its associated WACODIS jobs");
 				JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
-				wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId());
+				wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId(), true);
 				
 				// if the execution-interval, specified in WACODIS job definition, is shorter than the already existing trigger
 				// then we might want to adjust the trigger --> shorten execution interval
@@ -107,7 +107,7 @@ public class JobScheduler {
 			else{
 				// initialize wacodisJobIdStorage in jobDataMap
 				LOG.info("No existing quartz job with the same parameters was found. Will create and schedule a new quartz job and add WACODIS job ID to its associated WACODIS jobs");
-				wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(jobDetail, job.getId());
+				wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(jobDetail, job.getId(), false);
 				
 				Trigger trigger = prepareTrigger(jobDetail);
 		        wacodisQuartz.scheduleJob(jobDetail, trigger);

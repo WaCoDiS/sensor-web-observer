@@ -78,7 +78,7 @@ public class QuartzServer implements InitializingBean {
 		return this.scheduler.getJobDetail(key);		
 	}
 
-	public void addWacodisJobIdToQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId) throws SchedulerException {
+	public void addWacodisJobIdToQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId, boolean replaceExistingQuartzJob) throws SchedulerException {
 		JobDataMap jobDataMap = quartzJob.getJobDataMap();
 		
 		log.info("Associated WACODIS job management: add WACODIS job ID '{}' to the associated jobs of quartz job with key '{}' .", wacodisJobId, quartzJob.getKey());
@@ -109,7 +109,9 @@ public class QuartzServer implements InitializingBean {
 		
 		// now we must replace the existing job innscheduler in order to apply the updated jobDataMap !
 		// otherwise the initial jobDataMa will still be used
-		this.scheduler.addJob(quartzJob, true);
+		if(replaceExistingQuartzJob){
+			this.scheduler.addJob(quartzJob, true);
+		}		
 	}
 
 	public Trigger getAssociatedTrigger(JobDetail existingQuartzJob) throws SchedulerException {		
