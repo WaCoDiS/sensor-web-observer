@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +60,7 @@ public class SensorWebJobFactory implements JobFactory {
 //	}
 
 	@Override
-	public JobDetail initializeJob(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition,
-			String jobId, String jobGroupName) {
+	public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition) {
 		if (subsetDefinition instanceof SensorWebSubsetDefinition) {
 			SensorWebSubsetDefinition senSubset = (SensorWebSubsetDefinition) subsetDefinition;
 			data.put("procedures", Collections.singletonList(senSubset.getProcedure()));
@@ -76,9 +74,7 @@ public class SensorWebJobFactory implements JobFactory {
 		log.info("Preparing JobDetail");
 
 		return JobBuilder.newJob(SensorWebJob.class)
-				.withIdentity(jobId, jobGroupName)
-				.usingJobData(data)
-				.build();
+				.usingJobData(data);
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +84,8 @@ public class SentinelJobFactory implements JobFactory {
 //    }
 
 	@Override
-	public JobDetail initializeJob(WacodisJobDefinition job, JobDataMap data,
-			AbstractSubsetDefinition subsetDefinition, String jobId, String jobGroupName) {		
+	public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data,
+			AbstractSubsetDefinition subsetDefinition) {		
 		if(subsetDefinition instanceof CopernicusSubsetDefinition){
 			
 			LOG.info("Preparing SentinelJob JobDetail");
@@ -124,9 +123,7 @@ public class SentinelJobFactory implements JobFactory {
 		
 		// create the quartz object
 	    return JobBuilder.newJob(SentinelJob.class)
-	            .withIdentity(jobId, jobGroupName)
-	            .usingJobData(data)
-	            .build();
+	            .usingJobData(data);
 		
 	}
 

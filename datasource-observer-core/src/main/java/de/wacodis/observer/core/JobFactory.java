@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
@@ -85,7 +86,10 @@ public interface JobFactory {
 			String jobGroupName = generateGroupName(job, subsetDefinition);
 			
 			LOG.debug("Initialize a potential quartz job with jobId '{}' and groupName '{}' for input subsetDefinition \n{}", jobId, jobGroupName, subsetDefinition);
-			quartzJobs.add(initializeJob(job, data_cloned, subsetDefinition, jobId, jobGroupName));
+			JobBuilder jobBuilder = initializeJobBuilder(job, data_cloned, subsetDefinition);
+			// store durably is required in order to replace an already existing job in scheduler to update its jobDataMap
+			JobDetail quartzJob = jobBuilder.withIdentity(jobId, jobGroupName).storeDurably(true).build();
+			quartzJobs.add(quartzJob);
 		}
 		
 		return quartzJobs;		
@@ -95,12 +99,10 @@ public interface JobFactory {
 	 * Pack business logic data into JobDataMap's data package and build new JobDetail
 	 * @param job - Instance of a new Job
 	 * @param data - Contains the business logic
-	 * @param subsetDefinition - the concrete subsetDefinition, for which the job shall be generated
-	 * @param jobGroupName - the job group name to use for quartz JobDetail
 	 * @param jobId - the jobId to use for quartz JobDetail
-	 * @return JobDetail using job's data within JobDataMap
+	 * @return JobBuilder using job's data within JobDataMap
 	 */   
-	JobDetail initializeJob(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition, String jobId, String jobGroupName);
+	JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition);
 
 	/**
 	 * Method to filter the WACODIS job inputs relevant for the respective JobFactory instance
