@@ -1,8 +1,13 @@
 package de.wacodis.observer.quartz;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -10,10 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
 import de.wacodis.observer.publisher.PublisherChannel;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 @Component
 public class QuartzServer implements InitializingBean {
@@ -21,6 +26,8 @@ public class QuartzServer implements InitializingBean {
     private static final Logger log = LoggerFactory.getLogger(QuartzServer.class);
 
     public static final String PUBLISHER = "PUBLISHER";
+    public static final String WACODIS_JOB_ID_STORAGE = "wacodisJobIds";
+    
 
     private Scheduler scheduler;
 
@@ -41,5 +48,69 @@ public class QuartzServer implements InitializingBean {
     public Date scheduleJob(JobDetail jobDetail, Trigger trigger) throws SchedulerException {
         return this.scheduler.scheduleJob(jobDetail, trigger);	//runs QuartzJob's execute()
     }
+
+	public void removeJobByKey(JobKey key) throws SchedulerException {
+		if(this.scheduler.checkExists(key)){
+			this.scheduler.deleteJob(key);
+		}		
+		
+	}
+
+	public void removeJobsByKeys(List<JobKey> oneTimeJobKeys) throws SchedulerException {
+		for (JobKey jobKey : oneTimeJobKeys) {
+			this.removeJobByKey(jobKey);
+		}
+		
+	}
+
+	public boolean jobForSameDatasourceAndTypeAlreadyExists(JobDetail jobDetail) throws SchedulerException {
+		// this should work, as the jobKey is generated from WACODIS SubsetDefinition 
+		// specific properties
+		
+		// hence the same key is guaranteed to be generated for equal SubsetDefinitions
+		return this.scheduler.checkExists(jobDetail.getKey());
+	}
+
+	public JobDetail getQuartzJobForWacodisInputDefinition(JobDetail jobDetail) throws SchedulerException {
+		JobKey key = jobDetail.getKey();
+			
+		return this.scheduler.getJobDetail(key);		
+	}
+
+	public void addWacodisJobIdToQuartzJobDataMap(JobDetail existingQuartzJob, UUID wacodisJobId) {
+		JobDataMap jobDataMap = existingQuartzJob.getJobDataMap();
+		
+		// implement a storage for associated WACODIS job ids than require the quartz job
+		
+		// implement as HashSet in order to ensure that WACODIS jobIds cannot be inserted twice
+		HashSet<UUID> wacodisJobIds = null;
+		
+		if(jobDataMap.containsKey(WACODIS_JOB_ID_STORAGE)){
+			Object object = jobDataMap.get(WACODIS_JOB_ID_STORAGE);
+			if (object instanceof HashSet<?>){
+				wacodisJobIds = (HashSet<UUID>) object;
+				wacodisJobIds.add(wacodisJobId);
+			}
+		}
+		else{
+			wacodisJobIds = new HashSet<UUID>();
+			wacodisJobIds.add(wacodisJobId);			
+		}
+		
+		// modify element in quartz job data map
+		jobDataMap.put(WACODIS_JOB_ID_STORAGE, wacodisJobIds);		
+	}
+
+	public Trigger getAssociatedTrigger(JobDetail existingQuartzJob) throws SchedulerException {		
+		
+		/*
+		 * Currently only one trigger shall exist for the same job
+		 * 
+		 * so we can simply return the first value
+		 */
+		List<? extends Trigger> triggersOfJob = this.scheduler.getTriggersOfJob(existingQuartzJob.getKey());
+		
+		return triggersOfJob.get(0);
+	}
 
 }
