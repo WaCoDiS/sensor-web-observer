@@ -12,6 +12,10 @@ spring:
           destination: wacodis.test.jobs.new
           binder: wacodis_rabbit
           content-type: application/json
+        job-deletion:
+          destination: wacodis.test.jobs.deleted
+          binder: wacodis_rabbit
+          content-type: application/json  
         output-data-envelope:
           destination: wacodis.test.data.available
           binder: wacodis_rabbit
