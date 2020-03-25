@@ -14,55 +14,34 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * contains specific information about a ArcGIS Image Server product backend
+ * contains specific information about a GeoServer product backend 
  */
-@ApiModel(description = "contains specific information about a ArcGIS Image Server product backend")
+@ApiModel(description = "contains specific information about a GeoServer product backend ")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-03-25T18:31:03.536+01:00[Europe/Berlin]")
 
-public class ArcGISImageServerBackend extends AbstractBackend implements Serializable {
+public class GeoServerBackend extends AbstractBackend implements Serializable {
   private static final long serialVersionUID = 1L;
-
-  @JsonProperty("productCollection")
-  private String productCollection = null;
 
   @JsonProperty("baseUrl")
   private String baseUrl = null;
+
+  @JsonProperty("productCollection")
+  private String productCollection = null;
 
   @JsonProperty("serviceTypes")
   @Valid
   private List<String> serviceTypes = new ArrayList<String>();
 
-  public ArcGISImageServerBackend productCollection(String productCollection) {
-    this.productCollection = productCollection;
-    return this;
-  }
-
-  /**
-   * name of the product collection
-   * @return productCollection
-  **/
-  @ApiModelProperty(required = true, value = "name of the product collection")
-  @NotNull
-
-
-  public String getProductCollection() {
-    return productCollection;
-  }
-
-  public void setProductCollection(String productCollection) {
-    this.productCollection = productCollection;
-  }
-
-  public ArcGISImageServerBackend baseUrl(String baseUrl) {
+  public GeoServerBackend baseUrl(String baseUrl) {
     this.baseUrl = baseUrl;
     return this;
   }
 
   /**
-   * base URL of the ArcGIS Image Server backend
+   * base URL of the GeoServer backend
    * @return baseUrl
   **/
-  @ApiModelProperty(required = true, value = "base URL of the ArcGIS Image Server backend")
+  @ApiModelProperty(required = true, value = "base URL of the GeoServer backend")
   @NotNull
 
 
@@ -74,21 +53,42 @@ public class ArcGISImageServerBackend extends AbstractBackend implements Seriali
     this.baseUrl = baseUrl;
   }
 
-  public ArcGISImageServerBackend serviceTypes(List<String> serviceTypes) {
+  public GeoServerBackend productCollection(String productCollection) {
+    this.productCollection = productCollection;
+    return this;
+  }
+
+  /**
+   * name of the product collection (e.g. for WMS the layer name, for WFS the FeatureType) 
+   * @return productCollection
+  **/
+  @ApiModelProperty(required = true, value = "name of the product collection (e.g. for WMS the layer name, for WFS the FeatureType) ")
+  @NotNull
+
+
+  public String getProductCollection() {
+    return productCollection;
+  }
+
+  public void setProductCollection(String productCollection) {
+    this.productCollection = productCollection;
+  }
+
+  public GeoServerBackend serviceTypes(List<String> serviceTypes) {
     this.serviceTypes = serviceTypes;
     return this;
   }
 
-  public ArcGISImageServerBackend addServiceTypesItem(String serviceTypesItem) {
+  public GeoServerBackend addServiceTypesItem(String serviceTypesItem) {
     this.serviceTypes.add(serviceTypesItem);
     return this;
   }
 
   /**
-   * the supported ArcGIS Image Server services (e.g. ImageServer, WmsServer) 
+   * the supported GeoServer services (e.g. WMS, WFS) 
    * @return serviceTypes
   **/
-  @ApiModelProperty(required = true, value = "the supported ArcGIS Image Server services (e.g. ImageServer, WmsServer) ")
+  @ApiModelProperty(required = true, value = "the supported GeoServer services (e.g. WMS, WFS) ")
   @NotNull
 
 
@@ -109,25 +109,25 @@ public class ArcGISImageServerBackend extends AbstractBackend implements Seriali
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ArcGISImageServerBackend arcGISImageServerBackend = (ArcGISImageServerBackend) o;
-    return Objects.equals(this.productCollection, arcGISImageServerBackend.productCollection) &&
-        Objects.equals(this.baseUrl, arcGISImageServerBackend.baseUrl) &&
-        Objects.equals(this.serviceTypes, arcGISImageServerBackend.serviceTypes) &&
+    GeoServerBackend geoServerBackend = (GeoServerBackend) o;
+    return Objects.equals(this.baseUrl, geoServerBackend.baseUrl) &&
+        Objects.equals(this.productCollection, geoServerBackend.productCollection) &&
+        Objects.equals(this.serviceTypes, geoServerBackend.serviceTypes) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(productCollection, baseUrl, serviceTypes, super.hashCode());
+    return Objects.hash(baseUrl, productCollection, serviceTypes, super.hashCode());
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ArcGISImageServerBackend {\n");
+    sb.append("class GeoServerBackend {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    productCollection: ").append(toIndentedString(productCollection)).append("\n");
     sb.append("    baseUrl: ").append(toIndentedString(baseUrl)).append("\n");
+    sb.append("    productCollection: ").append(toIndentedString(productCollection)).append("\n");
     sb.append("    serviceTypes: ").append(toIndentedString(serviceTypes)).append("\n");
     sb.append("}");
     return sb.toString();
