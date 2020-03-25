@@ -65,7 +65,7 @@ public class JobScheduler {
     		 */
 			WacodisJobDefinitionExecution execution = job.getExecution();
 			AbstractWacodisJobExecutionEvent event = execution.getEvent();
-			if(event != null && event.equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)){
+			if(event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)){
 				// specification of a job, that shall only be executed once
 				// e.g. for on demand jobs
 				
