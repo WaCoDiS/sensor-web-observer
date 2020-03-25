@@ -6,12 +6,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.observer.model.AbstractSubsetDefinition;
 import de.wacodis.observer.model.WacodisJobDefinition;
 
@@ -84,6 +89,14 @@ public interface JobFactory {
 			JobDataMap data_cloned = (JobDataMap) data.clone();
 			String jobId = generateSubsetSpecificIdentifier(subsetDefinition);
 			String jobGroupName = generateGroupName(job, subsetDefinition);
+			
+			// TODO FIXME take care of areaOfInterest from JobDataMap --> maybe as part of the job key
+			List<Float> areaOfInterestExtent = job.getAreaOfInterest().getExtent();
+			String extent = areaOfInterestExtent.get(0) + "-"
+                    + areaOfInterestExtent.get(1) + ","
+                    + areaOfInterestExtent.get(2) + "-"
+                    + areaOfInterestExtent.get(3);
+			jobId = jobId + extent;
 			
 			LOG.debug("Initialize a potential quartz job with jobId '{}' and groupName '{}' for input subsetDefinition \n{}", jobId, jobGroupName, subsetDefinition);
 			JobBuilder jobBuilder = initializeJobBuilder(job, data_cloned, subsetDefinition);
