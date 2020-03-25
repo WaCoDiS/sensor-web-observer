@@ -174,9 +174,12 @@ public class QuartzServer implements InitializingBean {
 			// depending on boolean parameter remove whole job or just unschedule it
 			if(completelyRemoveQuartzJob){
 				this.scheduler.deleteJob(quartzJob.getKey());
+				log.info("Associated WACODIS job management: the quartz job with key '{}' was deleted.", quartzJob.getKey());
+				
 			}
 			else{
 				this.scheduler.unscheduleJob(triggerKey);
+				log.info("Associated WACODIS job management: the quartz job with key '{}' was unscheduled. Hence the trigger with key '{}' was removed.", quartzJob.getKey(), triggerKey);
 			}
 		}
 		
