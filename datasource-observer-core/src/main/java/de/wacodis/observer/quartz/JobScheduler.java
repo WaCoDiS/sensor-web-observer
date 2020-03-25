@@ -116,7 +116,7 @@ public class JobScheduler {
 				JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
 				// get Trigger, which has associated Key in case we only want to unschedule job
 				Trigger trigger = prepareTrigger(jobDetail);
-				wacodisQuartz.removeWacodisJobIdFromQuartzJobDataMap(existingQuartzJob, wacodisJob.getId(), trigger.getKey(), false);				
+				wacodisQuartz.removeWacodisJobIdFromQuartzJobDataMap(existingQuartzJob, wacodisJob.getId(), trigger.getKey(), true);				
 			}
 		}
 		
