@@ -12,10 +12,10 @@ import de.wacodis.observer.model.WacodisJobDefinition;
 import java.util.stream.Collectors;
 
 @Component
-public class NewJobHandler implements InitializingBean {
+public class JobHandler implements InitializingBean {
 
 	
-	private static final Logger log = LoggerFactory.getLogger(NewJobHandler.class);
+	private static final Logger log = LoggerFactory.getLogger(JobHandler.class);
 
 	@Autowired
 	private List<JobFactory> jobFactories;
@@ -25,7 +25,7 @@ public class NewJobHandler implements InitializingBean {
 	 * @param job - Instance of new Job
 	 * @return corresponding JobFactories to job's inputDefinition
 	 */
-	public List<JobFactory> receiveJob(WacodisJobDefinition job) {
+	public List<JobFactory> getResponsibleJobFactories(WacodisJobDefinition job) {
 		return jobFactories.stream()
                         .filter(jf -> jf.supportsJobDefinition(job))
                         .collect(Collectors.toList());

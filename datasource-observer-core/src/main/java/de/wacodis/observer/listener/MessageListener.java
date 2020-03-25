@@ -8,7 +8,7 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 
 import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.core.JobFactory;
-import de.wacodis.observer.core.NewJobHandler;
+import de.wacodis.observer.core.JobHandler;
 import de.wacodis.observer.quartz.JobScheduler;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -20,7 +20,7 @@ public class MessageListener {
 	private JobScheduler jobScheduler;
 	
 	@Autowired
-	private NewJobHandler newJobHandler;
+	private JobHandler newJobHandler;
 
 	private static final Logger log = LoggerFactory.getLogger(MessageListener.class);
 
@@ -28,10 +28,21 @@ public class MessageListener {
 	public void receiveNewJob(WacodisJobDefinition newJob) {
 		log.info("New job received:\n{}", newJob);
 		
-		List<JobFactory> factories = newJobHandler.receiveJob(newJob);
+		List<JobFactory> factories = newJobHandler.getResponsibleJobFactories(newJob);
 		
 		factories.forEach(factory -> {
                     jobScheduler.scheduleJob(newJob, factory);
+                });
+	}
+	
+	@StreamListener(ListenerChannel.JOBDELETION_INPUT)
+	public void onDeleteWacodisJob(WacodisJobDefinition wacodisJob) {
+		log.info("Received deletion event for WACODIS job with id {}", wacodisJob.getId().toString());
+		
+		List<JobFactory> factories = newJobHandler.getResponsibleJobFactories(wacodisJob);
+		
+		factories.forEach(factory -> {
+                    jobScheduler.onDeleteWacodisJob(wacodisJob, factory);
                 });
 	}
         

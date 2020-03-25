@@ -75,7 +75,7 @@ public class JobScheduler {
 				return;
 			}
 			else{
-				manageQuartzJobDefinitions(job, quartzJobDefinitions);
+				manageQuartzJobDefinitions_onAddNewWacodisJob(job, quartzJobDefinitions);
 			}
         } catch (SchedulerException e) {
             LOG.warn(e.getMessage());
@@ -85,8 +85,44 @@ public class JobScheduler {
             LOG.debug(e.getMessage(), e);
 		}
     }
+    
+    public void onDeleteWacodisJob(WacodisJobDefinition wacodisJob, JobFactory factory) {
+		/*
+		 * when a WACODIS job is deleted we must check if there are running quartz jobs 
+		 * for each input of the WACODIS job 
+		 * --> within those eisting quartz jobs, we must remove the WACODIS job ID from quartz JobDataMap
+		 * 
+		 * if there is no remaining WACODIS job ID in quartz JobDataMap --> then pause/unschedule job (remove trigger!)! 
+		 */
+		
+		// generate all Quartz job definitions for each WACODIS job input (SubsetDefinition)
+		// they will be used to inspect existing quartz jobs    	 
+    	
+    	try {
+    		Collection<JobDetail> quartzJobDefinitions = generateQuartzJobDefinitions(wacodisJob, factory); 
+			manageQuartzJobDefinitions_onDeleteWacodisJob(wacodisJob, quartzJobDefinitions);
+		} catch (SchedulerException e) {
+			LOG.warn(e.getMessage());
+            LOG.debug(e.getMessage(), e);
+		}
+	}
 
-	private void manageQuartzJobDefinitions(WacodisJobDefinition job, Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
+	private void manageQuartzJobDefinitions_onDeleteWacodisJob(WacodisJobDefinition wacodisJob,
+			Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
+		
+		for (JobDetail jobDetail : quartzJobDefinitions) {
+			if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)){
+				LOG.info("Existing quartz job with the same parameters identified. Will remove WACODIS job ID from its associated WACODIS jobs");
+				JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
+				// get Trigger, which has associated Key in case we only want to unschedule job
+				Trigger trigger = prepareTrigger(jobDetail);
+				wacodisQuartz.removeWacodisJobIdFromQuartzJobDataMap(existingQuartzJob, wacodisJob.getId(), trigger.getKey(), false);				
+			}
+		}
+		
+	}
+
+	private void manageQuartzJobDefinitions_onAddNewWacodisJob(WacodisJobDefinition job, Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
 		
 		/**
 		 * check if existing jobs already watch the same set of queried data
@@ -119,6 +155,12 @@ public class JobScheduler {
 	private void adjustTriggerIfIntervalIsShorter(JobDetail existingQuartzJob, String pattern) throws SchedulerException {
 		// TODO FIXME implement
 		LOG.info("Adjustment of Triggers is currently not implemented.");
+		
+		/*
+		 * it might happen, that an existing job was just paused!
+		 * 
+		 * TODO detect that and if it is state=paused/unscheduled, then we might just define a new trigger
+		 */
 		
 //		CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(pattern);
 //		
