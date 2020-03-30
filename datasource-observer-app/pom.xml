@@ -55,6 +55,11 @@
             <artifactId>dwd-observer</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>de.wacodis</groupId>
+            <artifactId>code-de-observer</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
 
         <!-- Test-Scope -->
         <dependency>
