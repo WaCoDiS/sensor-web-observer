@@ -32,7 +32,7 @@ public class CodeDeResponseResolverTest {
     private static Node node;
 
     @BeforeAll
-    public static void setup() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    public static void setup() throws Exception {
 
         resolver = new CodeDeResponseResolver();
         dbf.setNamespaceAware(true);

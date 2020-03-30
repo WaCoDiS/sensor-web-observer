@@ -1,5 +1,6 @@
 package de.wacodis.codede.sentinel;
 
+import org.apache.http.impl.client.HttpClients;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -17,13 +18,15 @@ public class CodeDeOpenSearchRequestorIT {
     private static CodeDeOpenSearchRequestor requestor;
 
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws Exception {
         params = new CodeDeRequestParams();
         requestor = new CodeDeOpenSearchRequestor();
+        requestor.afterPropertiesSet();
+        requestor.setHttpClient(HttpClients.createDefault());
         params.setParentIdentifier("S2_MSI_L2A");
         params.setStartDate(DateTime.parse("2020-01-01T00:00:00Z", FORMATTER));
         params.setEndDate(DateTime.parse("2020-02-01T00:00:00Z", FORMATTER));
-        params.setBbox(new ArrayList<Float>(){
+        params.setBbox(new ArrayList<Float>() {
             {
                 add(7.023582486435771f);
                 add(50.94074249267579f);
@@ -31,7 +34,8 @@ public class CodeDeOpenSearchRequestorIT {
                 add(51.29734038608149f);
             }
         });
-        params.setCloudCover(new ArrayList<Float>(){            {
+        params.setCloudCover(new ArrayList<Float>() {
+            {
                 add(0.0f);
                 add(50.0f);
             }
