@@ -10,49 +10,26 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * Helper class to resolve required product metadata from the OpenSearch Response
  *
- *  Helper class to resolve required product metadata from the OpenSearch Response
- *
- *
- *@author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
- *@author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
+ * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 public class CodeDeResponseResolver {
 
-    private static final int ITEMS_PER_PAGE = 50;
-    private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
-    private final XPath xpath;
-    public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    DocumentBuilder db;
-
     public CodeDeResponseResolver() {
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        try {
-            db = dbf.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            LOG.warn(e.getMessage());
-        }
-
         // enables namespaces with the xpath-library
         XPathFactory factory = XPathFactory.newInstance();
         this.xpath = factory.newXPath();
-        Map<String, String> prefMap = new HashMap<String, String>(){
+        Map<String, String> prefMap = new HashMap<String, String>() {
             {
                 // default namespace
                 put("a", "http://www.w3.org/2005/Atom");
@@ -69,27 +46,20 @@ public class CodeDeResponseResolver {
         xpath.setNamespaceContext(namespaces);
     }
 
-
-    /**
-     *  Delivers the xml-Document from an InputStream
-     * @param getResponse link to the xml document
-     * @return xml document
-     * @throws IOException
-     * @throws SAXException
-     */
-    public Document getDocument(InputStream getResponse) throws IOException, SAXException {
-        LOG.debug("Analyze InputStream");
-        return db.parse(getResponse);
-    }
+    private static final int ITEMS_PER_PAGE = 50;
+    private static final Logger LOG = LoggerFactory.getLogger(CodeDeJob.class);
+    private XPath xpath;
+    public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     /**
      * Delivers the single entry nodes from the requested sentinel products (all <entry>-tags)
+     *
      * @param responseDoc requested document
      * @return entry nodes as NodeList
      * @throws XPathExpressionException
      */
     public NodeList getEntryNodes(Document responseDoc) throws XPathExpressionException {
-        String xPathString="/a:feed/a:entry";
+        String xPathString = "/a:feed/a:entry";
         XPathExpression expression = xpath.compile(xPathString);
         return (NodeList) expression.evaluate(responseDoc, XPathConstants.NODESET);
     }
@@ -102,12 +72,9 @@ public class CodeDeResponseResolver {
      * @throws XPathExpressionException
      */
     public String getDownloadLink(Node entryNode) throws XPathExpressionException {
-        Document newDocument = db.newDocument();
-        Node importedNode = newDocument.importNode(entryNode, true);
-        newDocument.appendChild(importedNode);
-        String xPathString="/a:entry/a:link[@title=\"Download\"]/@href";
+        String xPathString = "./a:link[@title=\"Download\"]/@href";
         XPathExpression expression = this.xpath.compile(xPathString);
-        return (String) expression.evaluate(newDocument, XPathConstants.STRING);
+        return (String) expression.evaluate(entryNode, XPathConstants.STRING);
     }
 
     /**
@@ -118,29 +85,23 @@ public class CodeDeResponseResolver {
      * @throws XPathExpressionException
      */
     public float getCloudCoverage(Node entryNode) throws XPathExpressionException {
-        Document newDocument = db.newDocument();
-        Node importedNode = newDocument.importNode(entryNode, true);
-        newDocument.appendChild(importedNode);
-        String xpathString="/a:entry/opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
+        String xpathString = "./opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expression = this.xpath.compile(xpathString);
-        String resultCloudCoverage = (String)expression.evaluate(newDocument, XPathConstants.STRING);
+        String resultCloudCoverage = (String) expression.evaluate(entryNode, XPathConstants.STRING);
         return Float.parseFloat(resultCloudCoverage);
     }
 
 
     /**
-     *  Returns the identifier/datasetID of the sentinel layer
+     * Returns the identifier/datasetID of the sentinel layer
      *
      * @param entryNode the xml document which contains the metadata of one sentinel product
      * @return identifier of a sentinel layer
      */
     public String getIdentifier(Node entryNode) throws XPathExpressionException {
-        Document newDocument = db.newDocument();
-        Node importedNode = newDocument.importNode(entryNode, true);
-        newDocument.appendChild(importedNode);
-        String xpathString = "a:entry/opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:identifier";
+        String xpathString = "./opt:EarthObservation/eop:metaDataProperty/eop:EarthObservationMetaData/eop:identifier";
         XPathExpression expression = this.xpath.compile(xpathString);
-        return (String) expression.evaluate(newDocument, XPathConstants.STRING);
+        return (String) expression.evaluate(entryNode, XPathConstants.STRING);
     }
 
     /**
@@ -152,12 +113,10 @@ public class CodeDeResponseResolver {
      */
     public List<DateTime> getTimeFrame(Node entryNode) throws XPathExpressionException {
         List<DateTime> result = new ArrayList<>();
-        Document newDocument = db.newDocument();
-        Node importedNode = newDocument.importNode(entryNode, true);
-        newDocument.appendChild(importedNode);
-        String xPathString="/a:entry/dc:date";
-        XPathExpression expression= this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(newDocument, XPathConstants.NODESET);
+
+        String xPathString = "./dc:date";
+        XPathExpression expression = this.xpath.compile(xPathString);
+        NodeList nodeList = (NodeList) expression.evaluate(entryNode, XPathConstants.NODESET);
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] timeFrame = nodeList.item(i).getTextContent().split("/");
@@ -173,18 +132,15 @@ public class CodeDeResponseResolver {
     /**
      * Returns the Bounding Box of the product
      *
-     * @param  entryNode One specific sentinel Product which corresponds to an <entry>-Tag
+     * @param entryNode One specific sentinel Product which corresponds to an <entry>-Tag
      * @return Bounding Box of the sentinel product - Schema [minLat, minLon, maxLat, maxLon]
      * @throws XPathExpressionException
      */
     public List<Float> getBbox(Node entryNode) throws XPathExpressionException {
-        ArrayList<Float> bbox= new ArrayList<>();
-        Document newDocument = db.newDocument();
-        Node importedNode = newDocument.importNode(entryNode, true);
-        newDocument.appendChild(importedNode);
-        String xPathString="/a:entry/georss:box";
-        XPathExpression expression= this.xpath.compile(xPathString);
-        NodeList nodeList = (NodeList)expression.evaluate(newDocument, XPathConstants.NODESET);
+        ArrayList<Float> bbox = new ArrayList<>();
+        String xPathString = "./georss:box";
+        XPathExpression expression = this.xpath.compile(xPathString);
+        NodeList nodeList = (NodeList) expression.evaluate(entryNode, XPathConstants.NODESET);
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             String[] bboxCoordinates = nodeList.item(i).getTextContent().split(" ");
@@ -199,14 +155,14 @@ public class CodeDeResponseResolver {
     /**
      * Delivers the number of pages of the product.
      *
-     * @param  responseDoc requested document
+     * @param responseDoc requested document
      * @return number of pages (int)
      * @throws XPathExpressionException
      */
     public int getNumberOfPages(Document responseDoc) throws XPathExpressionException {
-        String xPathString="/a:feed/os:totalResults";
+        String xPathString = "/a:feed/os:totalResults";
         XPathExpression expression = this.xpath.compile(xPathString);
-        int totalResults = (int)((double) expression.evaluate(responseDoc, XPathConstants.NUMBER));
+        int totalResults = (int) ((double) expression.evaluate(responseDoc, XPathConstants.NUMBER));
         return numberOfPagesCalculation(totalResults);
     }
 
@@ -216,11 +172,12 @@ public class CodeDeResponseResolver {
      * @param totalResults number of total <entry>-Tags
      * @return number of pages (int)
      */
-    private int numberOfPagesCalculation(int totalResults){
-        int modulo = totalResults%ITEMS_PER_PAGE;
-        int nop = (totalResults-modulo)/ITEMS_PER_PAGE;
+    private int numberOfPagesCalculation(int totalResults) {
+        int modulo = totalResults % ITEMS_PER_PAGE;
+        int nop = (totalResults - modulo) / ITEMS_PER_PAGE;
         if (modulo > 0)
             nop += 1;
         return nop;
     }
+
 }
