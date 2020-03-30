@@ -4,22 +4,25 @@ import de.wacodis.codede.sentinel.exception.HttpConnectionException;
 import de.wacodis.observer.decode.DecodingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +33,18 @@ import java.util.List;
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 @Component
-public class CodeDeOpenSearchRequestor {
+public class CodeDeOpenSearchRequestor implements InitializingBean {
 
     private final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
+
+    private CloseableHttpClient httpClient;
+
+    private DocumentBuilderFactory factory;
+
+    @Autowired
+    public void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
 
     /**
      * Performs a query with the given paramerters.
@@ -52,14 +64,17 @@ public class CodeDeOpenSearchRequestor {
                 String getRequestUrl = CodeDeOpenSearchRequestorBuilder.buildGetRequestUrl(params, k);
                 LOG.info("Request CODE-DE API: {}", getRequestUrl);
 
-                InputStream inputStream = sendOpenSearchRequest(getRequestUrl);
-                Document getResponseDoc = resolver.getDocument(inputStream);
-                LOG.debug("CODE-DE response document: {}", getResponseDoc.getTextContent());
+                Document responseDoc = sendOpenSearchRequest(getRequestUrl);
+                if (responseDoc == null) {
+                    throw new DecodingException("Creation of response document failed");
+                } else {
+                    LOG.debug("CODE-DE response document: {}", responseDoc.getTextContent());
+                }
 
                 if (k == 1) {
-                    pages = resolver.getNumberOfPages(getResponseDoc);
+                    pages = resolver.getNumberOfPages(responseDoc);
                 }
-                NodeList nodeList = resolver.getEntryNodes(getResponseDoc);
+                NodeList nodeList = resolver.getEntryNodes(responseDoc);
 
                 for (int i = 0; i < nodeList.getLength(); i++) {
                     CodeDeProductsMetadata metadataObject = new CodeDeProductsMetadata();
@@ -82,7 +97,7 @@ public class CodeDeOpenSearchRequestor {
 
             }
             return productsMetadata;
-        } catch (XPathExpressionException | SAXException e) {
+        } catch (XPathExpressionException e) {
             throw new DecodingException("Could not process OpenSearch response", e);
         } catch (IOException e) {
             throw new HttpConnectionException("Connection to server failed", e);
@@ -97,14 +112,31 @@ public class CodeDeOpenSearchRequestor {
      * @throws ClientProtocolException
      * @throws IOException
      */
-    private InputStream sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
-
-        // contact http-client
-        CloseableHttpClient httpclient = HttpClients.createDefault();
+    private Document sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
         HttpGet httpGet = new HttpGet(getRequestUrl);
-        CloseableHttpResponse response = httpclient.execute(httpGet);
-        HttpEntity entity = response.getEntity(); // fill http-Object (status, parameters, content)
-        return entity.getContent();
+
+        ResponseHandler<Document> responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status >= 200 && status < 300) {
+                HttpEntity entity = response.getEntity();
+                try {
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    return builder.parse(entity.getContent());
+                } catch (SAXException | ParserConfigurationException ex) {
+                    LOG.warn(ex.getMessage());
+                    throw new IOException("Could not parse XML document", ex);
+                }
+            } else {
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            }
+        };
+        Document responseDoc = httpClient.execute(httpGet, responseHandler);
+        return responseDoc;
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+    }
 }
