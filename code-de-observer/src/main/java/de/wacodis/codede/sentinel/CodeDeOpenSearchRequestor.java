@@ -10,6 +10,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ import java.util.List;
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 @Component
-public class CodeDeOpenSearchRequestor implements InitializingBean {
+public class CodeDeOpenSearchRequestor implements InitializingBean, DisposableBean {
 
     private final static Logger LOG = LoggerFactory.getLogger(CodeDeOpenSearchRequestor.class);
 
@@ -135,8 +136,13 @@ public class CodeDeOpenSearchRequestor implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        httpClient.close();
     }
 }
