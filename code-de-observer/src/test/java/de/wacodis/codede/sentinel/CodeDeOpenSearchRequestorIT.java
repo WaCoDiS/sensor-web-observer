@@ -23,7 +23,7 @@ public class CodeDeOpenSearchRequestorIT {
         requestor = new CodeDeOpenSearchRequestor();
         requestor.afterPropertiesSet();
         requestor.setHttpClient(HttpClients.createDefault());
-        params.setParentIdentifier("S2_MSI_L2A");
+        params.setParentIdentifier("EOP:CODE-DE:S2_MSI_L2A");
         params.setStartDate(DateTime.parse("2020-01-01T00:00:00Z", FORMATTER));
         params.setEndDate(DateTime.parse("2020-02-01T00:00:00Z", FORMATTER));
         params.setBbox(new ArrayList<Float>() {

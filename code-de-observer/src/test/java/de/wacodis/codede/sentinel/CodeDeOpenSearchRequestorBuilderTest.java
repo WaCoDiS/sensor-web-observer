@@ -14,7 +14,7 @@ public class CodeDeOpenSearchRequestorBuilderTest {
 
     @BeforeAll
     public static void setup() {
-        String parentIdentifier = "S2_MSI_L2A";
+        String parentIdentifier = "EOP:CODE-DE:S2_MSI_L2A";
         DateTime startDate = DateTime.parse("2019-01-01T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
         DateTime endDate = DateTime.parse("2020-01-17T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
         List<Float> bbox = new ArrayList<Float>();
