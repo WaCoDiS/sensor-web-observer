@@ -11,6 +11,7 @@ import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
 @Component
+@ConditionalOnProperty(value = "datasource-observer.code-de.enabled", havingValue = "true")
 public class CodeDeJobFactory implements JobFactory {
     private final static String PRODUCT_IDENTIFIER_PREFIX = "EOP:CODE-DE:";
     private final static Map<String, String> SATELLTIE_MAPPING;

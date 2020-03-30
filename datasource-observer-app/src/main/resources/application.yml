@@ -53,6 +53,9 @@ datasource-observer:
       sentinel: 3600
       dwd: 3600
   sentinelhub:
+    enabled: false
     base-url: https://scihub.copernicus.eu/apihub/
     user: testuser
     password: testpwd
+  code-de:
+    enabled: true
