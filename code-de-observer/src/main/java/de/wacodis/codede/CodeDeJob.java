@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -66,13 +67,8 @@ public class CodeDeJob implements Job {
         // 1) Get all required request parameters stored in the JobDataMap
         String satelliteProduct = dataMap.getString(PRODUCT_IDENTIFIER);
         String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY);
-        String maxCloudCover = dataMap.getString(CLOUD_COVER_KEY);
-        ArrayList cloudCover = new ArrayList() {
-            {
-                add(0);
-                add(maxCloudCover);
-            }
-        };
+        float maxCloudCover = dataMap.getFloat(CLOUD_COVER_KEY);
+        List cloudCover = Arrays.asList(0.f, maxCloudCover);
         String[] executionAreaJSON = dataMap.getString(BBOX_KEY).split(",");
 
         // parse executionAreaJSON into Float list

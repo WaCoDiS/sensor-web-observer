@@ -14,8 +14,6 @@ import org.joda.time.format.DateTimeFormatter;
 public class CodeDeOpenSearchRequestorBuilder {
 
     public static final String SERVICE_URL = "https://catalog.code-de.org/opensearch/request?";
-    public static final String HTTP_ACCEPT = "httpAccept=application/atom%2Bxml";
-    public static final String PARENT_IDENTIFIER_PREFIX = "EOP:CODE-DE:";
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     public static final String MAXIMUM_RECORDS= "50";
     public static final String RECORD_SCHEMA = "om";
@@ -28,7 +26,7 @@ public class CodeDeOpenSearchRequestorBuilder {
      */
     public static String buildGetRequestUrl(CodeDeRequestParams params, int page){
         // parentIdentifier
-        String parentIdentifier = CodeDeJob.PARENT_IDENTIFIER_KEY + "=" + PARENT_IDENTIFIER_PREFIX + params.getParentIdentifier();
+        String parentIdentifier = CodeDeJob.PARENT_IDENTIFIER_KEY + "=" +  params.getParentIdentifier();
         // dates
         String startDate = CodeDeJob.START_DATE_KEY + "=" + params.getStartDate().toString(FORMATTER);
         String endDate = CodeDeJob.END_DATE_KEY + "=" + params.getEndDate().toString(FORMATTER);
