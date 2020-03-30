@@ -68,8 +68,6 @@ public class CodeDeOpenSearchRequestor implements InitializingBean, DisposableBe
                 Document responseDoc = sendOpenSearchRequest(getRequestUrl);
                 if (responseDoc == null) {
                     throw new DecodingException("Creation of response document failed");
-                } else {
-                    LOG.debug("CODE-DE response document: {}", responseDoc.getTextContent());
                 }
 
                 if (k == 1) {
@@ -82,17 +80,23 @@ public class CodeDeOpenSearchRequestor implements InitializingBean, DisposableBe
                     Node node = nodeList.item(i);
 
                     String downloadLink = resolver.getDownloadLink(node);
-                    float cloudCoverage = resolver.getCloudCoverage(node);
-                    String identifier = resolver.getIdentifier(node);
-                    List<DateTime> timeFrame = resolver.getTimeFrame(node);
-                    List<Float> bbox = resolver.getBbox(node);
-
                     metadataObject.setDownloadLink(downloadLink);
-                    metadataObject.setCloudCover(cloudCoverage);
+
+                    String cloudCoverage = resolver.getCloudCoverage(node);
+                    if (cloudCoverage != null && !cloudCoverage.isEmpty()) {
+                        metadataObject.setCloudCover(Float.parseFloat(cloudCoverage));
+                    }
+
+                    String identifier = resolver.getIdentifier(node);
                     metadataObject.setDatasetId(identifier);
+
+                    List<DateTime> timeFrame = resolver.getTimeFrame(node);
                     metadataObject.setStartDate(timeFrame.get(0));
                     metadataObject.setEndDate(timeFrame.get(1));
+
+                    List<Float> bbox = resolver.getBbox(node);
                     metadataObject.setBbox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
+
                     productsMetadata.add(metadataObject);
                 }
 

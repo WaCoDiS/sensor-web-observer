@@ -40,7 +40,7 @@ public class CodeDeResponseResolverTest {
         db = dbf.newDocumentBuilder();
         XPathFactory factory = XPathFactory.newInstance();
         xpath = factory.newXPath();
-        Map<String, String> prefMap = new HashMap<String, String>(){
+        Map<String, String> prefMap = new HashMap<String, String>() {
             {
                 put("a", "http://www.w3.org/2005/Atom");
             }
@@ -50,7 +50,7 @@ public class CodeDeResponseResolverTest {
 
         InputStream openSearchResponseStream = CodeDeResponseResolverTest.class.getClassLoader().getResourceAsStream("catalog.code-de.org.xml");
         xmlDoc = db.parse(openSearchResponseStream);
-        String xPathString="/a:feed/a:entry[1]";
+        String xPathString = "/a:feed/a:entry[1]";
         XPathExpression expression = xpath.compile(xPathString);
         node = (Node) expression.evaluate(xmlDoc, XPathConstants.NODE);
 
@@ -72,7 +72,7 @@ public class CodeDeResponseResolverTest {
         // expected cloud coverage
         float expectedCloudCoverage = 2.175213f;
         // actual cloud coverage
-        float actualCloudCoverage = resolver.getCloudCoverage(node);
+        float actualCloudCoverage = Float.parseFloat(resolver.getCloudCoverage(node));
 
         Assertions.assertEquals(expectedCloudCoverage, actualCloudCoverage, 0.001);
     }
@@ -91,7 +91,7 @@ public class CodeDeResponseResolverTest {
     public void testGetTimeFrame() throws IOException, SAXException, XPathExpressionException {
 
         // expected time frame
-        List<DateTime> expectedTimeFrame = new ArrayList<DateTime>(){
+        List<DateTime> expectedTimeFrame = new ArrayList<DateTime>() {
             {
                 add(DateTime.parse("2019-01-20T10:33:41.024Z", CodeDeResponseResolver.FORMATTER));
                 add(DateTime.parse("2019-01-20T10:33:41.024Z", CodeDeResponseResolver.FORMATTER));
@@ -108,7 +108,7 @@ public class CodeDeResponseResolverTest {
     public void testGetBbox() throws IOException, SAXException, XPathExpressionException {
 
         // expected bbox
-        List<Float> expectedbbox = new ArrayList<Float>(){
+        List<Float> expectedbbox = new ArrayList<Float>() {
             {
                 add(50.43685871745407f);
                 add(6.590688202965415f);

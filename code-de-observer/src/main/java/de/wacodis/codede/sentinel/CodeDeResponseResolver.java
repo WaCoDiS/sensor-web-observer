@@ -84,11 +84,10 @@ public class CodeDeResponseResolver {
      * @return float number (percentage)
      * @throws XPathExpressionException
      */
-    public float getCloudCoverage(Node entryNode) throws XPathExpressionException {
+    public String getCloudCoverage(Node entryNode) throws XPathExpressionException {
         String xpathString = "./opt:EarthObservation/om:result/opt:EarthObservationResult/opt:cloudCoverPercentage";
         XPathExpression expression = this.xpath.compile(xpathString);
-        String resultCloudCoverage = (String) expression.evaluate(entryNode, XPathConstants.STRING);
-        return Float.parseFloat(resultCloudCoverage);
+        return (String) expression.evaluate(entryNode, XPathConstants.STRING);
     }
 
 
