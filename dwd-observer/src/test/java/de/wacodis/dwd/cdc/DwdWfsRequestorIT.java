@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import de.wacodis.dwd.cdc.model.DwdProductsMetadata;
 import de.wacodis.dwd.cdc.model.DwdWfsRequestParams;
 import de.wacodis.dwd.cdc.model.Envelope;
+import org.apache.http.impl.client.HttpClients;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -52,6 +53,7 @@ public class DwdWfsRequestorIT {
 
 		reader = new DwdWfsRequestorBuilder(params);
 		requestor = new DwdWfsRequestor();
+		requestor.setHttpClient(HttpClients.createDefault());
 		requestor.afterPropertiesSet();
 	}
 
