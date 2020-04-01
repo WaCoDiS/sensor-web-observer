@@ -1,4 +1,4 @@
-package de.wacodis.codede.sentinel;
+package de.wacodis.observer.http;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
 @Configuration
-public class CodeDeOpenSearchConfig {
+public class HttpClientConfig {
 
     @Bean
     public CloseableHttpClient httpClient() {

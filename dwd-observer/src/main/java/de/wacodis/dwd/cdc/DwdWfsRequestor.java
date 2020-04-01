@@ -19,6 +19,7 @@ import de.wacodis.dwd.cdc.model.DwdProductsMetadata;
 import de.wacodis.dwd.cdc.model.DwdWfsRequestParams;
 import de.wacodis.dwd.cdc.model.Envelope;
 import de.wacodis.dwd.cdc.model.SpatioTemporalExtent;
+import de.wacodis.observer.http.XmlDocResponseHandler;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -129,22 +130,7 @@ public class DwdWfsRequestor implements InitializingBean {
         StringEntity entity = new StringEntity(requestBody);
         httpPost.setEntity(entity);
 
-        ResponseHandler<Document> responseHandler = response -> {
-            int status = response.getStatusLine().getStatusCode();
-            if (status >= 200 && status < 300) {
-                HttpEntity responseEntity = response.getEntity();
-                try {
-                    DocumentBuilder builder = dbf.newDocumentBuilder();
-                    return builder.parse(responseEntity.getContent());
-                } catch (SAXException | ParserConfigurationException ex) {
-                    LOG.warn(ex.getMessage());
-                    throw new IOException("Could not parse XML document", ex);
-                }
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            }
-        };
-        Document responseDoc = httpClient.execute(httpPost, responseHandler);
+        Document responseDoc = httpClient.execute(httpPost, new XmlDocResponseHandler());
         return responseDoc;
 
     }

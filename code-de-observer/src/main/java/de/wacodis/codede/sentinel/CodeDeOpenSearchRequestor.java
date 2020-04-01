@@ -2,6 +2,7 @@ package de.wacodis.codede.sentinel;
 
 import de.wacodis.codede.sentinel.exception.HttpConnectionException;
 import de.wacodis.observer.decode.DecodingException;
+import de.wacodis.observer.http.XmlDocResponseHandler;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -120,22 +121,22 @@ public class CodeDeOpenSearchRequestor implements InitializingBean, DisposableBe
     private Document sendOpenSearchRequest(String getRequestUrl) throws ClientProtocolException, IOException {
         HttpGet httpGet = new HttpGet(getRequestUrl);
 
-        ResponseHandler<Document> responseHandler = response -> {
-            int status = response.getStatusLine().getStatusCode();
-            if (status >= 200 && status < 300) {
-                HttpEntity entity = response.getEntity();
-                try {
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    return builder.parse(entity.getContent());
-                } catch (SAXException | ParserConfigurationException ex) {
-                    LOG.warn(ex.getMessage());
-                    throw new IOException("Could not parse XML document", ex);
-                }
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            }
-        };
-        Document responseDoc = httpClient.execute(httpGet, responseHandler);
+//        ResponseHandler<Document> responseHandler = response -> {
+//            int status = response.getStatusLine().getStatusCode();
+//            if (status >= 200 && status < 300) {
+//                HttpEntity entity = response.getEntity();
+//                try {
+//                    DocumentBuilder builder = factory.newDocumentBuilder();
+//                    return builder.parse(entity.getContent());
+//                } catch (SAXException | ParserConfigurationException ex) {
+//                    LOG.warn(ex.getMessage());
+//                    throw new IOException("Could not parse XML document", ex);
+//                }
+//            } else {
+//                throw new ClientProtocolException("Unexpected response status: " + status);
+//            }
+//        };
+        Document responseDoc = httpClient.execute(httpGet, new XmlDocResponseHandler());
         return responseDoc;
     }
 
