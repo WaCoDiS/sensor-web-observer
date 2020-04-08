@@ -10,7 +10,7 @@ import org.joda.time.format.DateTimeFormatter;
  * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
-
+@Deprecated
 public class CodeDeOpenSearchRequestorBuilder {
 
     public static final String SERVICE_URL = "https://catalog.code-de.org/opensearch/request?";

@@ -23,6 +23,7 @@ import java.util.Map;
  * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
  */
+@Deprecated
 public class CodeDeResponseResolver {
 
     public CodeDeResponseResolver() {
