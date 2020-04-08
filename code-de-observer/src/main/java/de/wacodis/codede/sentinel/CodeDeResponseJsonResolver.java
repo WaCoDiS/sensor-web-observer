@@ -11,12 +11,16 @@ import org.locationtech.jts.geom.Geometry;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.json.GeoJSONDecoder;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
 public class CodeDeResponseJsonResolver {
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final int ITEMS_PER_PAGE = 50;
 
     private static final String FEATURES_PATH = "/features";
     private static final String IDENTIFIER_PATH = "/id";
@@ -26,6 +30,7 @@ public class CodeDeResponseJsonResolver {
     private static final String COMPLETION_DATE_PATH = "/properties/completionDate";
     private static final String CLOUD_COVERAGE_PATH = "/properties/cloudCover";
     private static final String GEOMETRY_PATH = "/geometry";
+    private static final String TOTAL_RESULTS_PATH = "/properties/totalResults";
 
     private GeoJSONDecoder decoder;
 
@@ -33,11 +38,23 @@ public class CodeDeResponseJsonResolver {
         decoder = new GeoJSONDecoder();
     }
 
+    public CodeDeProductsMetadata resolveMetadata(JsonNode node) throws ParsingException {
+        CodeDeProductsMetadata metadata = new CodeDeProductsMetadata();
+        metadata.setDatasetId(getIdentifier(node));
+        metadata.setAreaOfInterest(Arrays.asList(getBbox(node)));
+        metadata.setStartDate(getTimeFrame(node)[0]);
+        metadata.setEndDate(getTimeFrame(node)[1]);
+        metadata.setCloudCover(getCloudCoverage(node));
+        metadata.setDownloadLink(getDownloadLink(node));
+        metadata.setProductIdentifier(getProductIdentifier(node));
+        return null;
+    }
+
     public ArrayNode resolveFeatures(JsonNode node) {
         return (ArrayNode) node.at(FEATURES_PATH);
     }
 
-    public String getIdentifier(JsonNode node) throws ParsingException {
+    String getIdentifier(JsonNode node) throws ParsingException {
         JsonNode idNode = node.at(IDENTIFIER_PATH);
         if (idNode.isMissingNode()) {
             throw new ParsingException(String.format("Missing node: '%s'", IDENTIFIER_PATH));
@@ -45,7 +62,7 @@ public class CodeDeResponseJsonResolver {
         return idNode.asText();
     }
 
-    public String getProductIdentifier(JsonNode node) throws ParsingException {
+    String getProductIdentifier(JsonNode node) throws ParsingException {
         JsonNode prodIdNode = node.at(PRODUCT_IDENTIFIER_PATH);
         if (prodIdNode.isMissingNode()) {
             throw new ParsingException(String.format("Missing node: '%s'", PRODUCT_IDENTIFIER_PATH));
@@ -53,7 +70,7 @@ public class CodeDeResponseJsonResolver {
         return prodIdNode.asText();
     }
 
-    public String getDownloadLink(JsonNode node) throws ParsingException {
+    String getDownloadLink(JsonNode node) throws ParsingException {
         JsonNode downloadNode = node.at(DOWNLOAD_LINK_PATH);
         if (downloadNode.isMissingNode()) {
             throw new ParsingException(String.format("Missing node: '%s'", DOWNLOAD_LINK_PATH));
@@ -61,7 +78,7 @@ public class CodeDeResponseJsonResolver {
         return downloadNode.asText();
     }
 
-    public DateTime[] getTimeFrame(JsonNode node) throws ParsingException {
+    DateTime[] getTimeFrame(JsonNode node) throws ParsingException {
         JsonNode startDateNode = node.at(START_DATE_PATH);
         if (startDateNode.isMissingNode()) {
             throw new ParsingException(String.format("Missing node: '%s'", START_DATE_PATH));
@@ -76,7 +93,7 @@ public class CodeDeResponseJsonResolver {
         };
     }
 
-    public Float getCloudCoverage(JsonNode node) {
+    Float getCloudCoverage(JsonNode node) {
         JsonNode cloudCoverNode = node.at(CLOUD_COVERAGE_PATH);
         if (cloudCoverNode.isMissingNode() || cloudCoverNode.asText().equals("-1")) {
             return null;
@@ -85,7 +102,7 @@ public class CodeDeResponseJsonResolver {
         }
     }
 
-    public Coordinate[] getBbox(JsonNode node) throws ParsingException {
+    Float[] getBbox(JsonNode node) throws ParsingException {
         JsonNode geomNode = node.at(GEOMETRY_PATH);
         if (geomNode.isMissingNode()) {
             throw new ParsingException(String.format("Missing node: '%s'", GEOMETRY_PATH));
@@ -96,7 +113,34 @@ public class CodeDeResponseJsonResolver {
         } catch (DecodingException ex) {
             throw new ParsingException("Error while decoding geomerty.", ex);
         }
-        return geom.getEnvelope().getCoordinates();
+        return new Float[]{
+                ((Double) geom.getEnvelope().getCoordinates()[0].getX()).floatValue(),
+                ((Double) geom.getEnvelope().getCoordinates()[0].getY()).floatValue(),
+                ((Double) geom.getEnvelope().getCoordinates()[2].getX()).floatValue(),
+                ((Double) geom.getEnvelope().getCoordinates()[2].getY()).floatValue()
+        };
     }
 
+
+    public int getNumberOfPages(JsonNode node) throws ParsingException {
+        JsonNode idNode = node.at(TOTAL_RESULTS_PATH);
+        if (idNode.isMissingNode()) {
+            throw new ParsingException(String.format("Missing node: '%s'", TOTAL_RESULTS_PATH));
+        }
+        return numberOfPagesCalculation(idNode.asInt());
+    }
+
+    /**
+     * Calculates the number of pages. Each page contains 50 <entry>-Tags
+     *
+     * @param totalResults number of total <entry>-Tags
+     * @return number of pages (int)
+     */
+    private int numberOfPagesCalculation(int totalResults) {
+        int modulo = totalResults % ITEMS_PER_PAGE;
+        int nop = (totalResults - modulo) / ITEMS_PER_PAGE;
+        if (modulo > 0)
+            nop += 1;
+        return nop;
+    }
 }

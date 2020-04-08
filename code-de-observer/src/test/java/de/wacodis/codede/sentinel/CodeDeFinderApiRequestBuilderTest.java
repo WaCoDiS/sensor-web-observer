@@ -38,6 +38,7 @@ public class CodeDeFinderApiRequestBuilderTest {
                 "completionDate=2020-01-17T00:00:00Z" + "&" +
                 "geometry=POLYGON((6.96+50.9,6.96+51.2,8.02+51.2,8.02+50.9,6.96+50.9))" + "&" +
                 "maxRecords=50" + "&" +
+                "page=1" + "&" +
                 "cloudCover=[0,40]";
 
         Assertions.assertEquals(expectedRequestUrl, actualRequestUrl);

@@ -2,10 +2,12 @@ package de.wacodis.codede.sentinel;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.stereotype.Component;
 
 /**
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
  */
+@Component
 public class CodeDeFinderApiRequestBuilder {
 
     private static final String SERVICE_URL = "https://finder.code-de.org/resto/api/collections/";
@@ -25,6 +27,7 @@ public class CodeDeFinderApiRequestBuilder {
     private static final String PROCESSING_LEVEL_PARAM = "processingLevel";
     private static final String GEOMETRY_PARAM = "geometry";
     private static final String SENSOR_MODE_PARAM = "sensorMode";
+    public static final String PAGE_PARAM = "page";
 
     /**
      * Builds the String containing the URL of the GET request.
@@ -42,7 +45,8 @@ public class CodeDeFinderApiRequestBuilder {
                 getStartDateParam(params),
                 getCompletionDateParam(params),
                 getGeometryParam(params),
-                getMaxRecordsParam());
+                getMaxRecordsParam(),
+                getPageParam(page));
         reqUrl = getCloudCoverParam(params).isEmpty() ? reqUrl : reqUrl + "&" + getCloudCoverParam(params);
         reqUrl = getSensorMode(params).isEmpty() ? reqUrl : reqUrl + "&" + getSensorMode(params);
         return reqUrl;
@@ -96,5 +100,9 @@ public class CodeDeFinderApiRequestBuilder {
 
     private String getMaxRecordsParam() {
         return String.join(PARAM_DELIMITER, MAX_RECORD_PARAM, MAXIMUM_RECORDS);
+    }
+
+    private String getPageParam(int page) {
+        return String.join(PARAM_DELIMITER, PAGE_PARAM, String.valueOf(page));
     }
 }

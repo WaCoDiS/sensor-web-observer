@@ -102,13 +102,9 @@ public class CodeDeResponseJsonResolverTest {
 
     @Test
     void testGetBbox() throws ParsingException {
-        Coordinate[] expBbox = new Coordinate[5];
-        expBbox[0] = new Coordinate(6.574941793, 50.382122251);
-        expBbox[1] = new Coordinate(6.574941793, 51.38167062);
-        expBbox[2] = new Coordinate(7.450589699, 51.38167062);
-        expBbox[3] = new Coordinate(7.450589699, 50.382122251);
-        expBbox[4] = new Coordinate(6.574941793, 50.382122251);
-        Coordinate[] bbox = resolver.getBbox(featureNode);
+        Float[] expBbox = {6.574941793f, 50.382122251f, 7.450589699f, 51.38167062f};
+        Float[] bbox = resolver.getBbox(featureNode);
+
         Assertions.assertArrayEquals(expBbox, bbox);
     }
 

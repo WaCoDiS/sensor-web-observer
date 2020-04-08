@@ -20,18 +20,18 @@ public class CodeDeProductsMetadata {
     private String downloadLink;
 
     // optional
-    private String identifier;
+    private String productIdentifier;
     private DateTime startDate;
     private DateTime endDate;
-    private ArrayList<Float> areaOfInterest = new ArrayList<Float>();
+    private List<Float> areaOfInterest = new ArrayList<Float>();
 
 
-    public String getIdentifier() {
-        return identifier;
+    public String getProductIdentifier() {
+        return productIdentifier;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setProductIdentifier(String productIdentifier) {
+        this.productIdentifier = productIdentifier;
     }
 
     public DateTime getStartDate() {
@@ -54,15 +54,8 @@ public class CodeDeProductsMetadata {
         return areaOfInterest;
     }
 
-    public void setAreaOfInterest(ArrayList<Float> areaOfInterest) {
+    public void setAreaOfInterest(List<Float> areaOfInterest) {
         this.areaOfInterest = areaOfInterest;
-    }
-
-    public void setBbox(float xMin, float yMin, float xMax, float yMax){
-        this.areaOfInterest.add(xMin);
-        this.areaOfInterest.add(yMin);
-        this.areaOfInterest.add(xMax);
-        this.areaOfInterest.add(yMax);
     }
 
     public float getCloudCover() {

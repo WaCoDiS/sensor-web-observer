@@ -1,6 +1,8 @@
 package de.wacodis.codede.sentinel;
 
+import de.wacodis.codede.CodeDeJob;
 import org.joda.time.DateTime;
+import org.quartz.JobDataMap;
 
 import java.util.List;
 
@@ -9,30 +11,42 @@ import java.util.List;
  *
  * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
  * @author <a href="mailto:christian.koert@hs-bochum.de">Christian Koert</a>
+ * @author <a href="mailto:sebastian.drost@hs-bochum.de">Sebastian Drost</a>
  */
 
 public class CodeDeRequestParamsEncoder {
 
     /**
-     * puts all necessary attributes of a subsetdefinition into a requestParams object
-     * @param parentIdentifier    id of the requested satallitesensor
-     * @param startDate  start date of the request timeframe
-     * @param endDate end date of the request timeframe
-     * @param bbox       bbox (minLon, minLat, maxLon, maxLat)
-     * @param cloudCover requested cloud cover
+     * Puts all necessary attributes of a subsetdefinition into a requestParams object
+     *
+     * @param dataMap a {@link JobDataMap} that holds all request parameter values
      * @return object containing all parameters
      */
-    public CodeDeRequestParams encode(String parentIdentifier, DateTime startDate, DateTime endDate,
-                                      List<Float> bbox, List<Float>cloudCover) {
+    public CodeDeRequestParams encode(JobDataMap dataMap, DateTime startDate, DateTime endDate) {
 
-        CodeDeRequestParams params = new CodeDeRequestParams();
+        String satellite = dataMap.getString(CodeDeJob.SATTELITE_KEY);
+        String instrument = dataMap.getString(CodeDeJob.INSTRUMENT_KEY);
+        String productType = dataMap.getString(CodeDeJob.PRODUCT_TYPE_KEY);
+        String processingLevel = dataMap.getString(CodeDeJob.PROCESSING_LEVEL_KEY);
 
-        params.setParentIdentifier(parentIdentifier);
-        params.setStartDate(startDate);
-        params.setEndDate(endDate);
-        params.setBbox(bbox); // Temporal Coverage?
-        params.setCloudCover(cloudCover);
+        String[] executionAreaJSON = dataMap.getString(CodeDeJob.BBOX_KEY).split(",");
+        Float[] area = new Float[]{
+                Float.parseFloat(executionAreaJSON[0].split(" ")[0]),
+                Float.parseFloat(executionAreaJSON[0].split(" ")[1]),
+                Float.parseFloat(executionAreaJSON[1].split(" ")[0]),
+                Float.parseFloat(executionAreaJSON[1].split(" ")[1])
+        };
 
-        return params;
+        Float[] cloudCover = null;
+        if (satellite.equals("Sentinel2")) {
+            cloudCover = new Float[]{0.f, dataMap.getFloat(CodeDeJob.CLOUD_COVER_KEY)};
+        }
+
+        String sensorMode = null;
+        if (satellite.equals("Sentinel1")) {
+            sensorMode = dataMap.getString(CodeDeJob.SENSOR_MODE_KEY);
+        }
+
+        return new CodeDeRequestParams(satellite, instrument, productType, processingLevel, startDate, endDate, area, sensorMode, cloudCover);
     }
 }

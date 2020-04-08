@@ -8,38 +8,36 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CodeDeOpenSearchRequestorIT {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private static CodeDeRequestParams params;
-    private static CodeDeOpenSearchRequestor requestor;
+    private static CodeDeRequestor requestor;
 
     @BeforeAll
     public static void setUp() throws Exception {
-        params = new CodeDeRequestParams();
-        requestor = new CodeDeOpenSearchRequestor();
+
+        requestor = new CodeDeRequestor();
         requestor.afterPropertiesSet();
         requestor.setHttpClient(HttpClients.createDefault());
-        params.setParentIdentifier("EOP:CODE-DE:S2_MSI_L2A");
-        params.setStartDate(DateTime.parse("2020-01-01T00:00:00Z", FORMATTER));
-        params.setEndDate(DateTime.parse("2020-02-01T00:00:00Z", FORMATTER));
-        params.setBbox(new ArrayList<Float>() {
-            {
-                add(7.023582486435771f);
-                add(50.94074249267579f);
-                add(7.555961664766073f);
-                add(51.29734038608149f);
-            }
-        });
-        params.setCloudCover(new ArrayList<Float>() {
-            {
-                add(0.0f);
-                add(50.0f);
-            }
-        });
+
+//        params = new CodeDeRequestParams("Sentinel2",
+//                DateTime.parse("2020-01-01T00:00:00Z", FORMATTER),
+//                DateTime.parse("2020-02-01T00:00:00Z", FORMATTER),
+//                new Float[]{0.0f, 50.0f});
+
+//        params.setBbox(new ArrayList<Float>() {
+//            {
+//                add(7.023582486435771f);
+//                add(50.94074249267579f);
+//                add(7.555961664766073f);
+//                add(51.29734038608149f);
+//            }
+//        });
+
     }
 
     @Test
@@ -51,7 +49,7 @@ public class CodeDeOpenSearchRequestorIT {
         expectedMetadataObject.setDatasetId("EOP:CODE-DE:S2_MSI_L2A:/S2B_MSIL2A_20200113T104309_N0213_R008_T31UGT_20200113T112959");
         expectedMetadataObject.setStartDate(DateTime.parse("2020-01-13T10:43:09.025Z", CodeDeResponseResolver.FORMATTER));
         expectedMetadataObject.setEndDate(DateTime.parse("2020-01-13T10:43:09.025Z", CodeDeResponseResolver.FORMATTER));
-        expectedMetadataObject.setBbox(51.27892518278613f, 5.870215764132042f, 52.31403780479302f, 7.539979680877824f);
+        expectedMetadataObject.setAreaOfInterest(Arrays.asList(51.27892518278613f, 5.870215764132042f, 52.31403780479302f, 7.539979680877824f));
 
         List<CodeDeProductsMetadata> metadataList = requestor.request(params);
         CodeDeProductsMetadata actualMetadataObject = metadataList.get(0);

@@ -31,9 +31,9 @@ public class CodeDeJobFactory implements JobFactory {
 
     static {
         Map<String, String> map = new HashMap<>();
-        map.put("sentinel-1", "S1");
-        map.put("sentinel-2", "S2");
-        map.put("sentinel-3", "S3");
+        map.put("sentinel-1", "Sentinel1");
+        map.put("sentinel-2", "Sentinel2");
+        map.put("sentinel-3", "Sentinel3");
         SATELLTIE_MAPPING = Collections.unmodifiableMap(map);
     }
 
@@ -62,11 +62,18 @@ public class CodeDeJobFactory implements JobFactory {
             CopernicusSubsetDefinition def = (CopernicusSubsetDefinition) defOpt.get();
 
             // Put all required request parameters into JobDataMap
-
-            // data.put(DwdJob.LAYER_NAME_KEY, def.getLayerName());
-            data.put(CodeDeJob.PRODUCT_IDENTIFIER, buildProductIdentifier(def));
+            data.put(CodeDeJob.SATTELITE_KEY, SATELLTIE_MAPPING.get(def.getSatellite().toString()));
+            data.put(CodeDeJob.INSTRUMENT_KEY, def.getInstrument());
+            data.put(CodeDeJob.PRODUCT_TYPE_KEY, def.getProductType());
+            data.put(CodeDeJob.PROCESSING_LEVEL_KEY, def.getProductLevel());
             data.put(CodeDeJob.TEMPORAL_COVERAGE_KEY, job.getTemporalCoverage().getDuration());
-            data.put(CodeDeJob.CLOUD_COVER_KEY, def.getMaximumCloudCoverage());
+            if (def.getSensorMode() != null && !def.getSensorMode().isEmpty()) {
+                data.put(CodeDeJob.SENSOR_MODE_KEY, def.getSensorMode());
+            }
+            if (def.getMaximumCloudCoverage() != null) {
+                data.put(CodeDeJob.CLOUD_COVER_KEY, def.getMaximumCloudCoverage());
+            }
+
             data.put(CodeDeJob.LATEST_REQUEST_END_DATE, null);
             String extent = job.getAreaOfInterest().getExtent().get(0) + " "
                     + job.getAreaOfInterest().getExtent().get(1) + ","

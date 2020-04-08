@@ -3,29 +3,28 @@ package de.wacodis.codede.sentinel;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Disabled
 public class CodeDeOpenSearchRequestorBuilderTest {
 
     private static CodeDeRequestParams params;
+    private static final String SATELLITE = "Sentinel2";
+    private static final String INSTRUMENT = "MSI";
+    private static final String PRODUCT_TYPE = "L2A";
+    private static final String PROCESSING_LEVEL = "LEVEL2A";
+    private static final String SENSOR_MODE = null;
+    private static final String START_DATE = "2019-01-01T00:00:00Z";
+    private static final String COMPLETION_DATE = "2020-01-17T00:00:00Z";
+    private static final Float[] BBOX = new Float[]{6.96f, 50.9f, 8.02f, 51.2f};
+    private static final Float[] CLOUD_COVER = new Float[]{0.f, 40.f};
 
     @BeforeAll
     public static void setup() {
-        String parentIdentifier = "EOP:CODE-DE:S2_MSI_L2A";
-        DateTime startDate = DateTime.parse("2019-01-01T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
-        DateTime endDate = DateTime.parse("2020-01-17T00:00:00Z", CodeDeOpenSearchRequestorBuilder.FORMATTER);
-        List<Float> bbox = new ArrayList<Float>();
-        bbox.add(6.96f);
-        bbox.add(50.9f);
-        bbox.add(8.02f);
-        bbox.add(51.2f);
-        List<Float> cloudCover = new ArrayList<Float>();
-        cloudCover.add(0.f);
-        cloudCover.add(40.f);
-        params = new CodeDeRequestParams(parentIdentifier, startDate, endDate, bbox, cloudCover);
+        params = new CodeDeRequestParams(SATELLITE, INSTRUMENT, PRODUCT_TYPE, PROCESSING_LEVEL,
+                DateTime.parse(START_DATE, CodeDeFinderApiRequestBuilder.FORMATTER),
+                DateTime.parse(COMPLETION_DATE, CodeDeFinderApiRequestBuilder.FORMATTER), BBOX, SENSOR_MODE, CLOUD_COVER);
     }
 
     @Test

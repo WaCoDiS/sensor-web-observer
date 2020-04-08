@@ -2,6 +2,7 @@ package de.wacodis.codede;
 
 import de.wacodis.codede.sentinel.*;
 import de.wacodis.codede.sentinel.exception.HttpConnectionException;
+import de.wacodis.codede.sentinel.exception.ParsingException;
 import de.wacodis.observer.decode.DecodingException;
 import de.wacodis.observer.model.CopernicusDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,11 +36,15 @@ public class CodeDeJob implements Job {
 
     //Class variables for Job
     public static final String TEMPORAL_COVERAGE_KEY = "temporalCoverage";
-    public static final String PRODUCT_IDENTIFIER = "productIdentifier";
+    public static final String SATTELITE_KEY = "satellite";
     public static final String LATEST_REQUEST_END_DATE = "endDate";
     public static final String MAXIMUM_RECORDS_KEY = "maximumRecords";
     public static final String RECORD_SCHEMA_KEY = "recordSchema";
     public static final String START_PAGE_KEY = "startPage";
+    public static final String INSTRUMENT_KEY = "instrument";
+    public static final String PRODUCT_TYPE_KEY = "productType";
+    public static final String PROCESSING_LEVEL_KEY = "processingLevel";
+    public static final String SENSOR_MODE_KEY = "sensorMode";
 
     public static final String EXECUTION_INTERVAL_KEY = "executionInterval";
 
@@ -51,7 +55,7 @@ public class CodeDeJob implements Job {
     private PublisherChannel pub;
 
     @Autowired
-    private CodeDeOpenSearchRequestor requestor;
+    private CodeDeRequestor requestor;
 
     /**
      * executes the job
@@ -61,35 +65,13 @@ public class CodeDeJob implements Job {
     @Override
     public void execute(JobExecutionContext context) {
         LOG.debug("Start CodeDeJob's execute()");
-        // 1) Get all required request parameters stored in the JobDataMap
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
-        // 1) Get all required request parameters stored in the JobDataMap
-        String satelliteProduct = dataMap.getString(PRODUCT_IDENTIFIER);
         String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY);
-        float maxCloudCover = dataMap.getFloat(CLOUD_COVER_KEY);
-        List cloudCover = Arrays.asList(0.f, maxCloudCover);
-        String[] executionAreaJSON = dataMap.getString(BBOX_KEY).split(",");
-
-        // parse executionAreaJSON into Float list
-        String bottomLeftYStr = executionAreaJSON[0].split(" ")[0];
-        String bottomLeftXStr = executionAreaJSON[0].split(" ")[1];
-        String upperRightYStr = executionAreaJSON[1].split(" ")[0];
-        String upperRightXStr = executionAreaJSON[1].split(" ")[1];
-
-        float bottomLeftY = Float.parseFloat(bottomLeftYStr);
-        float bottomLeftX = Float.parseFloat(bottomLeftXStr);
-        float upperRightY = Float.parseFloat(upperRightYStr);
-        float upperRightX = Float.parseFloat(upperRightXStr);
-        ArrayList<Float> area = new ArrayList<>();
-        area.add(0, bottomLeftY);
-        area.add(1, bottomLeftX);
-        area.add(2, upperRightY);
-        area.add(3, upperRightX);
-
         Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
         DateTime endDate = DateTime.now();
         DateTime startDate;
+
         // If there was a Job execution before, consider the latest request
         // end date as start date for the current request.
         // Else, calculate the start date for an initial request by taking a
@@ -99,23 +81,20 @@ public class CodeDeJob implements Job {
         else startDate = endDate.withPeriodAdded(period, -1);
         dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
-        this.publishDataEnvelopes(satelliteProduct, startDate, endDate, area, cloudCover);
+        CodeDeRequestParamsEncoder encoder = new CodeDeRequestParamsEncoder();
+        CodeDeRequestParams params = encoder.encode(dataMap, startDate, endDate);
 
+        List<CopernicusDataEnvelope> dataEnvelopes = requestCodeDE(params);
+        this.publishDataEnvelopes(dataEnvelopes);
     }
 
     /**
      * Publish the {@link CopernicusDataEnvelope} for a set of request parameters
      *
-     * @param parentIdentifier id of the requested satallitesensor
-     * @param startDate        start date of the request timeframe
-     * @param endDate          end date of the request timeframe
-     * @param bbox             bbox (minLon, minLat, maxLon, maxLat)
-     * @param cloudCover       requested cloud cover
+     * @param dataEnvelopes list of {@link CopernicusDataEnvelope} objects that will be published
      */
-    private void publishDataEnvelopes(String parentIdentifier, DateTime startDate, DateTime endDate, List<Float> bbox, List<Float> cloudCover) {
-        CodeDeRequestParamsEncoder encoder = new CodeDeRequestParamsEncoder();
-        CodeDeRequestParams params = encoder.encode(parentIdentifier, startDate, endDate, bbox, cloudCover);
-        List<CopernicusDataEnvelope> dataEnvelopes = this.createDataEnvelopes(params);
+    private void publishDataEnvelopes(List<CopernicusDataEnvelope> dataEnvelopes) {
+
         for (CopernicusDataEnvelope copDE : dataEnvelopes) {
             pub.sendDataEnvelope().send(MessageBuilder.withPayload(copDE).build());
             LOG.info("Published new CodeDeDataEnvelope for Copernicus dataset: {}", copDE.getDatasetId());
@@ -125,19 +104,19 @@ public class CodeDeJob implements Job {
     }
 
     /**
-     * Request CodeDe metadata from an Opensearch API and create a {@link CopernicusDataEnvelope}
+     * Request CODE-DE metadata and create a {@link CopernicusDataEnvelope}
      *
-     * @param params parameters from CodeDeRequestParams
+     * @param params parameters that will be used for requesting the CODE-DE Finder API
      * @return all requested dataEnvelopes
      */
-    private List<CopernicusDataEnvelope> createDataEnvelopes(CodeDeRequestParams params) {
+    private List<CopernicusDataEnvelope> requestCodeDE(CodeDeRequestParams params) {
         ArrayList<CopernicusDataEnvelope> dataEnvelopes = new ArrayList<>();
         // Request CodeDe Opensearch API with request paramaters
         List<CodeDeProductsMetadata> metadata = new ArrayList<>();
         try {
             metadata = requestor.request(params);
-        } catch (DecodingException ex) {
-            LOG.error("Error while decoding CODE-DE response: {}", ex.getMessage());
+        } catch (ParsingException ex) {
+            LOG.error("Error while parsing CODE-DE response: {}", ex.getMessage());
             LOG.debug("Decoding error cause: ", ex);
         } catch (HttpConnectionException ex) {
             LOG.error("Error while requesting CODE-DE: {}", ex.getMessage());
