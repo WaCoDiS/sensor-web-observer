@@ -47,7 +47,7 @@ public class CodeDeResponseJsonResolver {
         metadata.setCloudCover(getCloudCoverage(node));
         metadata.setDownloadLink(getDownloadLink(node));
         metadata.setProductIdentifier(getProductIdentifier(node));
-        return null;
+        return metadata;
     }
 
     public ArrayNode resolveFeatures(JsonNode node) {

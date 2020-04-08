@@ -36,12 +36,11 @@ import java.util.List;
  * @author <a href="mailto:sebastian.drost@hs-bochum.de">Sebastian Drost</a>
  */
 @Component
-public class CodeDeRequestor implements InitializingBean, DisposableBean {
+public class CodeDeRequestor implements DisposableBean {
 
     private final static Logger LOG = LoggerFactory.getLogger(CodeDeRequestor.class);
 
     private CloseableHttpClient httpClient;
-    private DocumentBuilderFactory factory;
     private CodeDeFinderApiRequestBuilder requestBuilder;
 
     @Autowired
@@ -86,11 +85,11 @@ public class CodeDeRequestor implements InitializingBean, DisposableBean {
                     CodeDeProductsMetadata metadata = null;
                     try {
                         metadata = resolver.resolveMetadata(f);
+                        metadataList.add(metadata);
                     } catch (ParsingException ex) {
                         LOG.error("Could not resolve metadata for feature. Cause: {}", ex.getMessage());
                         LOG.debug(String.format("Could not resolve metadata for feature: {}.", f), ex);
                     }
-                    metadataList.add(metadata);
                 });
             }
             return metadataList;
@@ -110,12 +109,6 @@ public class CodeDeRequestor implements InitializingBean, DisposableBean {
     private JsonNode sendOpenSearchRequest(String requestUrl) throws ClientProtocolException, IOException {
         HttpGet httpGet = new HttpGet(requestUrl);
         return httpClient.execute(httpGet, new JsonNodeResponseHandler());
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
     }
 
     @Override
