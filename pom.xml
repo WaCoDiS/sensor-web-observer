@@ -4,7 +4,7 @@
 
 	<groupId>de.wacodis</groupId>
 	<artifactId>datasource-observer</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
 	<name>WaCoDiS DatasourceObserver</name>
@@ -37,7 +37,7 @@
 		<spring-boot.version>2.0.4.RELEASE</spring-boot.version>
 		<java.version>1.8</java.version>
 		<springfox-version>2.8.0</springfox-version>
-		<wacodis-datasource-observer.version>1.1.0</wacodis-datasource-observer.version>
+		<wacodis-datasource-observer.version>1.1.1-SNAPSHOT</wacodis-datasource-observer.version>
 	</properties>
 
 	<dependencyManagement>
