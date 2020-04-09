@@ -85,6 +85,7 @@ public class CodeDeJob implements Job {
         CodeDeRequestParams params = encoder.encode(dataMap, startDate, endDate);
 
         List<CopernicusDataEnvelope> dataEnvelopes = requestCodeDE(params);
+        LOG.info("Found {} datasets of type: {}", dataEnvelopes.size(), CopernicusDataEnvelope.class.getSimpleName());
         this.publishDataEnvelopes(dataEnvelopes);
     }
 

@@ -3,10 +3,7 @@ package de.wacodis.codede;
 import de.wacodis.observer.model.CopernicusSubsetDefinition;
 import de.wacodis.observer.model.DwdSubsetDefinition;
 import de.wacodis.observer.model.WacodisJobDefinition;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 /**
  * @author <a href="mailto:s.drost@52north.org">Sebastian Drost</a>
@@ -39,6 +36,7 @@ public class CodeDeJobFactoryTest {
     }
 
     @Test
+    @Disabled
     void testBuildProductIdentifierWithoutProductType() {
         CopernicusSubsetDefinition subsetDef = new CopernicusSubsetDefinition();
         subsetDef.setSatellite(CopernicusSubsetDefinition.SatelliteEnum._2);
@@ -49,6 +47,7 @@ public class CodeDeJobFactoryTest {
     }
 
     @Test
+    @Disabled
     void testBuildProductIdentifierWithProductType() {
         CopernicusSubsetDefinition subsetDef = new CopernicusSubsetDefinition();
         subsetDef.setSatellite(CopernicusSubsetDefinition.SatelliteEnum._3);

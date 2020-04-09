@@ -87,6 +87,7 @@ public class CodeDeJobFactory implements JobFactory {
                 .build();
     }
 
+    @Deprecated
     protected String buildProductIdentifier(CopernicusSubsetDefinition def) {
         String satelliteAbr = SATELLTIE_MAPPING.get(def.getSatellite().toString());
         String productId = PRODUCT_IDENTIFIER_PREFIX
