@@ -4,7 +4,7 @@
 
 	<groupId>de.wacodis</groupId>
 	<artifactId>datasource-observer</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<packaging>pom</packaging>
 	
 	<name>WaCoDiS DatasourceObserver</name>
@@ -23,7 +23,7 @@
 		<url>https://github.com/WaCoDiS/datasource-observer/</url>
 		<connection>scm:git:git://github.com/WaCoDiS/datasource-observer.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/WaCoDiS/datasource-observer.git</developerConnection>
-		<tag>v1.0.0</tag>
+		<tag>v1.1.0</tag>
 	</scm>
     
 
@@ -37,10 +37,41 @@
 		<spring-boot.version>2.0.4.RELEASE</spring-boot.version>
 		<java.version>1.8</java.version>
 		<springfox-version>2.8.0</springfox-version>
+		<wacodis-datasource-observer.version>1.1.0</wacodis-datasource-observer.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>de.wacodis</groupId>
+				<artifactId>datasource-observer-core</artifactId>
+				<version>${wacodis-datasource-observer.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.wacodis</groupId>
+				<artifactId>sensor-web-observer</artifactId>
+				<version>${wacodis-datasource-observer.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.wacodis</groupId>
+				<artifactId>sentinel-observer</artifactId>
+				<version>${wacodis-datasource-observer.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.wacodis</groupId>
+				<artifactId>dwd-observer</artifactId>
+				<version>${wacodis-datasource-observer.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.wacodis</groupId>
+				<artifactId>code-de-observer</artifactId>
+				<version>${wacodis-datasource-observer.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.wacodis</groupId>
+				<artifactId>data-models</artifactId>
+				<version>${wacodis-datasource-observer.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
@@ -89,13 +120,7 @@
 				<scope>import</scope>
 			</dependency>
 			
-			<!--  --> 
-			
-			<dependency>
-				<groupId>de.wacodis</groupId>
-				<artifactId>data-models</artifactId>
-				<version>1.0.1-SNAPSHOT</version>
-			</dependency>
+			<!--  -->
 			<dependency>
 				<!-- Import dependency management from Spring Boot -->
 				<groupId>org.springframework.boot</groupId>

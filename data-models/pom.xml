@@ -3,7 +3,7 @@
     <parent>
         <groupId>de.wacodis</groupId>
         <artifactId>datasource-observer</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>data-models</artifactId>
@@ -56,7 +56,7 @@
                                         <artifactItem>
                                             <groupId>de.wacodis</groupId>
                                             <artifactId>openapi</artifactId>
-                                            <version>1.1.1-SNAPSHOT</version>
+                                            <version>1.1.1</version>
                                             <type>jar</type>
                                             <includes>definitions/wacodis-schemas.yml</includes>
                                             <outputDirectory>${project.basedir}/src/main/resources</outputDirectory>
@@ -99,7 +99,7 @@
                 <dependency>
                     <groupId>de.wacodis</groupId>
                     <artifactId>openapi</artifactId>
-                    <version>1.1.1-SNAPSHOT</version>
+                    <version>1.1.1</version>
                 </dependency>
                 <dependency>
                     <groupId>org.openapitools</groupId>
