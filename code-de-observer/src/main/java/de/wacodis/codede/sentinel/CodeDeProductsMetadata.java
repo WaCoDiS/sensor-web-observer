@@ -15,6 +15,7 @@ import java.util.List;
 public class CodeDeProductsMetadata {
 
     // required
+    private String satellite;
     private String datasetId;
     private float cloudCover;
     private String downloadLink;
@@ -25,6 +26,13 @@ public class CodeDeProductsMetadata {
     private DateTime endDate;
     private List<Float> areaOfInterest = new ArrayList<Float>();
 
+    public String getSatellite() {
+        return satellite;
+    }
+
+    public void setSatellite(String satellite) {
+        this.satellite = satellite;
+    }
 
     public String getProductIdentifier() {
         return productIdentifier;

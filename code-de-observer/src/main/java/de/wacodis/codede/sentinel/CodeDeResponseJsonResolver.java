@@ -22,6 +22,7 @@ public class CodeDeResponseJsonResolver {
     public static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final int ITEMS_PER_PAGE = 50;
 
+    private static final String SATELLITE_PATH = "/properties/collection";
     private static final String FEATURES_PATH = "/features";
     private static final String IDENTIFIER_PATH = "/id";
     private static final String PRODUCT_IDENTIFIER_PATH = "/properties/productIdentifier";
@@ -41,6 +42,7 @@ public class CodeDeResponseJsonResolver {
     public CodeDeProductsMetadata resolveMetadata(JsonNode node) throws ParsingException {
         CodeDeProductsMetadata metadata = new CodeDeProductsMetadata();
         metadata.setDatasetId(getIdentifier(node));
+        metadata.setSatellite(getSatellite(node));
         metadata.setAreaOfInterest(Arrays.asList(getBbox(node)));
         metadata.setStartDate(getTimeFrame(node)[0]);
         metadata.setEndDate(getTimeFrame(node)[1]);
@@ -58,6 +60,14 @@ public class CodeDeResponseJsonResolver {
         JsonNode idNode = node.at(IDENTIFIER_PATH);
         if (idNode.isMissingNode()) {
             throw new ParsingException(String.format("Missing node: '%s'", IDENTIFIER_PATH));
+        }
+        return idNode.asText();
+    }
+
+    String getSatellite(JsonNode node) throws ParsingException {
+        JsonNode idNode = node.at(SATELLITE_PATH);
+        if (idNode.isMissingNode()) {
+            throw new ParsingException(String.format("Missing node: '%s'", SATELLITE_PATH));
         }
         return idNode.asText();
     }

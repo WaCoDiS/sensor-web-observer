@@ -340,7 +340,6 @@
     {
       "type": "Feature",
       "properties": {
-        "collection": "Sentinel2",
         "status": 0,
         "license": {
           "licenseId": "unlicensed",

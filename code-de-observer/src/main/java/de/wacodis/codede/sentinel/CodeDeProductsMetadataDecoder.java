@@ -14,26 +14,37 @@ import de.wacodis.observer.model.CopernicusDataEnvelope;
 public class CodeDeProductsMetadataDecoder {
 
     /**
-     *delivers the content of a CodeDeProductsMetadata-object into a dataEnvelope
+     * delivers the content of a CodeDeProductsMetadata-object into a dataEnvelope
+     *
      * @param metadata object containing the metadata information of a code de request
      * @return CopernicusDataEnvelope, contains information about the product
      */
-    public static CopernicusDataEnvelope decode(CodeDeProductsMetadata metadata){
+    public static CopernicusDataEnvelope decode(CodeDeProductsMetadata metadata) {
 
-        // create objects
         CopernicusDataEnvelope copDE = new CopernicusDataEnvelope();
 
-        // datasetId, satellite, cloudCoverage, portal, sourceType
+        if (metadata.getSatellite().equalsIgnoreCase("sentinel1") ||
+                metadata.getSatellite().equalsIgnoreCase("sentinel-1")) {
+            copDE.setSatellite(CopernicusDataEnvelope.SatelliteEnum._1);
+        } else if (metadata.getSatellite().equalsIgnoreCase("sentinel2") ||
+                metadata.getSatellite().equalsIgnoreCase("sentinel-2")) {
+            copDE.setSatellite(CopernicusDataEnvelope.SatelliteEnum._2);
+        } else if (metadata.getSatellite().equalsIgnoreCase("sentinel3") ||
+                metadata.getSatellite().equalsIgnoreCase("sentinel-3")) {
+            copDE.setSatellite(CopernicusDataEnvelope.SatelliteEnum._3);
+        } else {
+            copDE.setSatellite(null);
+        }
+
         copDE.setDatasetId(metadata.getDatasetId());
-        //copDE.setSatellite();
         copDE.setCloudCoverage(metadata.getCloudCover());
         copDE.setPortal(CopernicusDataEnvelope.PortalEnum.CODE_DE);
         copDE.setSourceType(AbstractDataEnvelope.SourceTypeEnum.COPERNICUSDATAENVELOPE);
-        // extent
+
         AbstractDataEnvelopeAreaOfInterest extent = new AbstractDataEnvelopeAreaOfInterest();
         extent.extent(metadata.getAreaOfInterest());
         copDE.setAreaOfInterest(extent);
-        // timeframe
+
         AbstractDataEnvelopeTimeFrame timeframe = new AbstractDataEnvelopeTimeFrame();
         timeframe.setStartTime(metadata.getStartDate());
         timeframe.setEndTime(metadata.getEndDate());

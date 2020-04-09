@@ -34,7 +34,6 @@ public class CodeDeResponseJsonResolverTest {
 
     @Test
     void testGetIdentifier() throws ParsingException {
-//        String expId = "/codede/Sentinel-2/MSI/L1C/2020/03/30/S2B_MSIL1C_20200330T102609_N0209_R108_T31UGS_20200330T124538.SAFE";
         String expId = "716581ca-6e69-5ab0-bea8-05ad87d5af11";
         String identifier = resolver.getIdentifier(featureNode);
 
@@ -44,6 +43,19 @@ public class CodeDeResponseJsonResolverTest {
     @Test
     void testGetIdentifierShouldThrowPArsingExceptionForMissingNode() {
         Assertions.assertThrows(ParsingException.class, () -> resolver.getIdentifier(failingFeatureNode));
+    }
+
+    @Test
+    void testGetSatellite() throws ParsingException {
+        String expId = "Sentinel2";
+        String identifier = resolver.getSatellite(featureNode);
+
+        Assertions.assertEquals(expId, identifier);
+    }
+
+    @Test
+    void testGetSatlliteShouldThrowPArsingExceptionForMissingNode() {
+        Assertions.assertThrows(ParsingException.class, () -> resolver.getSatellite(failingFeatureNode));
     }
 
     @Test
