@@ -21,19 +21,16 @@ spring:
           type: rabbit
   datasource.quartz-data-source:
     name: quartzDataSource
-    jdbc-url: jdbc:h2:mem:quartzDB
-    username: sa
-    password:
-    driver-class: org.h2.Driver
+    jdbc-url: jdbc:postgresql://localhost:5433/wacodis-jobs
+    username: postgres
+    password: postgres
+    driver-class: org.postgresql.Driver
   quartz:
     job-store-type: jdbc
-    jdbc:
-      initialize-schema: always
-      schema: classpath:tables_h2_if_not_exist.sql
     properties:
       org.quartz.jobStore:
         class: org.quartz.impl.jdbcjobstore.JobStoreTX
-        driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+        driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
         dataSource: quartzDataSource
         tablePrefix: QRTZ_
         isClustered: false
@@ -50,7 +47,7 @@ datasource-observer:
     interval:
       # in seconds
       sensorWeb: 3600
-      sentinel: 3600
+      sentinel: 60
       dwd: 3600
   sentinelhub:
     enabled: false
