@@ -25,6 +25,7 @@ public class ProductMetadata {
     private String instrumentShortName;
     private String footprintWkt;
     private String platformName;
+    private String sensorMode;
     private String productType;
     private String processingLevel;
     private Envelope bbox;
@@ -99,6 +100,14 @@ public class ProductMetadata {
 
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
+    }
+
+    public String getSensorMode() {
+        return sensorMode;
+    }
+
+    public void setSensorMode(String sensorMode) {
+        this.sensorMode = sensorMode;
     }
 
     public String getProductType() {

@@ -62,6 +62,7 @@ public class FeedDecoderTest {
         Assert.assertThat(p1.getPlatformName(), CoreMatchers.equalTo("Sentinel-2"));
         Assert.assertThat(p1.getProcessingLevel(), CoreMatchers.equalTo("Level-2A"));
         Assert.assertThat(p1.getProductType(), CoreMatchers.equalTo("S2MSI2A"));
+        Assert.assertNull(p1.getSensorMode());
         Assert.assertThat(p1.resolveBbox(), CoreMatchers.notNullValue());
         Envelope bbox = p1.resolveBbox();
         Assert.assertThat(bbox.getMaxX(), CoreMatchers.is(7.450589699013681));

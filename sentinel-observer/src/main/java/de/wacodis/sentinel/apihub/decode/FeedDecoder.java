@@ -106,6 +106,7 @@ public class FeedDecoder {
             XPathExpression ingestionDateExpr = this.xpath.compile("./a:date[@name = 'ingestiondate']");
             XPathExpression footprintExpr = this.xpath.compile("./a:str[@name = 'footprint']");
             XPathExpression platformExpr = this.xpath.compile("./a:str[@name = 'platformname']");
+            XPathExpression sensorModeExpr = this.xpath.compile("./a:str[@name = 'sensoroperationalmode']");
             XPathExpression processLvlExpr = this.xpath.compile("./a:str[@name = 'processinglevel']");
             XPathExpression productTypeExpr = this.xpath.compile("./a:str[@name = 'producttype']");
             
@@ -120,6 +121,7 @@ public class FeedDecoder {
                 Object ingestionDateCandidate = ingestionDateExpr.evaluate(n, XPathConstants.STRING);
                 Object footprintCandidate = footprintExpr.evaluate(n, XPathConstants.STRING);
                 Object platformCandidate = platformExpr.evaluate(n, XPathConstants.STRING);
+                Object sensorModeCandidate = sensorModeExpr.evaluate(n, XPathConstants.STRING);
                 Object processLvlCandidate = processLvlExpr.evaluate(n, XPathConstants.STRING);
                 Object productTypeCandidate = productTypeExpr.evaluate(n, XPathConstants.STRING);
                 
@@ -133,6 +135,7 @@ public class FeedDecoder {
                 p.setIngestionDate(extractDate(ingestionDateCandidate));
                 p.setFootprintWkt(extractString(footprintCandidate));
                 p.setPlatformName(extractString(platformCandidate));
+                p.setSensorMode(extractString(sensorModeCandidate));
                 p.setProcessingLevel(extractString(processLvlCandidate));
                 p.setProductType(extractString(productTypeCandidate));
                 
