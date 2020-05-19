@@ -105,6 +105,9 @@ public class FeedDecoder {
             XPathExpression endPositionExpr = this.xpath.compile("./a:date[@name = 'endposition']");
             XPathExpression ingestionDateExpr = this.xpath.compile("./a:date[@name = 'ingestiondate']");
             XPathExpression footprintExpr = this.xpath.compile("./a:str[@name = 'footprint']");
+            XPathExpression platformExpr = this.xpath.compile("./a:str[@name = 'platformname']");
+            XPathExpression processLvlExpr = this.xpath.compile("./a:str[@name = 'processinglevel']");
+            XPathExpression productTypeExpr = this.xpath.compile("./a:str[@name = 'producttype']");
             
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node n = nodes.item(i);
@@ -116,6 +119,9 @@ public class FeedDecoder {
                 Object endPositionCandidate = endPositionExpr.evaluate(n, XPathConstants.STRING);
                 Object ingestionDateCandidate = ingestionDateExpr.evaluate(n, XPathConstants.STRING);
                 Object footprintCandidate = footprintExpr.evaluate(n, XPathConstants.STRING);
+                Object platformCandidate = platformExpr.evaluate(n, XPathConstants.STRING);
+                Object processLvlCandidate = processLvlExpr.evaluate(n, XPathConstants.STRING);
+                Object productTypeCandidate = productTypeExpr.evaluate(n, XPathConstants.STRING);
                 
                 ProductMetadata p = new ProductMetadata();                
                 p.setTitle(extractString(titleCandidate));
@@ -126,6 +132,9 @@ public class FeedDecoder {
                 p.setEndPosition(extractDate(endPositionCandidate));
                 p.setIngestionDate(extractDate(ingestionDateCandidate));
                 p.setFootprintWkt(extractString(footprintCandidate));
+                p.setPlatformName(extractString(platformCandidate));
+                p.setProcessingLevel(extractString(processLvlCandidate));
+                p.setProductType(extractString(productTypeCandidate));
                 
                 products.add(p);
             }

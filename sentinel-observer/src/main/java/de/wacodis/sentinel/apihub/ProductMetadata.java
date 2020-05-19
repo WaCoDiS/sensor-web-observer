@@ -24,6 +24,9 @@ public class ProductMetadata {
     private double cloudCoverPercentage;
     private String instrumentShortName;
     private String footprintWkt;
+    private String platformName;
+    private String productType;
+    private String processingLevel;
     private Envelope bbox;
 
     public String getTitle() {
@@ -88,6 +91,30 @@ public class ProductMetadata {
 
     public void setFootprintWkt(String footprintWkt) {
         this.footprintWkt = footprintWkt;
+    }
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public String getProcessingLevel() {
+        return processingLevel;
+    }
+
+    public void setProcessingLevel(String processingLevel) {
+        this.processingLevel = processingLevel;
     }
 
     public Envelope resolveBbox() {

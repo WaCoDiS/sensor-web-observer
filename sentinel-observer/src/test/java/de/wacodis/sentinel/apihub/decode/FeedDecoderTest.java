@@ -59,6 +59,9 @@ public class FeedDecoderTest {
                 + " 50.536822596839706,6.686823508496596 50.68300782013704,6.745473100900398 50.82898642785132,6.804652027737079"
                 + " 50.97486399443909,6.864109136690101 51.120703959269576,6.924048041127735 51.26647095616419,6.971322514095254"
                 + " 51.38160373804328,7.450589699013681 51.366602012514676,7.357621898236907 50.38212225093181,6.576402776126024 50.406238167275816))"));
+        Assert.assertThat(p1.getPlatformName(), CoreMatchers.equalTo("Sentinel-2"));
+        Assert.assertThat(p1.getProcessingLevel(), CoreMatchers.equalTo("Level-2A"));
+        Assert.assertThat(p1.getProductType(), CoreMatchers.equalTo("S2MSI2A"));
         Assert.assertThat(p1.resolveBbox(), CoreMatchers.notNullValue());
         Envelope bbox = p1.resolveBbox();
         Assert.assertThat(bbox.getMaxX(), CoreMatchers.is(7.450589699013681));
