@@ -23,7 +23,7 @@
         <url>https://github.com/WaCoDiS/datasource-observer/</url>
         <connection>scm:git:git://github.com/WaCoDiS/datasource-observer.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/WaCoDiS/datasource-observer.git</developerConnection>
-        <tag>v1.1.0</tag>
+        <tag>v1.1.1</tag>
     </scm>
 
 
