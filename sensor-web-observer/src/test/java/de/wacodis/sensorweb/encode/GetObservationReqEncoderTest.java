@@ -23,10 +23,9 @@ public class GetObservationReqEncoderTest {
 		List<String> offerings = Lists.newArrayList("Zeitreihen_Einzelwert");
 		List<String> featureIdentifiers = Lists.newArrayList("Laaken");
 		
-		DateTime start = new DateTime(2018, 3, 3, 0, 0, 0);
-		DateTime end = new DateTime(2018, 3, 3, 12, 0, 0);
-		
-		
+		DateTime start = DateTime.parse("2018-03-03T00:00:00+01:00");
+		DateTime end = DateTime.parse("2018-03-03T12:00:00+01:00");
+				
 		GetObservationReqEncoder encoder = new GetObservationReqEncoder();
 		String encoded = "";
 		String assertion = "";
