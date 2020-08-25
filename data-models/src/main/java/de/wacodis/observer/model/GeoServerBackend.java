@@ -17,7 +17,7 @@ import javax.validation.constraints.*;
  * contains specific information about a GeoServer product backend 
  */
 @ApiModel(description = "contains specific information about a GeoServer product backend ")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-03-25T18:31:03.536+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-04-02T17:23:27.249+02:00[Europe/Berlin]")
 
 public class GeoServerBackend extends AbstractBackend implements Serializable {
   private static final long serialVersionUID = 1L;

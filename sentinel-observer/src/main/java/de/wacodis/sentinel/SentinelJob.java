@@ -168,19 +168,45 @@ public class SentinelJob implements Job {
         }
 
         LOG.info("Found {} new products for Job {}", newProducts.size(), ctxt.getJobDetail().getKey());
-        
+
         final CopernicusDataEnvelope.SatelliteEnum satellite = CopernicusDataEnvelope.SatelliteEnum.fromValue(platformName.toLowerCase());
         newProducts.stream().forEach(p -> {
-            CopernicusDataEnvelope env = prepareEnvelop(p.getCloudCoverPercentage(), p.resolveBbox(), p.getId(),
-                    satellite, p.getBeginPosition(), p.getEndPosition());
+            CopernicusDataEnvelope env = prepareEnvelop(p);
             env.setPortal(CopernicusDataEnvelope.PortalEnum.SENTINEL_HUB);
 
-            publish(env);            
+            publish(env);
         });
     }
 
+    private CopernicusDataEnvelope prepareEnvelop(ProductMetadata metadata) {
+        //Build new SensorWebDataEnvelope
+        CopernicusDataEnvelope dataEnvelope = new CopernicusDataEnvelope();
+
+        dataEnvelope.setSourceType(AbstractDataEnvelope.SourceTypeEnum.COPERNICUSDATAENVELOPE);
+        dataEnvelope.setCloudCoverage((float) metadata.getCloudCoverPercentage());
+        dataEnvelope.setAreaOfInterest(createAreaOfInterest(metadata.resolveBbox()));
+        dataEnvelope.setDatasetId(metadata.getId());
+
+        CopernicusDataEnvelope.SatelliteEnum satellite = resolveSatellite(metadata);
+        dataEnvelope.setSatellite(satellite);
+        dataEnvelope.setInstrument(metadata.getInstrumentShortName());
+        dataEnvelope.sensorMode(metadata.getSensorMode());
+        dataEnvelope.setProductLevel(resolveProcessingLevel(metadata));
+        dataEnvelope.setProductType(resolveProductType(metadata, satellite));
+
+        dataEnvelope.setModified(new DateTime());
+
+        AbstractDataEnvelopeTimeFrame timeFrame = new AbstractDataEnvelopeTimeFrame();
+        timeFrame.setStartTime(metadata.getBeginPosition());
+        timeFrame.setEndTime(metadata.getEndPosition());
+        dataEnvelope.setTimeFrame(timeFrame);
+
+        return dataEnvelope;
+    }
+
+    @Deprecated
     private CopernicusDataEnvelope prepareEnvelop(double cloudCover, Envelope aoi, String id,
-            CopernicusDataEnvelope.SatelliteEnum platformName, DateTime firstProduct, DateTime lastProduct) {
+                                                  CopernicusDataEnvelope.SatelliteEnum platformName, DateTime firstProduct, DateTime lastProduct) {
         //Build new SensorWebDataEnvelope
         CopernicusDataEnvelope dataEnvelope = new CopernicusDataEnvelope();
 
@@ -189,8 +215,8 @@ public class SentinelJob implements Job {
         dataEnvelope.setAreaOfInterest(createAreaOfInterest(aoi));
         dataEnvelope.setSatellite(platformName);
         dataEnvelope.setDatasetId(id);
-        
-        dataEnvelope.setModified(new DateTime());	
+
+        dataEnvelope.setModified(new DateTime());
 
         AbstractDataEnvelopeTimeFrame timeFrame = new AbstractDataEnvelopeTimeFrame();
         timeFrame.setStartTime(firstProduct);
@@ -200,16 +226,51 @@ public class SentinelJob implements Job {
         return dataEnvelope;
     }
 
+    private CopernicusDataEnvelope.SatelliteEnum resolveSatellite(ProductMetadata metadata) {
+        return CopernicusDataEnvelope.SatelliteEnum.fromValue(metadata.getPlatformName().toLowerCase());
+    }
+
+    private String resolveProcessingLevel(ProductMetadata metadata) {
+        // This is the case for Sentinel-1 datasets
+        if (metadata.getProcessingLevel() == null) {
+            return null;
+            // For Sentinel-2 do some String processing to meet the expected values
+            // (LEVEL1C and LEVEL2A instead of Level-1C and Level-2A)
+        } else {
+            return metadata.getProcessingLevel().replace("-", "").toUpperCase();
+        }
+    }
+
+    private String resolveProductType(ProductMetadata metadata, CopernicusDataEnvelope.SatelliteEnum satellite) {
+        // For Sentinel-2 resolve the product type from processing level
+        // to meet the expected values
+        switch (satellite) {
+            case _2: {
+                if (metadata.getProcessingLevel().equals("Level-2A"))
+                    return "L2A";
+                else if (metadata.getProcessingLevel().equals("Level-1C"))
+                    return "L1C";
+                else
+                    return null;
+
+            }
+            // For all other datasets assume the originally product type
+            default:
+                return metadata.getProductType();
+        }
+    }
+
     private void publish(CopernicusDataEnvelope data) {
         publisher.sendDataEnvelope().send(MessageBuilder.withPayload(data).build());
-        LOG.info("DataEnvelope published");
+        LOG.info("Published new CopernicusDataEnvelope for Copernicus dataset: {}", data.getDatasetId());
+        LOG.debug("Published CopernicusDataEnvelope: {}", data);
     }
 
     private AbstractDataEnvelopeAreaOfInterest createAreaOfInterest(Envelope aoi) {
         if (aoi == null) {
             return null;
         }
-        
+
         AbstractDataEnvelopeAreaOfInterest result = new AbstractDataEnvelopeAreaOfInterest();
         List<Float> asList = Arrays.asList((float) aoi.getMinX(), (float) aoi.getMinY(),
                 (float) aoi.getMaxX(), (float) aoi.getMaxY());

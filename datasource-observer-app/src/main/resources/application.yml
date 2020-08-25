@@ -52,10 +52,14 @@ management:
 datasource-observer:
   execution:
     interval:
+      # in seconds
       sensorWeb: 3600
-      sentinel: 60
+      sentinel: 3600
       dwd: 3600
   sentinelhub:
+    enabled: false
     base-url: https://scihub.copernicus.eu/apihub/
     user: testuser
     password: testpwd
+  code-de:
+    enabled: true

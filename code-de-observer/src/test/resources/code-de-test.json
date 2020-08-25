@@ -1,0 +1,2702 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "id": "bb69e4d0-ce5f-57c9-8ad4-6df54fa405d2",
+    "totalResults": 9,
+    "exactCount": true,
+    "startIndex": 1,
+    "itemsPerPage": 9,
+    "query": {
+      "originalFilters": {
+        "maxRecords": "10",
+        "startDate": "2020-03-01T00:00:00Z",
+        "completionDate": "2020-04-01T23:59:59Z",
+        "cloudCover": "[0,15]",
+        "instrument": "MSI",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "geometry": "POLYGON((7.023582486435771 50.94074249267579,7.023582486435771 51.29734038608149,7.555961664766073 51.29734038608149,7.555961664766073 50.94074249267579,7.023582486435771 50.94074249267579))",
+        "status": 0,
+        "collection": "Sentinel2"
+      },
+      "appliedFilters": {
+        "maxRecords": "10",
+        "startDate": "2020-03-01T00:00:00Z",
+        "completionDate": "2020-04-01T23:59:59Z",
+        "cloudCover": "[0,15]",
+        "instrument": "MSI",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "geometry": "POLYGON((7.023582486435771 50.94074249267579,7.023582486435771 51.29734038608149,7.555961664766073 51.29734038608149,7.555961664766073 50.94074249267579,7.023582486435771 50.94074249267579))",
+        "status": 0,
+        "collection": "Sentinel2"
+      },
+      "analysis": {
+        "query": null,
+        "language": "en",
+        "analyze": {
+          "What": [],
+          "When": [],
+          "Where": [],
+          "Errors": [],
+          "Explained": []
+        },
+        "processingTime": 1.9073486328125e-6
+      },
+      "processingTime": 0.048098087310791
+    },
+    "links": [
+      {
+        "rel": "self",
+        "type": "application/json",
+        "title": "self",
+        "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&maxRecords=10&startDate=2020-03-01T00%3A00%3A00Z&completionDate=2020-04-01T23%3A59%3A59Z&cloudCover=%5B0%2C15%5D&instrument=MSI&productType=L1C&processingLevel=LEVEL1C&geometry=POLYGON%28%287.023582486435771%2050.94074249267579%2C7.023582486435771%2051.29734038608149%2C7.555961664766073%2051.29734038608149%2C7.555961664766073%2050.94074249267579%2C7.023582486435771%2050.94074249267579%29%29&recordSchema=om"
+      },
+      {
+        "rel": "search",
+        "type": "application/opensearchdescription+xml",
+        "title": "OpenSearch Description Document",
+        "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/describe.xml"
+      }
+    ]
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "716581ca-6e69-5ab0-bea8-05ad87d5af11",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              6.574941793,
+              50.406283267
+            ],
+            [
+              6.588986097,
+              50.441896832
+            ],
+            [
+              6.646582719,
+              50.588011472
+            ],
+            [
+              6.704706222,
+              50.734085763
+            ],
+            [
+              6.763535221,
+              50.88007519
+            ],
+            [
+              6.822675249,
+              51.026077258
+            ],
+            [
+              6.882422135,
+              51.172012069
+            ],
+            [
+              6.942844706,
+              51.317856714
+            ],
+            [
+              6.969185802,
+              51.38167062
+            ],
+            [
+              7.450589699,
+              51.366602013
+            ],
+            [
+              7.357621898,
+              50.382122251
+            ],
+            [
+              6.574941793,
+              50.406283267
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "collection": "Sentinel2",
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/codede/Sentinel-2/MSI/L1C/2020/03/30/S2B_MSIL1C_20200330T102609_N0209_R108_T31UGS_20200330T124538.SAFE",
+        "parentIdentifier": null,
+        "title": "S2B_MSIL1C_20200330T102609_N0209_R108_T31UGS_20200330T124538.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "startDate": "2020-03-30T10:26:09.024Z",
+        "completionDate": "2020-03-30T10:26:09.024Z",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2B",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 16007,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/30/S2B_MSIL1C_20200330T102609_N0209_R108_T31UGS_20200330T124538.SAFE/S2B_MSIL1C_20200330T102609_N0209_R108_T31UGS_20200330T124538-ql.jpg",
+        "updated": "2020-03-31T09:28:28.210923Z",
+        "published": "2020-03-31T09:28:28.210923Z",
+        "snowCover": 0,
+        "cloudCover": 12.6535,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 100,
+            "gcover": 1.37,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 82.58,
+            "gcover": 11.71,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "cc05d8ba736238c",
+            "name": "Rheinland-Pfalz",
+            "normalized": "rheinlandpfalz",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 17.48,
+            "gcover": 4.26,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Rheinland-Pfalz"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 2242.6673883121,
+            "value": 45.92,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 1850.3483914452,
+            "value": 37.89,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 738.4393292899,
+            "value": 15.12,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 55.86112110546,
+            "value": 1.14,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "b4de51064131332",
+            "name": "Spring",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Spring"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "56bf819406cae6b",
+            "name": "s2B",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2B"
+          },
+          {
+            "id": "f841767ba5c92d4",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "56bf819406cae6b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "aca78422271631a",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "f841767ba5c92d4",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "1c1c403216da1fd",
+            "name": "30",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=30"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>6.5749417933669,50.406283267219 6.5889860972917,50.441896831606 6.646582719332,50.588011471962 6.7047062217311,50.734085762868 6.763535221486,50.880075190349 6.8226752487234,51.026077258046 6.8824221346033,51.17201206922 6.9428447056094,51.31785671427 6.9691858024079,51.381670620073 7.4505896990137,51.366602012515 7.3576218982369,50.382122250932 6.5749417933669,50.406283267219</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            7.077470063,
+            50.84539009
+          ]
+        },
+        "orbitDirection": "ascending",
+        "timeliness": null,
+        "relativeOrbitNumber": 108,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2B_20200330T102609_016007_N02.09",
+        "services": {
+          "download": {
+            "url": "https://zipper.prod.cloud.code-de.org/download/716581ca-6e69-5ab0-bea8-05ad87d5af11",
+            "mimeType": "application/unknown",
+            "size": 382383296
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for 716581ca-6e69-5ab0-bea8-05ad87d5af11",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/716581ca-6e69-5ab0-bea8-05ad87d5af11.json?&lang=en"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "parentIdentifier": null,
+        "title": "S2A_MSIL1C_20200328T104021_N0209_R008_T31UGT_20200328T125435.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2A",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 24887,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/28/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGT_20200328T125435.SAFE/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGT_20200328T125435-ql.jpg",
+        "updated": "2020-03-29T17:37:13.00086Z",
+        "published": "2020-03-29T17:37:13.00086Z",
+        "snowCover": 0,
+        "cloudCover": -1,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 67.76,
+            "gcover": 2.28,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 67.44,
+            "gcover": 23.52,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "3763cf3ce24c9c6",
+            "name": "Niedersachsen",
+            "normalized": "niedersachsen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 0.31,
+            "gcover": 0.07,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Niedersachsen"
+          },
+          {
+            "id": "21e9736cb764775",
+            "name": "Netherlands",
+            "normalized": "netherlands",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 32.19,
+            "gcover": 10.37,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Netherlands"
+          },
+          {
+            "id": "6c87215f6a0bc58",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "21e9736cb764775",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "84d400ec3d60125",
+            "name": "Gelderland",
+            "normalized": "gelderland",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 19.41,
+            "gcover": 45.56,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Gelderland"
+          },
+          {
+            "id": "d14e3a4ab42816e",
+            "name": "Overijssel",
+            "normalized": "overijssel",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 6.1,
+            "gcover": 22,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Overijssel"
+          },
+          {
+            "id": "48a8e0f850a060f",
+            "name": "Limburg",
+            "normalized": "limburg",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 5.28,
+            "gcover": 30.39,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Limburg"
+          },
+          {
+            "id": "2e6886e23050a1f",
+            "name": "Noord-Brabant",
+            "normalized": "noordbrabant",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 1.35,
+            "gcover": 3.12,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Noord-Brabant"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 8268.0393496641,
+            "value": 68.89,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 1524.2677181322,
+            "value": 12.7,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 1284.0863668235,
+            "value": 10.7,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 1101.1592917826,
+            "value": 9.17,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "b4de51064131332",
+            "name": "Spring",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Spring"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "afe9ad14455c260",
+            "name": "s2A",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2A"
+          },
+          {
+            "id": "503f8f6199f3e44",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "afe9ad14455c260",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "3f85bb5d775e1fc",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "503f8f6199f3e44",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "2255d84df307b80",
+            "name": "28",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=28"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>5.9336157658092,52.314037804793 7.5399796808778,52.263137397918 7.4420951843331,51.278925182786 5.870215764132,51.328067311214 5.9336157658092,52.314037804793</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            6.696532449,
+            51.797829004
+          ]
+        },
+        "orbitDirection": "descending",
+        "timeliness": null,
+        "relativeOrbitNumber": 8,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2A_20200328T104021_024887_N02.09",
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for df8d301c-a8f2-5ef2-b7f5-1afa2e623891",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/df8d301c-a8f2-5ef2-b7f5-1afa2e623891.json?&lang=en"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "7c42aa78-edfb-5435-bb40-666c79cb5ad3",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              6.123708232,
+              51.41588359
+            ],
+            [
+              7.702092127,
+              51.443997908
+            ],
+            [
+              7.729300892,
+              50.456861171
+            ],
+            [
+              6.183927395,
+              50.429712992
+            ],
+            [
+              6.123708232,
+              51.41588359
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "collection": "Sentinel2",
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/codede/Sentinel-2/MSI/L1C/2020/03/28/S2A_MSIL1C_20200328T104021_N0209_R008_T32ULB_20200328T125435.SAFE",
+        "parentIdentifier": null,
+        "title": "S2A_MSIL1C_20200328T104021_N0209_R008_T32ULB_20200328T125435.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "startDate": "2020-03-28T10:40:21.024Z",
+        "completionDate": "2020-03-28T10:40:21.024Z",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2A",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 24887,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/28/S2A_MSIL1C_20200328T104021_N0209_R008_T32ULB_20200328T125435.SAFE/S2A_MSIL1C_20200328T104021_N0209_R008_T32ULB_20200328T125435-ql.jpg",
+        "updated": "2020-03-29T17:37:32.402649Z",
+        "published": "2020-03-29T17:37:32.402649Z",
+        "snowCover": 0,
+        "cloudCover": 0,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 98.86,
+            "gcover": 3.33,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 87.48,
+            "gcover": 30.55,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "cc05d8ba736238c",
+            "name": "Rheinland-Pfalz",
+            "normalized": "rheinlandpfalz",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 11.44,
+            "gcover": 6.86,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Rheinland-Pfalz"
+          },
+          {
+            "id": "9cc27b309d16a9c",
+            "name": "Belgium",
+            "normalized": "belgium",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 0.74,
+            "gcover": 0.29,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Belgium"
+          },
+          {
+            "id": "00b9ac9167bfc04",
+            "name": "Walloon",
+            "normalized": "walloon",
+            "type": "region",
+            "parentHash": "9cc27b309d16a9c",
+            "value": 0.8,
+            "gcover": 0.57,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Walloon"
+          },
+          {
+            "id": "1d44dca99c2180a",
+            "name": "Liege",
+            "normalized": "liege",
+            "type": "state",
+            "parentHash": "00b9ac9167bfc04",
+            "value": 0.74,
+            "gcover": 2.4,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Liege"
+          },
+          {
+            "id": "21e9736cb764775",
+            "name": "Netherlands",
+            "normalized": "netherlands",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 0.43,
+            "gcover": 0.13,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Netherlands"
+          },
+          {
+            "id": "6c87215f6a0bc58",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "21e9736cb764775",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "48a8e0f850a060f",
+            "name": "Limburg",
+            "normalized": "limburg",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 0.43,
+            "gcover": 2.48,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Limburg"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 6137.399682071,
+            "value": 51.07,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 4279.7491773664,
+            "value": 35.61,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 1379.2478886387,
+            "value": 11.47,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 220.40060839115,
+            "value": 1.83,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "b4de51064131332",
+            "name": "Spring",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Spring"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "afe9ad14455c260",
+            "name": "s2A",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2A"
+          },
+          {
+            "id": "503f8f6199f3e44",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "afe9ad14455c260",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "3f85bb5d775e1fc",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "503f8f6199f3e44",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "2255d84df307b80",
+            "name": "28",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=28"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>6.1237082316989,51.415883589518 7.7020921271763,51.443997908036 7.7293008917944,50.456861170627 6.1839273950963,50.429712991702 6.1237082316989,51.415883589518</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            6.934730503,
+            50.938353445
+          ]
+        },
+        "orbitDirection": "descending",
+        "timeliness": null,
+        "relativeOrbitNumber": 8,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2A_20200328T104021_024887_N02.09",
+        "services": {
+          "download": {
+            "url": "https://zipper.prod.cloud.code-de.org/download/7c42aa78-edfb-5435-bb40-666c79cb5ad3",
+            "mimeType": "application/unknown",
+            "size": 845705354
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for 7c42aa78-edfb-5435-bb40-666c79cb5ad3",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/7c42aa78-edfb-5435-bb40-666c79cb5ad3.json?&lang=en"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f420dbb0-37bc-566c-8f84-af457bfe8fa3",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.875717289,
+              51.415897696
+            ],
+            [
+              7.450589699,
+              51.366602013
+            ],
+            [
+              7.357621898,
+              50.382122251
+            ],
+            [
+              5.815510114,
+              50.429726614
+            ],
+            [
+              5.875717289,
+              51.415897696
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "collection": "Sentinel2",
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/codede/Sentinel-2/MSI/L1C/2020/03/28/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGS_20200328T125435.SAFE",
+        "parentIdentifier": null,
+        "title": "S2A_MSIL1C_20200328T104021_N0209_R008_T31UGS_20200328T125435.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "startDate": "2020-03-28T10:40:21.024Z",
+        "completionDate": "2020-03-28T10:40:21.024Z",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2A",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 24887,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/28/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGS_20200328T125435.SAFE/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGS_20200328T125435-ql.jpg",
+        "updated": "2020-03-29T17:37:52.136523Z",
+        "published": "2020-03-29T17:37:52.136523Z",
+        "snowCover": 0,
+        "cloudCover": 0,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 84.07,
+            "gcover": 2.83,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 77.01,
+            "gcover": 26.86,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "cc05d8ba736238c",
+            "name": "Rheinland-Pfalz",
+            "normalized": "rheinlandpfalz",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 7.11,
+            "gcover": 4.26,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Rheinland-Pfalz"
+          },
+          {
+            "id": "21e9736cb764775",
+            "name": "Netherlands",
+            "normalized": "netherlands",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 8.23,
+            "gcover": 2.65,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Netherlands"
+          },
+          {
+            "id": "6c87215f6a0bc58",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "21e9736cb764775",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "48a8e0f850a060f",
+            "name": "Limburg",
+            "normalized": "limburg",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 8.07,
+            "gcover": 46.45,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Limburg"
+          },
+          {
+            "id": "2e6886e23050a1f",
+            "name": "Noord-Brabant",
+            "normalized": "noordbrabant",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 0.15,
+            "gcover": 0.36,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Noord-Brabant"
+          },
+          {
+            "id": "9cc27b309d16a9c",
+            "name": "Belgium",
+            "normalized": "belgium",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 7.7,
+            "gcover": 3.02,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Belgium"
+          },
+          {
+            "id": "00b9ac9167bfc04",
+            "name": "Walloon",
+            "normalized": "walloon",
+            "type": "region",
+            "parentHash": "9cc27b309d16a9c",
+            "value": 7.61,
+            "gcover": 5.39,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Walloon"
+          },
+          {
+            "id": "1d44dca99c2180a",
+            "name": "Liege",
+            "normalized": "liege",
+            "type": "state",
+            "parentHash": "00b9ac9167bfc04",
+            "value": 7.54,
+            "gcover": 24.26,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Liege"
+          },
+          {
+            "id": "98c87182de53552",
+            "name": "Flemish",
+            "normalized": "flemish",
+            "type": "region",
+            "parentHash": "9cc27b309d16a9c",
+            "value": 0.16,
+            "gcover": 0.14,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Flemish"
+          },
+          {
+            "id": "6b4d75950f34b3a",
+            "name": "Limburg",
+            "normalized": "limburg",
+            "type": "state",
+            "parentHash": "98c87182de53552",
+            "value": 0.16,
+            "gcover": 0.81,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Limburg"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 6881.0600342162,
+            "value": 57.32,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 3309.5546938613,
+            "value": 27.57,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 1422.4945157825,
+            "value": 11.85,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 459.1987518758,
+            "value": 3.82,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "b4de51064131332",
+            "name": "Spring",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Spring"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "afe9ad14455c260",
+            "name": "s2A",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2A"
+          },
+          {
+            "id": "503f8f6199f3e44",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "afe9ad14455c260",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "3f85bb5d775e1fc",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "503f8f6199f3e44",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "2255d84df307b80",
+            "name": "28",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=28"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>5.8757172886033,51.415897696398 7.4505896990137,51.366602012515 7.3576218982369,50.382122250932 5.815510113567,50.429726614086 5.8757172886033,51.415897696398</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            6.624905648,
+            50.900318664
+          ]
+        },
+        "orbitDirection": "descending",
+        "timeliness": null,
+        "relativeOrbitNumber": 8,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2A_20200328T104021_024887_N02.09",
+        "services": {
+          "download": {
+            "url": "https://zipper.prod.cloud.code-de.org/download/f420dbb0-37bc-566c-8f84-af457bfe8fa3",
+            "mimeType": "application/unknown",
+            "size": 845075822
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for f420dbb0-37bc-566c-8f84-af457bfe8fa3",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/f420dbb0-37bc-566c-8f84-af457bfe8fa3.json?&lang=en"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "0a595547-28ad-5aee-bce8-26981713158d",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              6.933585301,
+              51.294822877
+            ],
+            [
+              6.982730931,
+              51.414291143
+            ],
+            [
+              7.042691414,
+              51.560170383
+            ],
+            [
+              7.103353011,
+              51.706038703
+            ],
+            [
+              7.164772257,
+              51.851881549
+            ],
+            [
+              7.226741252,
+              51.997649662
+            ],
+            [
+              7.288513044,
+              52.143491452
+            ],
+            [
+              7.342108066,
+              52.269407301
+            ],
+            [
+              7.539979681,
+              52.263137398
+            ],
+            [
+              7.442095184,
+              51.278925183
+            ],
+            [
+              6.933585301,
+              51.294822877
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "collection": "Sentinel2",
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/codede/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGT_20200325T141120.SAFE",
+        "parentIdentifier": null,
+        "title": "S2A_MSIL1C_20200325T103021_N0209_R108_T31UGT_20200325T141120.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "startDate": "2020-03-25T10:30:21.024Z",
+        "completionDate": "2020-03-25T10:30:21.024Z",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2A",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 24844,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGT_20200325T141120.SAFE/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGT_20200325T141120-ql.jpg",
+        "updated": "2020-03-26T11:18:48.545146Z",
+        "published": "2020-03-26T11:18:48.545146Z",
+        "snowCover": 0,
+        "cloudCover": 0.4378,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 100,
+            "gcover": 0.75,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 100,
+            "gcover": 7.78,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 1668.4929449633,
+            "value": 62.25,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 588.57857702481,
+            "value": 21.96,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 439.60780165044,
+            "value": 16.4,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 6.0106125439255,
+            "value": 0.22,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "b4de51064131332",
+            "name": "Spring",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Spring"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "afe9ad14455c260",
+            "name": "s2A",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2A"
+          },
+          {
+            "id": "503f8f6199f3e44",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "afe9ad14455c260",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "3f85bb5d775e1fc",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "503f8f6199f3e44",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "9bfeda338a3c7e9",
+            "name": "25",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=25"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>6.933585300789,51.294822876771 6.9827309314771,51.414291143212 7.0426914138509,51.560170383462 7.1033530105363,51.706038703069 7.1647722569904,51.851881548598 7.2267412523586,51.997649661585 7.2885130441381,52.143491452108 7.3421080661205,52.269407300775 7.5399796808778,52.263137397918 7.4420951843331,51.278925182786 6.933585300789,51.294822876771</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            7.29517301,
+            51.705026664
+          ]
+        },
+        "orbitDirection": "descending",
+        "timeliness": null,
+        "relativeOrbitNumber": 108,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2A_20200325T103021_024844_N02.09",
+        "services": {
+          "download": {
+            "url": "https://zipper.prod.cloud.code-de.org/download/0a595547-28ad-5aee-bce8-26981713158d",
+            "mimeType": "application/unknown",
+            "size": 221978715
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for 0a595547-28ad-5aee-bce8-26981713158d",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/0a595547-28ad-5aee-bce8-26981713158d.json?&lang=en"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "36301d70-829d-59c6-8bca-2630a7a0bccc",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              6.575550515,
+              50.406264476
+            ],
+            [
+              6.628241314,
+              50.539182466
+            ],
+            [
+              6.686504135,
+              50.685244417
+            ],
+            [
+              6.745352087,
+              50.831144963
+            ],
+            [
+              6.804117799,
+              50.977005272
+            ],
+            [
+              6.862990296,
+              51.122846946
+            ],
+            [
+              6.922764594,
+              51.268518788
+            ],
+            [
+              6.969310233,
+              51.381666725
+            ],
+            [
+              7.450589699,
+              51.366602013
+            ],
+            [
+              7.357621898,
+              50.382122251
+            ],
+            [
+              6.575550515,
+              50.406264476
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "collection": "Sentinel2",
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/codede/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGS_20200325T141120.SAFE",
+        "parentIdentifier": null,
+        "title": "S2A_MSIL1C_20200325T103021_N0209_R108_T31UGS_20200325T141120.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "startDate": "2020-03-25T10:30:21.024Z",
+        "completionDate": "2020-03-25T10:30:21.024Z",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2A",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 24844,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGS_20200325T141120.SAFE/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGS_20200325T141120-ql.jpg",
+        "updated": "2020-03-26T11:18:53.724974Z",
+        "published": "2020-03-26T11:18:53.724974Z",
+        "snowCover": 0,
+        "cloudCover": 6.0255,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 100,
+            "gcover": 1.36,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 82.55,
+            "gcover": 11.69,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "cc05d8ba736238c",
+            "name": "Rheinland-Pfalz",
+            "normalized": "rheinlandpfalz",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 17.5,
+            "gcover": 4.26,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Rheinland-Pfalz"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 2236.5507143641,
+            "value": 45.87,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 1849.8570001734,
+            "value": 37.94,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 737.64631232826,
+            "value": 15.13,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 55.712051377657,
+            "value": 1.14,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "b4de51064131332",
+            "name": "Spring",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Spring"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "afe9ad14455c260",
+            "name": "s2A",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2A"
+          },
+          {
+            "id": "503f8f6199f3e44",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "afe9ad14455c260",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "3f85bb5d775e1fc",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "503f8f6199f3e44",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "9bfeda338a3c7e9",
+            "name": "25",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=25"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>6.575550515165,50.406264476225 6.6282413136274,50.539182466083 6.6865041350659,50.685244417127 6.7453520874521,50.831144963392 6.80411779859,50.977005271788 6.8629902962057,51.122846946193 6.9227645942578,51.268518787621 6.9693102328647,51.381666725228 7.4505896990137,51.366602012515 7.3576218982369,50.382122250932 6.575550515165,50.406264476225</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            7.077979129,
+            50.845403042
+          ]
+        },
+        "orbitDirection": "descending",
+        "timeliness": null,
+        "relativeOrbitNumber": 108,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2A_20200325T103021_024844_N02.09",
+        "services": {
+          "download": {
+            "url": "https://zipper.prod.cloud.code-de.org/download/36301d70-829d-59c6-8bca-2630a7a0bccc",
+            "mimeType": "application/unknown",
+            "size": 384129951
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for 36301d70-829d-59c6-8bca-2630a7a0bccc",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/36301d70-829d-59c6-8bca-2630a7a0bccc.json?&lang=en"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "3581cd7f-9498-5cfb-890c-7854d18c8113",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              6.587657451,
+              50.436805475
+            ],
+            [
+              6.628241314,
+              50.539182466
+            ],
+            [
+              6.686504135,
+              50.685244417
+            ],
+            [
+              6.745352087,
+              50.831144963
+            ],
+            [
+              6.804117799,
+              50.977005272
+            ],
+            [
+              6.862990296,
+              51.122846946
+            ],
+            [
+              6.922764594,
+              51.268518788
+            ],
+            [
+              6.982730931,
+              51.414291143
+            ],
+            [
+              6.989725822,
+              51.431309174
+            ],
+            [
+              7.702092127,
+              51.443997908
+            ],
+            [
+              7.729300892,
+              50.456861171
+            ],
+            [
+              6.587657451,
+              50.436805475
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "collection": "Sentinel2",
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/codede/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T32ULB_20200325T141120.SAFE",
+        "parentIdentifier": null,
+        "title": "S2A_MSIL1C_20200325T103021_N0209_R108_T32ULB_20200325T141120.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "startDate": "2020-03-25T10:30:21.024Z",
+        "completionDate": "2020-03-25T10:30:21.024Z",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2A",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 24844,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T32ULB_20200325T141120.SAFE/S2A_MSIL1C_20200325T103021_N0209_R108_T32ULB_20200325T141120-ql.jpg",
+        "updated": "2020-03-26T11:19:18.224127Z",
+        "published": "2020-03-26T11:19:18.224127Z",
+        "snowCover": 0,
+        "cloudCover": 5.4618,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 100,
+            "gcover": 2,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 80.77,
+            "gcover": 16.76,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "cc05d8ba736238c",
+            "name": "Rheinland-Pfalz",
+            "normalized": "rheinlandpfalz",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 19.25,
+            "gcover": 6.86,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Rheinland-Pfalz"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 3425.7512782241,
+            "value": 47.96,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 2712.6735823348,
+            "value": 37.97,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 884.57788369878,
+            "value": 12.38,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 125.19427853507,
+            "value": 1.75,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "b4de51064131332",
+            "name": "Spring",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Spring"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "afe9ad14455c260",
+            "name": "s2A",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2A"
+          },
+          {
+            "id": "503f8f6199f3e44",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "afe9ad14455c260",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "3f85bb5d775e1fc",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "503f8f6199f3e44",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "9bfeda338a3c7e9",
+            "name": "25",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=25"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>6.5876574512994,50.436805475058 6.6282413136274,50.539182466083 6.6865041350659,50.685244417127 6.7453520874521,50.831144963392 6.80411779859,50.977005271788 6.8629902962057,51.122846946193 6.9227645942578,51.268518787621 6.9827309314771,51.414291143212 6.9897258222039,51.431309174162 7.7020921271763,51.443997908036 7.7293008917944,50.456861170627 6.5876574512994,50.436805475058</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            7.244311614,
+            50.90405466
+          ]
+        },
+        "orbitDirection": "descending",
+        "timeliness": null,
+        "relativeOrbitNumber": 108,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2A_20200325T103021_024844_N02.09",
+        "services": {
+          "download": {
+            "url": "https://zipper.prod.cloud.code-de.org/download/3581cd7f-9498-5cfb-890c-7854d18c8113",
+            "mimeType": "application/unknown",
+            "size": 553656316
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for 3581cd7f-9498-5cfb-890c-7854d18c8113",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/3581cd7f-9498-5cfb-890c-7854d18c8113.json?&lang=en"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f9b3572d-c052-5cad-a122-d1192ee57655",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.933615766,
+              52.314037805
+            ],
+            [
+              7.539979681,
+              52.263137398
+            ],
+            [
+              7.442095184,
+              51.278925183
+            ],
+            [
+              5.870215764,
+              51.328067311
+            ],
+            [
+              5.933615766,
+              52.314037805
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "collection": "Sentinel2",
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/codede/Sentinel-2/MSI/L1C/2020/03/23/S2B_MSIL1C_20200323T103639_N0209_R008_T31UGT_20200323T142259.SAFE",
+        "parentIdentifier": null,
+        "title": "S2B_MSIL1C_20200323T103639_N0209_R008_T31UGT_20200323T142259.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "startDate": "2020-03-23T10:36:39.024Z",
+        "completionDate": "2020-03-23T10:36:39.024Z",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2B",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 15907,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/23/S2B_MSIL1C_20200323T103639_N0209_R008_T31UGT_20200323T142259.SAFE/S2B_MSIL1C_20200323T103639_N0209_R008_T31UGT_20200323T142259-ql.jpg",
+        "updated": "2020-03-27T12:47:47.130447Z",
+        "published": "2020-03-27T12:47:47.130447Z",
+        "snowCover": 0,
+        "cloudCover": 1.2767,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 67.76,
+            "gcover": 2.28,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 67.44,
+            "gcover": 23.52,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "3763cf3ce24c9c6",
+            "name": "Niedersachsen",
+            "normalized": "niedersachsen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 0.31,
+            "gcover": 0.07,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Niedersachsen"
+          },
+          {
+            "id": "21e9736cb764775",
+            "name": "Netherlands",
+            "normalized": "netherlands",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 32.19,
+            "gcover": 10.37,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Netherlands"
+          },
+          {
+            "id": "6c87215f6a0bc58",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "21e9736cb764775",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "84d400ec3d60125",
+            "name": "Gelderland",
+            "normalized": "gelderland",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 19.41,
+            "gcover": 45.56,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Gelderland"
+          },
+          {
+            "id": "d14e3a4ab42816e",
+            "name": "Overijssel",
+            "normalized": "overijssel",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 6.1,
+            "gcover": 22,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Overijssel"
+          },
+          {
+            "id": "48a8e0f850a060f",
+            "name": "Limburg",
+            "normalized": "limburg",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 5.28,
+            "gcover": 30.39,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Limburg"
+          },
+          {
+            "id": "2e6886e23050a1f",
+            "name": "Noord-Brabant",
+            "normalized": "noordbrabant",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 1.35,
+            "gcover": 3.12,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Noord-Brabant"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 8268.0393496641,
+            "value": 68.89,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 1524.2677181322,
+            "value": 12.7,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 1284.0863668235,
+            "value": 10.7,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 1101.1592917826,
+            "value": 9.17,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "b4de51064131332",
+            "name": "Spring",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Spring"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "56bf819406cae6b",
+            "name": "s2B",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2B"
+          },
+          {
+            "id": "f841767ba5c92d4",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "56bf819406cae6b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "aca78422271631a",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "f841767ba5c92d4",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "eccc4e1537ae32f",
+            "name": "23",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=23"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>5.9336157658092,52.314037804793 7.5399796808778,52.263137397918 7.4420951843331,51.278925182786 5.870215764132,51.328067311214 5.9336157658092,52.314037804793</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            6.696532449,
+            51.797829004
+          ]
+        },
+        "orbitDirection": "descending",
+        "timeliness": null,
+        "relativeOrbitNumber": 8,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2B_20200323T103639_015907_N02.09",
+        "services": {
+          "download": {
+            "url": "https://zipper.prod.cloud.code-de.org/download/f9b3572d-c052-5cad-a122-d1192ee57655",
+            "mimeType": "application/unknown",
+            "size": 855674069
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for f9b3572d-c052-5cad-a122-d1192ee57655",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/f9b3572d-c052-5cad-a122-d1192ee57655.json?&lang=en"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "61d54db6-9279-57d8-ae40-d3a350172791",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.875717289,
+              51.415897696
+            ],
+            [
+              7.450589699,
+              51.366602013
+            ],
+            [
+              7.357621898,
+              50.382122251
+            ],
+            [
+              5.815510114,
+              50.429726614
+            ],
+            [
+              5.875717289,
+              51.415897696
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "collection": "Sentinel2",
+        "status": 0,
+        "license": {
+          "licenseId": "unlicensed",
+          "hasToBeSigned": "never",
+          "grantedCountries": null,
+          "grantedOrganizationCountries": null,
+          "grantedFlags": null,
+          "viewService": "public",
+          "signatureQuota": -1,
+          "description": {
+            "shortName": "No license"
+          }
+        },
+        "productIdentifier": "/codede/Sentinel-2/MSI/L1C/2020/03/18/S2A_MSIL1C_20200318T104021_N0209_R008_T31UGS_20200318T112339.SAFE",
+        "parentIdentifier": null,
+        "title": "S2A_MSIL1C_20200318T104021_N0209_R008_T31UGS_20200318T112339.SAFE",
+        "description": null,
+        "organisationName": "ESA",
+        "startDate": "2020-03-18T10:40:21.024Z",
+        "completionDate": "2020-03-18T10:40:21.024Z",
+        "productType": "L1C",
+        "processingLevel": "LEVEL1C",
+        "platform": "S2A",
+        "instrument": "MSI",
+        "resolution": 60,
+        "sensorMode": "INS-NOBS",
+        "orbitNumber": 24744,
+        "quicklook": null,
+        "thumbnail": "http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/18/S2A_MSIL1C_20200318T104021_N0209_R008_T31UGS_20200318T112339.SAFE/S2A_MSIL1C_20200318T104021_N0209_R008_T31UGS_20200318T112339-ql.jpg",
+        "updated": "2020-03-24T14:53:44.969631Z",
+        "published": "2020-03-24T14:53:44.969631Z",
+        "snowCover": 0,
+        "cloudCover": 13.547,
+        "keywords": [
+          {
+            "id": "bce097de57d1ab7",
+            "name": "Europe",
+            "normalized": "europe",
+            "type": "continent",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Europe"
+          },
+          {
+            "id": "3f6de0e18fc780d",
+            "name": "Germany",
+            "normalized": "germany",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 84.07,
+            "gcover": 2.83,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Germany"
+          },
+          {
+            "id": "5f5f1cde1a2de47",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "3f6de0e18fc780d",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "20063a778c75690",
+            "name": "Nordrhein-Westfalen",
+            "normalized": "nordrheinwestfalen",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 77.01,
+            "gcover": 26.86,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Nordrhein-Westfalen"
+          },
+          {
+            "id": "cc05d8ba736238c",
+            "name": "Rheinland-Pfalz",
+            "normalized": "rheinlandpfalz",
+            "type": "state",
+            "parentHash": "5f5f1cde1a2de47",
+            "value": 7.11,
+            "gcover": 4.26,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Rheinland-Pfalz"
+          },
+          {
+            "id": "21e9736cb764775",
+            "name": "Netherlands",
+            "normalized": "netherlands",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 8.23,
+            "gcover": 2.65,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Netherlands"
+          },
+          {
+            "id": "6c87215f6a0bc58",
+            "name": "_all",
+            "normalized": "_all",
+            "type": "region",
+            "parentHash": "21e9736cb764775",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=_all"
+          },
+          {
+            "id": "48a8e0f850a060f",
+            "name": "Limburg",
+            "normalized": "limburg",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 8.07,
+            "gcover": 46.45,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Limburg"
+          },
+          {
+            "id": "2e6886e23050a1f",
+            "name": "Noord-Brabant",
+            "normalized": "noordbrabant",
+            "type": "state",
+            "parentHash": "6c87215f6a0bc58",
+            "value": 0.15,
+            "gcover": 0.36,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Noord-Brabant"
+          },
+          {
+            "id": "9cc27b309d16a9c",
+            "name": "Belgium",
+            "normalized": "belgium",
+            "type": "country",
+            "parentHash": "bce097de57d1ab7",
+            "value": 7.7,
+            "gcover": 3.02,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Belgium"
+          },
+          {
+            "id": "00b9ac9167bfc04",
+            "name": "Walloon",
+            "normalized": "walloon",
+            "type": "region",
+            "parentHash": "9cc27b309d16a9c",
+            "value": 7.61,
+            "gcover": 5.39,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Walloon"
+          },
+          {
+            "id": "1d44dca99c2180a",
+            "name": "Liege",
+            "normalized": "liege",
+            "type": "state",
+            "parentHash": "00b9ac9167bfc04",
+            "value": 7.54,
+            "gcover": 24.26,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Liege"
+          },
+          {
+            "id": "98c87182de53552",
+            "name": "Flemish",
+            "normalized": "flemish",
+            "type": "region",
+            "parentHash": "9cc27b309d16a9c",
+            "value": 0.16,
+            "gcover": 0.14,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Flemish"
+          },
+          {
+            "id": "6b4d75950f34b3a",
+            "name": "Limburg",
+            "normalized": "limburg",
+            "type": "state",
+            "parentHash": "98c87182de53552",
+            "value": 0.16,
+            "gcover": 0.81,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Limburg"
+          },
+          {
+            "id": "a306c45408e6b6f",
+            "name": "Cultivated Area",
+            "normalized": "cultivated",
+            "type": "landuse",
+            "area": 6881.0600342162,
+            "value": 57.32,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Cultivated%20Area%22"
+          },
+          {
+            "id": "5b8cdeb6f99ce56",
+            "name": "Forest",
+            "normalized": "forest",
+            "type": "landuse",
+            "area": 3309.5546938613,
+            "value": 27.57,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Forest"
+          },
+          {
+            "id": "154109666ea230b",
+            "name": "Urban",
+            "normalized": "urban",
+            "type": "landuse",
+            "area": 1422.4945157825,
+            "value": 11.85,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Urban"
+          },
+          {
+            "id": "870b2149f9a08a2",
+            "name": "Herbaceous Area",
+            "normalized": "herbaceous",
+            "type": "landuse",
+            "area": 459.1987518758,
+            "value": 3.82,
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=%22Herbaceous%20Area%22"
+          },
+          {
+            "id": "a0e4a10aa754ab4",
+            "name": "Northern",
+            "type": "location",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Northern"
+          },
+          {
+            "id": "12ea3ae8c42bdf2",
+            "name": "Winter",
+            "type": "season",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Winter"
+          },
+          {
+            "id": "7dd5ce6fe9bcea1",
+            "name": "Sentinel2",
+            "type": "collection",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=Sentinel2"
+          },
+          {
+            "id": "b53413be0d10e41",
+            "name": "L1C",
+            "type": "productType",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=L1C"
+          },
+          {
+            "id": "44b15c0a6e62129",
+            "name": "LEVEL1C",
+            "type": "processingLevel",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=LEVEL1C"
+          },
+          {
+            "id": "afe9ad14455c260",
+            "name": "s2A",
+            "type": "platform",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=s2A"
+          },
+          {
+            "id": "503f8f6199f3e44",
+            "name": "msi",
+            "type": "instrument",
+            "parentHash": "afe9ad14455c260",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=msi"
+          },
+          {
+            "id": "3f85bb5d775e1fc",
+            "name": "INS-NOBS",
+            "type": "sensorMode",
+            "parentHash": "503f8f6199f3e44",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=INS-NOBS"
+          },
+          {
+            "id": "6414a4147122d1b",
+            "name": "2020",
+            "type": "year",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=2020"
+          },
+          {
+            "id": "91464504add049c",
+            "name": "March",
+            "type": "month",
+            "parentHash": "6414a4147122d1b",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=March"
+          },
+          {
+            "id": "67d163fd3e3d342",
+            "name": "18",
+            "type": "day",
+            "parentHash": "91464504add049c",
+            "href": "https://finder.code-de.org/resto/api/collections/Sentinel2/search.json?&lang=en&q=18"
+          }
+        ],
+        "gmlgeometry": "<gml:Polygon srsName=\"EPSG:4326\"><gml:outerBoundaryIs><gml:LinearRing><gml:coordinates>5.8757172886033,51.415897696398 7.4505896990137,51.366602012515 7.3576218982369,50.382122250932 5.815510113567,50.429726614086 5.8757172886033,51.415897696398</gml:coordinates></gml:LinearRing></gml:outerBoundaryIs></gml:Polygon>",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [
+            6.624905648,
+            50.900318664
+          ]
+        },
+        "orbitDirection": "descending",
+        "timeliness": null,
+        "relativeOrbitNumber": 8,
+        "processingBaseline": 2.09,
+        "missionTakeId": "GS2A_20200318T104021_024744_N02.09",
+        "services": {
+          "download": {
+            "url": "https://zipper.prod.cloud.code-de.org/download/61d54db6-9279-57d8-ae40-d3a350172791",
+            "mimeType": "application/unknown",
+            "size": 854663483
+          }
+        },
+        "links": [
+          {
+            "rel": "self",
+            "type": "application/json",
+            "title": "GeoJSON link for 61d54db6-9279-57d8-ae40-d3a350172791",
+            "href": "https://finder.code-de.org/resto/collections/Sentinel2/61d54db6-9279-57d8-ae40-d3a350172791.json?&lang=en"
+          }
+        ]
+      }
+    }
+  ]
+}

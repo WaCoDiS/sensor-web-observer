@@ -19,9 +19,12 @@ import de.wacodis.dwd.cdc.model.DwdProductsMetadata;
 import de.wacodis.dwd.cdc.model.DwdWfsRequestParams;
 import de.wacodis.dwd.cdc.model.Envelope;
 import de.wacodis.dwd.cdc.model.SpatioTemporalExtent;
+import de.wacodis.observer.http.XmlDocResponseHandler;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -46,7 +49,14 @@ public class DwdWfsRequestor implements InitializingBean {
 
     final static Logger LOG = LoggerFactory.getLogger(DwdWfsRequestor.class);
 
-    private DocumentBuilder docBuilder;
+    private DocumentBuilderFactory dbf;
+
+    private CloseableHttpClient httpClient;
+
+    @Autowired
+    public void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
 
     /**
      * Performs a query with the given parameters
@@ -67,8 +77,7 @@ public class DwdWfsRequestor implements InitializingBean {
         DwdWfsRequestorBuilder wfsRequest = new DwdWfsRequestorBuilder(params);
 
         String getPostBody = wfsRequest.createGetFeaturePost().xmlText();
-        InputStream getFeatureResponse = sendWfsRequest(url, getPostBody);
-        Document getFeatureDoc = docBuilder.parse(getFeatureResponse);
+        Document getFeatureDoc = sendWfsRequest(url, getPostBody);
 
         if (!responseResolver.responseContainsFeatureCollection(getFeatureDoc)) {
             return null;
@@ -76,8 +85,7 @@ public class DwdWfsRequestor implements InitializingBean {
         SpatioTemporalExtent timeAndBbox = responseResolver.generateSpatioTemporalExtent(getFeatureDoc, typeName);
 
         String capPostBody = wfsRequest.createGetCapabilitiesPost().xmlText();
-        InputStream capResponse = sendWfsRequest(url, capPostBody);
-        Document getCapDoc = docBuilder.parse(capResponse);
+        Document getCapDoc = sendWfsRequest(url, capPostBody);
 
         if (responseResolver.responseContainsCapabilities(getCapDoc)) {
             // typename and clearname
@@ -106,31 +114,29 @@ public class DwdWfsRequestor implements InitializingBean {
      * Delivers the post response depending on the outputformat (xml)
      *
      * @param url         serviceURL
-     * @param postRequest post message (xml)
+     * @param requestBody post message (xml)
      * @return httpContent post response
      * @throws UnsupportedEncodingException
      * @throws IOException
      * @throws ClientProtocolException
      */
-    protected InputStream sendWfsRequest(String url, String postRequest)
+    protected Document sendWfsRequest(String url, String requestBody)
             throws UnsupportedEncodingException, IOException, ClientProtocolException {
-        // contact http-client
-        CloseableHttpClient httpclient = HttpClients.createDefault();
+
+        // create HTTP POST message body
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader("content-type", "application/xml");
-        // create PostMessage
-        StringEntity entity = new StringEntity(postRequest);
-        httpPost.setEntity(entity);
-        HttpResponse response = httpclient.execute(httpPost);
 
-        HttpEntity responseEntity = response.getEntity(); // fill http-Object (status, parameters, content)
-        InputStream httpContent = responseEntity.getContent(); // ask for content
-        return httpContent;
+        StringEntity entity = new StringEntity(requestBody);
+        httpPost.setEntity(entity);
+
+        Document responseDoc = httpClient.execute(httpPost, new XmlDocResponseHandler());
+        return responseDoc;
+
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        this.docBuilder = dbf.newDocumentBuilder();
+        dbf = DocumentBuilderFactory.newInstance();
     }
 }

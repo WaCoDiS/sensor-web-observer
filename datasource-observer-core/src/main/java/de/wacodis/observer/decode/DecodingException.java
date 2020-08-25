@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.wacodis.sentinel.apihub;
+package de.wacodis.observer.decode;
 
 
 /**
@@ -27,4 +27,7 @@ public class DecodingException extends Exception {
         super(msg, ex);
     }
 
+    public DecodingException(String message) {
+        super(message);
+    }
 }

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en" xmlns="http://www.w3.org/2005/Atom" xmlns:time="http://a9.com/-/opensearch/extensions/time/1.0/" xmlns:os="http://a9.com/-/spec/opensearch/1.1/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" xmlns:geo="http://a9.com/-/opensearch/extensions/geo/1.0/" xmlns:eo="http://a9.com/-/opensearch/extensions/eo/1.0/" xmlns:metalink="urn:ietf:params:xml:ns:metalink" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:media="http://search.yahoo.com/mrss/">
+    <title>resto</title>
+    <subtitle type="html">9 results&amp;nbsp;|&amp;nbsp;_pagination</subtitle>
+    <generator uri="http://github.com/jjrom/resto" version="2.3">resto</generator>
+    <updated>2020-04-02T18:16:39Z</updated>
+    <id>bb69e4d0-ce5f-57c9-8ad4-6df54fa405d2</id>
+    <link rel="self" title="self" type="application/atom+xml" href="https://finder.code-de.org/resto/api/collections/Sentinel2/search.atom?&amp;maxRecords=10&amp;startDate=2020-03-01T00%3A00%3A00Z&amp;completionDate=2020-04-01T23%3A59%3A59Z&amp;cloudCover=%5B0%2C15%5D&amp;instrument=MSI&amp;productType=L1C&amp;processingLevel=LEVEL1C&amp;geometry=POLYGON%28%287.023582486435771%2050.94074249267579%2C7.023582486435771%2051.29734038608149%2C7.555961664766073%2051.29734038608149%2C7.555961664766073%2050.94074249267579%2C7.023582486435771%2050.94074249267579%29%29&amp;recordSchema=om"/>
+    <link rel="search" title="OpenSearch Description Document" type="application/opensearchdescription+xml" href="https://finder.code-de.org/resto/api/collections/Sentinel2/describe.xml"/>
+    <os:totalResults>9</os:totalResults>
+    <os:startIndex>1</os:startIndex>
+    <os:itemsPerPage>9</os:itemsPerPage>
+    <os:Query role="request" count="10" time:start="2020-03-01T00:00:00Z" time:end="2020-04-01T23:59:59Z" eo:cloudCover="[0,15]" eo:instrument="MSI" eo:productType="L1C" eo:processingLevel="LEVEL1C" geo:geometry="POLYGON((7.023582486435771 50.94074249267579,7.023582486435771 51.29734038608149,7.555961664766073 51.29734038608149,7.555961664766073 50.94074249267579,7.023582486435771 50.94074249267579))" resto:status="0"/>
+    <entry>
+        <title>S2B_MSIL1C_20200330T102609_N0209_R108_T31UGS_20200330T124538.SAFE</title>
+        <updated>2020-03-31T09:28:28.210923Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/716581ca-6e69-5ab0-bea8-05ad87d5af11.atom</id>
+        <summary type="text">S2B/MSI acquired on 2020-03-30T10:26:09.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for 716581ca-6e69-5ab0-bea8-05ad87d5af11" href="https://finder.code-de.org/resto/collections/Sentinel2/716581ca-6e69-5ab0-bea8-05ad87d5af11.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="382383296" title="File for 716581ca-6e69-5ab0-bea8-05ad87d5af11 product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/716581ca-6e69-5ab0-bea8-05ad87d5af11"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/30/S2B_MSIL1C_20200330T102609_N0209_R108_T31UGS_20200330T124538.SAFE/S2B_MSIL1C_20200330T102609_N0209_R108_T31UGS_20200330T124538-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>716581ca-6e69-5ab0-bea8-05ad87d5af11</dc:identifier>
+        <dc:date>2020-03-30T10:26:09.024Z/2020-03-30T10:26:09.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-30T10:26:09.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-30T10:26:09.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>50.406283267 6.574941793 50.441896832 6.588986097 50.588011472 6.646582719 50.734085763 6.704706222 50.88007519 6.763535221 51.026077258 6.822675249 51.172012069 6.882422135 51.317856714 6.942844706 51.38167062 6.969185802 51.366602013 7.450589699 50.382122251 7.357621898 50.406283267 6.574941793</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>6.5749417933669,50.406283267219 6.5889860972917,50.441896831606 6.646582719332,50.588011471962 6.7047062217311,50.734085762868 6.763535221486,50.880075190349 6.8226752487234,51.026077258046 6.8824221346033,51.17201206922 6.9428447056094,51.31785671427 6.9691858024079,51.381670620073 7.4505896990137,51.366602012515 7.3576218982369,50.382122250932 6.5749417933669,50.406283267219</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+    <entry>
+        <title>S2A_MSIL1C_20200328T104021_N0209_R008_T31UGT_20200328T125435.SAFE</title>
+        <updated>2020-03-29T17:37:13.00086Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/df8d301c-a8f2-5ef2-b7f5-1afa2e623891.atom</id>
+        <summary type="text">S2A/MSI acquired on 2020-03-28T10:40:21.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for df8d301c-a8f2-5ef2-b7f5-1afa2e623891" href="https://finder.code-de.org/resto/collections/Sentinel2/df8d301c-a8f2-5ef2-b7f5-1afa2e623891.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="845497349" title="File for df8d301c-a8f2-5ef2-b7f5-1afa2e623891 product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/df8d301c-a8f2-5ef2-b7f5-1afa2e623891"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/28/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGT_20200328T125435.SAFE/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGT_20200328T125435-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>df8d301c-a8f2-5ef2-b7f5-1afa2e623891</dc:identifier>
+        <dc:date>2020-03-28T10:40:21.024Z/2020-03-28T10:40:21.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-28T10:40:21.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-28T10:40:21.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>52.314037805 5.933615766 52.263137398 7.539979681 51.278925183 7.442095184 51.328067311 5.870215764 52.314037805 5.933615766</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>5.9336157658092,52.314037804793 7.5399796808778,52.263137397918 7.4420951843331,51.278925182786 5.870215764132,51.328067311214 5.9336157658092,52.314037804793</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+    <entry>
+        <title>S2A_MSIL1C_20200328T104021_N0209_R008_T32ULB_20200328T125435.SAFE</title>
+        <updated>2020-03-29T17:37:32.402649Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/7c42aa78-edfb-5435-bb40-666c79cb5ad3.atom</id>
+        <summary type="text">S2A/MSI acquired on 2020-03-28T10:40:21.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for 7c42aa78-edfb-5435-bb40-666c79cb5ad3" href="https://finder.code-de.org/resto/collections/Sentinel2/7c42aa78-edfb-5435-bb40-666c79cb5ad3.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="845705354" title="File for 7c42aa78-edfb-5435-bb40-666c79cb5ad3 product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/7c42aa78-edfb-5435-bb40-666c79cb5ad3"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/28/S2A_MSIL1C_20200328T104021_N0209_R008_T32ULB_20200328T125435.SAFE/S2A_MSIL1C_20200328T104021_N0209_R008_T32ULB_20200328T125435-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>7c42aa78-edfb-5435-bb40-666c79cb5ad3</dc:identifier>
+        <dc:date>2020-03-28T10:40:21.024Z/2020-03-28T10:40:21.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-28T10:40:21.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-28T10:40:21.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>51.41588359 6.123708232 51.443997908 7.702092127 50.456861171 7.729300892 50.429712992 6.183927395 51.41588359 6.123708232</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>6.1237082316989,51.415883589518 7.7020921271763,51.443997908036 7.7293008917944,50.456861170627 6.1839273950963,50.429712991702 6.1237082316989,51.415883589518</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+    <entry>
+        <title>S2A_MSIL1C_20200328T104021_N0209_R008_T31UGS_20200328T125435.SAFE</title>
+        <updated>2020-03-29T17:37:52.136523Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/f420dbb0-37bc-566c-8f84-af457bfe8fa3.atom</id>
+        <summary type="text">S2A/MSI acquired on 2020-03-28T10:40:21.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for f420dbb0-37bc-566c-8f84-af457bfe8fa3" href="https://finder.code-de.org/resto/collections/Sentinel2/f420dbb0-37bc-566c-8f84-af457bfe8fa3.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="845075822" title="File for f420dbb0-37bc-566c-8f84-af457bfe8fa3 product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/f420dbb0-37bc-566c-8f84-af457bfe8fa3"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/28/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGS_20200328T125435.SAFE/S2A_MSIL1C_20200328T104021_N0209_R008_T31UGS_20200328T125435-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>f420dbb0-37bc-566c-8f84-af457bfe8fa3</dc:identifier>
+        <dc:date>2020-03-28T10:40:21.024Z/2020-03-28T10:40:21.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-28T10:40:21.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-28T10:40:21.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>51.415897696 5.875717289 51.366602013 7.450589699 50.382122251 7.357621898 50.429726614 5.815510114 51.415897696 5.875717289</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>5.8757172886033,51.415897696398 7.4505896990137,51.366602012515 7.3576218982369,50.382122250932 5.815510113567,50.429726614086 5.8757172886033,51.415897696398</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+    <entry>
+        <title>S2A_MSIL1C_20200325T103021_N0209_R108_T31UGT_20200325T141120.SAFE</title>
+        <updated>2020-03-26T11:18:48.545146Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/0a595547-28ad-5aee-bce8-26981713158d.atom</id>
+        <summary type="text">S2A/MSI acquired on 2020-03-25T10:30:21.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for 0a595547-28ad-5aee-bce8-26981713158d" href="https://finder.code-de.org/resto/collections/Sentinel2/0a595547-28ad-5aee-bce8-26981713158d.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="221978715" title="File for 0a595547-28ad-5aee-bce8-26981713158d product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/0a595547-28ad-5aee-bce8-26981713158d"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGT_20200325T141120.SAFE/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGT_20200325T141120-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>0a595547-28ad-5aee-bce8-26981713158d</dc:identifier>
+        <dc:date>2020-03-25T10:30:21.024Z/2020-03-25T10:30:21.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-25T10:30:21.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-25T10:30:21.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>51.294822877 6.933585301 51.414291143 6.982730931 51.560170383 7.042691414 51.706038703 7.103353011 51.851881549 7.164772257 51.997649662 7.226741252 52.143491452 7.288513044 52.269407301 7.342108066 52.263137398 7.539979681 51.278925183 7.442095184 51.294822877 6.933585301</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>6.933585300789,51.294822876771 6.9827309314771,51.414291143212 7.0426914138509,51.560170383462 7.1033530105363,51.706038703069 7.1647722569904,51.851881548598 7.2267412523586,51.997649661585 7.2885130441381,52.143491452108 7.3421080661205,52.269407300775 7.5399796808778,52.263137397918 7.4420951843331,51.278925182786 6.933585300789,51.294822876771</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+    <entry>
+        <title>S2A_MSIL1C_20200325T103021_N0209_R108_T31UGS_20200325T141120.SAFE</title>
+        <updated>2020-03-26T11:18:53.724974Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/36301d70-829d-59c6-8bca-2630a7a0bccc.atom</id>
+        <summary type="text">S2A/MSI acquired on 2020-03-25T10:30:21.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for 36301d70-829d-59c6-8bca-2630a7a0bccc" href="https://finder.code-de.org/resto/collections/Sentinel2/36301d70-829d-59c6-8bca-2630a7a0bccc.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="384129951" title="File for 36301d70-829d-59c6-8bca-2630a7a0bccc product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/36301d70-829d-59c6-8bca-2630a7a0bccc"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGS_20200325T141120.SAFE/S2A_MSIL1C_20200325T103021_N0209_R108_T31UGS_20200325T141120-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>36301d70-829d-59c6-8bca-2630a7a0bccc</dc:identifier>
+        <dc:date>2020-03-25T10:30:21.024Z/2020-03-25T10:30:21.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-25T10:30:21.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-25T10:30:21.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>50.406264476 6.575550515 50.539182466 6.628241314 50.685244417 6.686504135 50.831144963 6.745352087 50.977005272 6.804117799 51.122846946 6.862990296 51.268518788 6.922764594 51.381666725 6.969310233 51.366602013 7.450589699 50.382122251 7.357621898 50.406264476 6.575550515</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>6.575550515165,50.406264476225 6.6282413136274,50.539182466083 6.6865041350659,50.685244417127 6.7453520874521,50.831144963392 6.80411779859,50.977005271788 6.8629902962057,51.122846946193 6.9227645942578,51.268518787621 6.9693102328647,51.381666725228 7.4505896990137,51.366602012515 7.3576218982369,50.382122250932 6.575550515165,50.406264476225</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+    <entry>
+        <title>S2A_MSIL1C_20200325T103021_N0209_R108_T32ULB_20200325T141120.SAFE</title>
+        <updated>2020-03-26T11:19:18.224127Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/3581cd7f-9498-5cfb-890c-7854d18c8113.atom</id>
+        <summary type="text">S2A/MSI acquired on 2020-03-25T10:30:21.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for 3581cd7f-9498-5cfb-890c-7854d18c8113" href="https://finder.code-de.org/resto/collections/Sentinel2/3581cd7f-9498-5cfb-890c-7854d18c8113.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="553656316" title="File for 3581cd7f-9498-5cfb-890c-7854d18c8113 product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/3581cd7f-9498-5cfb-890c-7854d18c8113"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/25/S2A_MSIL1C_20200325T103021_N0209_R108_T32ULB_20200325T141120.SAFE/S2A_MSIL1C_20200325T103021_N0209_R108_T32ULB_20200325T141120-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>3581cd7f-9498-5cfb-890c-7854d18c8113</dc:identifier>
+        <dc:date>2020-03-25T10:30:21.024Z/2020-03-25T10:30:21.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-25T10:30:21.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-25T10:30:21.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>50.436805475 6.587657451 50.539182466 6.628241314 50.685244417 6.686504135 50.831144963 6.745352087 50.977005272 6.804117799 51.122846946 6.862990296 51.268518788 6.922764594 51.414291143 6.982730931 51.431309174 6.989725822 51.443997908 7.702092127 50.456861171 7.729300892 50.436805475 6.587657451</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>6.5876574512994,50.436805475058 6.6282413136274,50.539182466083 6.6865041350659,50.685244417127 6.7453520874521,50.831144963392 6.80411779859,50.977005271788 6.8629902962057,51.122846946193 6.9227645942578,51.268518787621 6.9827309314771,51.414291143212 6.9897258222039,51.431309174162 7.7020921271763,51.443997908036 7.7293008917944,50.456861170627 6.5876574512994,50.436805475058</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+    <entry>
+        <title>S2B_MSIL1C_20200323T103639_N0209_R008_T31UGT_20200323T142259.SAFE</title>
+        <updated>2020-03-27T12:47:47.130447Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/f9b3572d-c052-5cad-a122-d1192ee57655.atom</id>
+        <summary type="text">S2B/MSI acquired on 2020-03-23T10:36:39.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for f9b3572d-c052-5cad-a122-d1192ee57655" href="https://finder.code-de.org/resto/collections/Sentinel2/f9b3572d-c052-5cad-a122-d1192ee57655.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="855674069" title="File for f9b3572d-c052-5cad-a122-d1192ee57655 product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/f9b3572d-c052-5cad-a122-d1192ee57655"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/23/S2B_MSIL1C_20200323T103639_N0209_R008_T31UGT_20200323T142259.SAFE/S2B_MSIL1C_20200323T103639_N0209_R008_T31UGT_20200323T142259-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>f9b3572d-c052-5cad-a122-d1192ee57655</dc:identifier>
+        <dc:date>2020-03-23T10:36:39.024Z/2020-03-23T10:36:39.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-23T10:36:39.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-23T10:36:39.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>52.314037805 5.933615766 52.263137398 7.539979681 51.278925183 7.442095184 51.328067311 5.870215764 52.314037805 5.933615766</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>5.9336157658092,52.314037804793 7.5399796808778,52.263137397918 7.4420951843331,51.278925182786 5.870215764132,51.328067311214 5.9336157658092,52.314037804793</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+    <entry>
+        <title>S2A_MSIL1C_20200318T104021_N0209_R008_T31UGS_20200318T112339.SAFE</title>
+        <updated>2020-03-24T14:53:44.969631Z</updated>
+        <id>https://finder.code-de.org/resto/collections/Sentinel2/61d54db6-9279-57d8-ae40-d3a350172791.atom</id>
+        <summary type="text">S2A/MSI acquired on 2020-03-18T10:40:21.024Z</summary>
+        <link rel="self" type="application/atom+xml" title="ATOM link for 61d54db6-9279-57d8-ae40-d3a350172791" href="https://finder.code-de.org/resto/collections/Sentinel2/61d54db6-9279-57d8-ae40-d3a350172791.atom?&amp;lang=en"/>
+        <link rel="enclosure" type="application/unknown" length="854663483" title="File for 61d54db6-9279-57d8-ae40-d3a350172791 product" metalink:priority="50" href="https://zipper.prod.cloud.code-de.org/download/61d54db6-9279-57d8-ae40-d3a350172791"/>
+        <media:group>
+            <media:content url="http://finder.code-de.org/files/Sentinel-2/MSI/L1C/2020/03/18/S2A_MSIL1C_20200318T104021_N0209_R008_T31UGS_20200318T112339.SAFE/S2A_MSIL1C_20200318T104021_N0209_R008_T31UGS_20200318T112339-ql.jpg" medium="image">
+                <media:category scheme="http://www.opengis.net/spec/EOMPOM/1.0">THUMBNAIL</media:category>
+            </media:content>
+        </media:group>
+        <dc:identifier>61d54db6-9279-57d8-ae40-d3a350172791</dc:identifier>
+        <dc:date>2020-03-18T10:40:21.024Z/2020-03-18T10:40:21.024Z</dc:date>
+        <gml:validTime>
+            <gml:TimePeriod>
+                <gml:beginPosition>2020-03-18T10:40:21.024Z</gml:beginPosition>
+                <gml:endPosition>2020-03-18T10:40:21.024Z</gml:endPosition>
+            </gml:TimePeriod>
+        </gml:validTime>
+        <georss:polygon>51.415897696 5.875717289 51.366602013 7.450589699 50.382122251 7.357621898 50.429726614 5.815510114 51.415897696 5.875717289</georss:polygon>
+        <gml:Polygon srsName="EPSG:4326">
+            <gml:outerBoundaryIs>
+                <gml:LinearRing>
+                    <gml:coordinates>5.8757172886033,51.415897696398 7.4505896990137,51.366602012515 7.3576218982369,50.382122250932 5.815510113567,50.429726614086 5.8757172886033,51.415897696398</gml:coordinates>
+                </gml:LinearRing>
+            </gml:outerBoundaryIs>
+        </gml:Polygon>
+    </entry>
+</feed>

@@ -9,6 +9,7 @@ import org.quartz.JobDataMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -24,6 +25,7 @@ import de.wacodis.sentinel.apihub.QueryBuilder;
  * @author matthes rieke
  */
 @Component
+@ConditionalOnProperty(value = "datasource-observer.sentinelhub.enabled", havingValue = "true")
 public class SentinelJobFactory implements JobFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(SentinelJobFactory.class);
