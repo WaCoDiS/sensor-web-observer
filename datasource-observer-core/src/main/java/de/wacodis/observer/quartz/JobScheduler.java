@@ -115,7 +115,7 @@ public class JobScheduler {
 		WacodisJobDefinitionTemporalCoverage temporalCoverage = job.getTemporalCoverage();
 		WacodisJobDefinitionExecution execution = job.getExecution();
 		AbstractWacodisJobExecutionEvent event = execution.getEvent();
-		if((event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)) || temporalCoverage.getDuration() != null) {
+		if(event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)) {
 			// make sure that duration property is set
 			String durationString = temporalCoverage.getDuration();
 			if(durationString == null || durationString.isEmpty()) {
@@ -125,14 +125,32 @@ public class JobScheduler {
 				throw new InvalidWacodisJobParameterException("Wacodis job of type '" + EventTypeEnum.SINGLEJOBEXECUTIONEVENT + "' has invalid parameter value for parameter 'temporalCoverage.duration'. The value of '" + durationString + "' cannot be parsed as ISO8601 duration");				
 			}
 		}
+		else if(temporalCoverage.getDuration() != null) {
+			// make sure that duration property is set
+			String durationString = temporalCoverage.getDuration();
+			if(! isValidIso8601DurationString(durationString)) {
+				throw new InvalidWacodisJobParameterException("Wacodis job of with 'temporalCoverage.duration' setting has invalid parameter value for parameter 'temporalCoverage.duration'. The value of '" + durationString + "' cannot be parsed as ISO8601 duration");				
+			}
+		}
 		else if (temporalCoverage.getPreviousExecution()) {
 			// make sure that pattern execution is set
 			String patternString = execution.getPattern();
 			if(patternString == null || patternString.isEmpty()) {
-				throw new InvalidWacodisJobParameterException("Wacodis job of type 'pattern execution' is missing required parameter value for parameter 'execution.pattern'");
+				throw new InvalidWacodisJobParameterException("Wacodis job of type 'pattern execution' with 'previousExecution=true' is missing required parameter value for parameter 'execution.pattern'");
 			}
 			if(! isValidCronPatternString(patternString)) {
-				throw new InvalidWacodisJobParameterException("Wacodis job of type 'pattern execution' has invalid parameter value for parameter 'execution.pattern'. The value of '" + patternString + "' cannot be parsed as CRON pattern");				
+				throw new InvalidWacodisJobParameterException("Wacodis job of type 'pattern execution' with 'previousExecution=true' has invalid parameter value for parameter 'execution.pattern'. The value of '" + patternString + "' cannot be parsed as CRON pattern");				
+			}
+		}
+		// case no previosExecution and not event of type SingleTimeExecution
+		else if (! temporalCoverage.getPreviousExecution() && (event == null || !event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT))) {
+			// make sure that pattern execution is set
+			String patternString = execution.getPattern();
+			if(patternString == null || patternString.isEmpty()) {
+				throw new InvalidWacodisJobParameterException("Wacodis job of type 'pattern execution' with 'previousExecution=false' is missing required parameter value for parameter 'execution.pattern'");
+			}
+			if(! isValidCronPatternString(patternString)) {
+				throw new InvalidWacodisJobParameterException("Wacodis job of type 'pattern execution' with 'previousExecution=false' has invalid parameter value for parameter 'execution.pattern'. The value of '" + patternString + "' cannot be parsed as CRON pattern");				
 			}
 		}
 	}
