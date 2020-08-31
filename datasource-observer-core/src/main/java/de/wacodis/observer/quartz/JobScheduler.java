@@ -3,6 +3,10 @@ package de.wacodis.observer.quartz;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.joda.time.Duration;
+import org.joda.time.Period;
+import org.quartz.CronExpression;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -21,6 +25,7 @@ import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent.EventTypeEnum;
 import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.model.WacodisJobDefinitionExecution;
 import de.wacodis.observer.model.WacodisJobDefinitionTemporalCoverage;
+import exception.InvalidWacodisJobParameterException;
 
 @Component
 public class JobScheduler {
@@ -37,8 +42,11 @@ public class JobScheduler {
     public JobScheduler() {
     }
 
-    public void scheduleJob(WacodisJobDefinition job, JobFactory factory) {
+    public void scheduleJob(WacodisJobDefinition job, JobFactory factory) {   	    	    	
         try {
+        	
+        	// first validate temporalCoverage
+        	validateJobParameters(job);
         	
         	// generate all Quartz job definitions for each WACODIS job input (SubsetDefinition)
         	
@@ -78,15 +86,94 @@ public class JobScheduler {
 				manageQuartzJobDefinitions_onAddNewWacodisJob(job, quartzJobDefinitions);
 			}
         } catch (SchedulerException e) {
-            LOG.warn(e.getMessage());
-            LOG.debug(e.getMessage(), e);
+            LOG.warn(e.getClass() + ": " + e.getMessage());
+            LOG.debug(e.getClass() + ": " + e.getMessage(), e);
+            e.printStackTrace();
         } catch (InterruptedException e) {
-        	LOG.warn(e.getMessage());
-            LOG.debug(e.getMessage(), e);
+        	LOG.warn(e.getClass() + ": " + e.getMessage());
+            LOG.debug(e.getClass() + ": " + e.getMessage(), e);
+            e.printStackTrace();
+		} catch (Exception e) {
+			LOG.warn(e.getClass() + ": " + e.getMessage());
+            LOG.debug(e.getClass() + ": " + e.getMessage(), e);
+            e.printStackTrace();
 		}
     }
     
-    public void onDeleteWacodisJob(WacodisJobDefinition wacodisJob, JobFactory factory) {
+    private void validateJobParameters(WacodisJobDefinition job) throws Exception{
+		// check job parameters to ensure that all necessary parameters are set (depending on the type of job)
+    	LOG.info("Start validation of WacodisJobDefinition.");
+		validateTemporalCoverage(job);
+		
+		LOG.info("WacodisJobDefinition validation succeeded without issues.");
+	}
+
+	private void validateTemporalCoverage(WacodisJobDefinition job) throws InvalidWacodisJobParameterException {
+		// bei SingleExecutionEvent muss duration angegeben werden
+		//  wenn previousExecution==true muss execution pattern angegeben werden
+		
+		WacodisJobDefinitionTemporalCoverage temporalCoverage = job.getTemporalCoverage();
+		WacodisJobDefinitionExecution execution = job.getExecution();
+		AbstractWacodisJobExecutionEvent event = execution.getEvent();
+		if((event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)) || temporalCoverage.getDuration() != null) {
+			// make sure that duration property is set
+			String durationString = temporalCoverage.getDuration();
+			if(durationString == null || durationString.isEmpty()) {
+				throw new InvalidWacodisJobParameterException("Wacodis job of type '" + EventTypeEnum.SINGLEJOBEXECUTIONEVENT + "' is missing required parameter value for parameter 'temporalCoverage.duration'");
+			}
+			if(! isValidIso8601DurationString(durationString)) {
+				throw new InvalidWacodisJobParameterException("Wacodis job of type '" + EventTypeEnum.SINGLEJOBEXECUTIONEVENT + "' has invalid parameter value for parameter 'temporalCoverage.duration'. The value of '" + durationString + "' cannot be parsed as ISO8601 duration");				
+			}
+		}
+		else if (temporalCoverage.getPreviousExecution()) {
+			// make sure that pattern execution is set
+			String patternString = execution.getPattern();
+			if(patternString == null || patternString.isEmpty()) {
+				throw new InvalidWacodisJobParameterException("Wacodis job of type 'pattern execution' is missing required parameter value for parameter 'execution.pattern'");
+			}
+			if(! isValidCronPatternString(patternString)) {
+				throw new InvalidWacodisJobParameterException("Wacodis job of type 'pattern execution' has invalid parameter value for parameter 'execution.pattern'. The value of '" + patternString + "' cannot be parsed as CRON pattern");				
+			}
+		}
+	}
+
+	private boolean isValidCronPatternString(String patternString) {
+		boolean isValidCronPattern = false;
+		
+		try {
+			CronExpression cronExpr = new CronExpression(patternString);
+			isValidCronPattern = true;
+		} catch (Exception e) {
+			LOG.debug("Error on parsing patternString '{}' as CRON pattern. Error message is:\n'{}'", patternString, e.getMessage());
+		}
+		
+		return isValidCronPattern;
+	}
+
+	private boolean isValidIso8601DurationString(String durationString) {
+		// try parse duration String. Expect it to be ISO8601 duration format
+		
+		// according to https://stackoverflow.com/questions/39411811/parsing-iso-8601-duration-format-to-joda-duration-illegalargumentexception 
+		// both possibilities, Duration and Period, should be checked
+		boolean isValidIso8601Duration = false;
+		try {
+			Duration jodaDuration = Duration.parse(durationString);
+			isValidIso8601Duration = true;
+		} catch (Exception e) {
+			LOG.debug("Error on parsing durationString '{}' as Joda Time Duration. Error message is:\n'{}'", durationString, e.getMessage());
+		}
+		
+		try {
+			Period jodaPeriod = Period.parse(durationString);
+			isValidIso8601Duration = true;
+		} catch (Exception e) {
+			LOG.debug("Error on parsing durationString '{}' as Joda Time Period. Error message is:\n'{}'", durationString, e.getMessage());
+		}
+		
+		return isValidIso8601Duration;
+	}
+
+	public void onDeleteWacodisJob(WacodisJobDefinition wacodisJob, JobFactory factory) {
 		/*
 		 * when a WACODIS job is deleted we must check if there are running quartz jobs 
 		 * for each input of the WACODIS job 
@@ -223,7 +310,7 @@ public class JobScheduler {
 		
 		// only "duration" is used to query data from the past. Hence existance of that property is sufficient
 		
-		if(temporalCoverage.getDuration() != null && !temporalCoverage.getDuration().isEmpty()){			
+		if(isValidIso8601DurationString(temporalCoverage.getDuration())){			
 			return true;
 		}
 		
