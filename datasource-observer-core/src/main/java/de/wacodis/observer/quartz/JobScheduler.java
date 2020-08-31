@@ -125,14 +125,14 @@ public class JobScheduler {
 				throw new InvalidWacodisJobParameterException("Wacodis job of type '" + EventTypeEnum.SINGLEJOBEXECUTIONEVENT + "' has invalid parameter value for parameter 'temporalCoverage.duration'. The value of '" + durationString + "' cannot be parsed as ISO8601 duration");				
 			}
 		}
-		else if(temporalCoverage.getDuration() != null) {
+		if(temporalCoverage.getDuration() != null) {
 			// make sure that duration property is set
 			String durationString = temporalCoverage.getDuration();
 			if(! isValidIso8601DurationString(durationString)) {
 				throw new InvalidWacodisJobParameterException("Wacodis job of with 'temporalCoverage.duration' setting has invalid parameter value for parameter 'temporalCoverage.duration'. The value of '" + durationString + "' cannot be parsed as ISO8601 duration");				
 			}
 		}
-		else if (temporalCoverage.getPreviousExecution()) {
+		if (temporalCoverage.getPreviousExecution()) {
 			// make sure that pattern execution is set
 			String patternString = execution.getPattern();
 			if(patternString == null || patternString.isEmpty()) {
@@ -143,7 +143,7 @@ public class JobScheduler {
 			}
 		}
 		// case no previosExecution and not event of type SingleTimeExecution
-		else if (! temporalCoverage.getPreviousExecution() && (event == null || !event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT))) {
+		if (! temporalCoverage.getPreviousExecution() && (event == null || !event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT))) {
 			// make sure that pattern execution is set
 			String patternString = execution.getPattern();
 			if(patternString == null || patternString.isEmpty()) {
@@ -321,7 +321,7 @@ public class JobScheduler {
                 .build();
 	}
 
-	private boolean queriesDataFromThePast(WacodisJobDefinition job) {
+	private boolean queriesDataFromThePast(WacodisJobDefinition job) {		
 		WacodisJobDefinitionTemporalCoverage temporalCoverage = job.getTemporalCoverage();
 		
 		// temporalCoverage can either have property "duration" or "previousExecution"
