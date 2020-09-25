@@ -29,6 +29,7 @@ public class ProductMetadata {
     private String productType;
     private String processingLevel;
     private Envelope bbox;
+    private String gmlFootprint;
 
     public String getTitle() {
         return title;
@@ -124,6 +125,14 @@ public class ProductMetadata {
 
     public void setProcessingLevel(String processingLevel) {
         this.processingLevel = processingLevel;
+    }
+
+    public String getGmlFootprint() {
+        return gmlFootprint;
+    }
+
+    public void setGmlFootprint(String gmlFootprint) {
+        this.gmlFootprint = gmlFootprint;
     }
 
     public Envelope resolveBbox() {

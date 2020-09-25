@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,32 +16,31 @@
 package de.wacodis.sentinel;
 
 import de.wacodis.observer.model.AbstractDataEnvelope;
-import de.wacodis.sentinel.apihub.ApiHubClient;
 import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.observer.model.AbstractDataEnvelopeTimeFrame;
 import de.wacodis.observer.model.CopernicusDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
+import de.wacodis.sentinel.apihub.ApiHubClient;
+import de.wacodis.sentinel.apihub.GeojsonHelper;
 import de.wacodis.sentinel.apihub.ProductMetadata;
 import de.wacodis.sentinel.apihub.QueryBuilder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.joda.time.DateTime;
 import org.locationtech.jts.geom.Envelope;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.PersistJobDataAfterExecution;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.io.geojson.GeoJsonWriter;
+import org.locationtech.jts.io.gml2.GMLReader;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
- *
  * @author matthes rieke
  */
 @PersistJobDataAfterExecution
@@ -56,11 +55,18 @@ public class SentinelJob implements Job {
     public static String LAST_LATEST_PRODUCT_KEY = "lastLatestProduct";
     public static String LAST_EXECUTION_PRODUCT_IDS_KEY = "lastExecutionProductIds";
 
+    private GeometryFactory factory;
+    private GMLReader gmlReader;
+    private GeoJsonWriter geojsonWriter;
+
     @Autowired
     private ApiHubClient hubClient;
 
     @Autowired
     private PublisherChannel publisher;
+
+    @Autowired
+    private GeojsonHelper geojsonHelper;
 
     @Override
     public void execute(JobExecutionContext ctxt) throws JobExecutionException {
@@ -107,7 +113,7 @@ public class SentinelJob implements Job {
         } else if (platform != null && platform instanceof QueryBuilder.PlatformName) {
             platformName = ((QueryBuilder.PlatformName) platform).toString();
         }
-        
+
         if (platform == null) {
             LOG.warn("Skipping the job, as the platform was not defined: {}", dataMap);
             return;
@@ -193,6 +199,7 @@ public class SentinelJob implements Job {
         dataEnvelope.sensorMode(metadata.getSensorMode());
         dataEnvelope.setProductLevel(resolveProcessingLevel(metadata));
         dataEnvelope.setProductType(resolveProductType(metadata, satellite));
+        dataEnvelope.setFootprint(resolveGmlFootprintAsGeojson(metadata));
 
         dataEnvelope.setModified(new DateTime());
 
@@ -205,7 +212,7 @@ public class SentinelJob implements Job {
     }
 
     @Deprecated
-    private CopernicusDataEnvelope prepareEnvelop(double cloudCover, Envelope aoi, String id,
+    private CopernicusDataEnvelope prepareEnvelop(double cloudCover, Envelope aoi, String gmlFootprint, String id,
                                                   CopernicusDataEnvelope.SatelliteEnum platformName, DateTime firstProduct, DateTime lastProduct) {
         //Build new SensorWebDataEnvelope
         CopernicusDataEnvelope dataEnvelope = new CopernicusDataEnvelope();
@@ -215,6 +222,7 @@ public class SentinelJob implements Job {
         dataEnvelope.setAreaOfInterest(createAreaOfInterest(aoi));
         dataEnvelope.setSatellite(platformName);
         dataEnvelope.setDatasetId(id);
+
 
         dataEnvelope.setModified(new DateTime());
 
@@ -260,6 +268,14 @@ public class SentinelJob implements Job {
         }
     }
 
+    private String resolveGmlFootprintAsGeojson(ProductMetadata metadata) {
+        if (metadata.getGmlFootprint() == null || metadata.getGmlFootprint().isEmpty()) {
+            return null;
+        } else {
+            return geojsonHelper.decodeGml(metadata.getGmlFootprint());
+        }
+    }
+
     private void publish(CopernicusDataEnvelope data) {
         publisher.sendDataEnvelope().send(MessageBuilder.withPayload(data).build());
         LOG.info("Published new CopernicusDataEnvelope for Copernicus dataset: {}", data.getDatasetId());
@@ -277,5 +293,4 @@ public class SentinelJob implements Job {
         result.setExtent(asList);
         return result;
     }
-
 }
