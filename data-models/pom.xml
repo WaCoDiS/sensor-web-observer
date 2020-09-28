@@ -34,6 +34,10 @@
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <!--Unpack the model definition file from dependency and generate the models.-->
