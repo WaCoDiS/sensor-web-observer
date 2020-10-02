@@ -226,7 +226,7 @@ public class JobScheduler {
     	//TODO what if single time job shall start in the future?
     	
     	return TriggerBuilder.newTrigger()
-    			.withIdentity(jobDetail.getKey().getName() + SINGLE_TIME_EXECUTION_SUFFIX, jobDetail.getKey().getGroup() + SINGLE_TIME_EXECUTION_SUFFIX)
+    			.withIdentity(jobDetail.getKey().getName() + SINGLE_TIME_EXECUTION_SUFFIX, jobDetail.getKey().getGroup() + SINGLE_TIME_EXECUTION_SUFFIX + "_" + UUID.randomUUID())
                 .startNow()
                 .build();
 	}
