@@ -16,7 +16,7 @@ import javax.validation.constraints.*;
  * event that describes a single execution of a wacods job without regular schedule 
  */
 @ApiModel(description = "event that describes a single execution of a wacods job without regular schedule ")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-03-18T12:25:28.273+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-10-02T13:07:36.861687+02:00[Europe/Berlin]")
 
 public class SingleJobExecutionEvent extends AbstractWacodisJobExecutionEvent implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -30,10 +30,10 @@ public class SingleJobExecutionEvent extends AbstractWacodisJobExecutionEvent im
   }
 
   /**
-   * Determines together with WacodisJobDefinition.temporalCoverage.duration which time period has to be considered for inputs. The attribute WacodisJobDefinition.temporalCoverage.duration has to be specified in WacodisJobDefinition. 
+   * determines together with WacodisJobDefinition.temporalCoverage.duration which time period has to be considered for inputs. The attribute WacodisJobDefinition.temporalCoverage.duration has to be specified in WacodisJobDefinition. 
    * @return temporalCoverageEndDate
   **/
-  @ApiModelProperty(required = true, value = "Determines together with WacodisJobDefinition.temporalCoverage.duration which time period has to be considered for inputs. The attribute WacodisJobDefinition.temporalCoverage.duration has to be specified in WacodisJobDefinition. ")
+  @ApiModelProperty(required = true, value = "determines together with WacodisJobDefinition.temporalCoverage.duration which time period has to be considered for inputs. The attribute WacodisJobDefinition.temporalCoverage.duration has to be specified in WacodisJobDefinition. ")
   @NotNull
 
   @Valid

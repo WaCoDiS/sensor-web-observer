@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.wacodis.observer.model.AbstractSubsetDefinition;
+import de.wacodis.observer.model.AbstractSubsetDefinitionTemporalCoverage;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import javax.validation.constraints.*;
  * contains information for defining a subset definition for process inputs from catalogue service
  */
 @ApiModel(description = "contains information for defining a subset definition for process inputs from catalogue service")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-03-25T18:31:03.536+01:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-10-02T13:07:36.861687+02:00[Europe/Berlin]")
 
 public class CatalogueSubsetDefinition extends AbstractSubsetDefinition implements Serializable {
   private static final long serialVersionUID = 1L;
