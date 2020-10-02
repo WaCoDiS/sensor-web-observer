@@ -1,16 +1,24 @@
 package de.wacodis.observer.quartz;
 
+import java.text.ParseException;
+
 import org.joda.time.Duration;
 import org.joda.time.Period;
 import org.quartz.CronExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cronutils.mapper.CronMapper;
+import com.cronutils.model.Cron;
+import com.cronutils.model.CronType;
+import com.cronutils.model.definition.CronDefinitionBuilder;
+import com.cronutils.parser.CronParser;
+
 import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent;
+import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent.EventTypeEnum;
 import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.model.WacodisJobDefinitionExecution;
 import de.wacodis.observer.model.WacodisJobDefinitionTemporalCoverage;
-import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent.EventTypeEnum;
 import exception.InvalidWacodisJobParameterException;
 
 /**
@@ -80,7 +88,7 @@ public class WacodisJobValidator {
 		boolean isValidCronPattern = false;
 		
 		try {
-			CronExpression cronExpr = new CronExpression(patternString);
+			CronExpression cronExpr = createQuartzCronSchedule(patternString);
 			isValidCronPattern = true;
 		} catch (Exception e) {
 			LOG.debug("Error on parsing patternString '{}' as CRON pattern. Error message is:\n'{}'", patternString, e.getMessage());
@@ -111,6 +119,24 @@ public class WacodisJobValidator {
 		
 		return isValidIso8601Duration;
 	}
+	
+	/**
+     * Creates a Quartz cron expression from a unix UNIX cron expression pattern
+     * in the default system timezone
+     *
+     * @param executionPattern the UNIX cron expression
+     * @return cron expression for Quartz that matches the UNIX cron expression
+     * @throws ParseException
+     */
+    public static CronExpression createQuartzCronSchedule(String executionPattern) throws ParseException {
+        CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+        Cron cron = parser.parse(executionPattern);
+
+        CronMapper cronMapper = CronMapper.fromUnixToQuartz();
+        Cron quartzCron = cronMapper.map(cron);
+
+        return new CronExpression(quartzCron.asString());
+    }
 
 	
 }
