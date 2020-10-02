@@ -19,16 +19,6 @@ import de.wacodis.observer.decode.DecodingException;
 import de.wacodis.observer.decode.SimpleNamespaceContext;
 import de.wacodis.sentinel.apihub.ProductMetadata;
 import de.wacodis.sentinel.apihub.SearchResult;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +26,9 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.xml.xpath.*;
+import java.util.*;
 
 /**
  *
@@ -109,6 +102,7 @@ public class FeedDecoder {
             XPathExpression sensorModeExpr = this.xpath.compile("./a:str[@name = 'sensoroperationalmode']");
             XPathExpression processLvlExpr = this.xpath.compile("./a:str[@name = 'processinglevel']");
             XPathExpression productTypeExpr = this.xpath.compile("./a:str[@name = 'producttype']");
+            XPathExpression gmlFootprintExpr = this.xpath.compile("./a:str[@name = 'gmlfootprint']");
             
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node n = nodes.item(i);
@@ -124,6 +118,7 @@ public class FeedDecoder {
                 Object sensorModeCandidate = sensorModeExpr.evaluate(n, XPathConstants.STRING);
                 Object processLvlCandidate = processLvlExpr.evaluate(n, XPathConstants.STRING);
                 Object productTypeCandidate = productTypeExpr.evaluate(n, XPathConstants.STRING);
+                Object gmlFootprintCandidate = gmlFootprintExpr.evaluate(n, XPathConstants.STRING);
                 
                 ProductMetadata p = new ProductMetadata();                
                 p.setTitle(extractString(titleCandidate));
@@ -138,6 +133,7 @@ public class FeedDecoder {
                 p.setSensorMode(extractString(sensorModeCandidate));
                 p.setProcessingLevel(extractString(processLvlCandidate));
                 p.setProductType(extractString(productTypeCandidate));
+                p.setGmlFootprint(extractString(gmlFootprintCandidate));
                 
                 products.add(p);
             }
