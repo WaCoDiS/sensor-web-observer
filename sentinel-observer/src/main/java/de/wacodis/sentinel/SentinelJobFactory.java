@@ -21,7 +21,6 @@ import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.sentinel.apihub.QueryBuilder;
 
 /**
- *
  * @author matthes rieke
  */
 @Component
@@ -29,7 +28,7 @@ import de.wacodis.sentinel.apihub.QueryBuilder;
 public class SentinelJobFactory implements JobFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(SentinelJobFactory.class);
-    
+
     @Autowired
     private ExecutionIntervalConfig intervalConfig;
 
@@ -85,72 +84,72 @@ public class SentinelJobFactory implements JobFactory {
 //                .build();
 //    }
 
-	@Override
-	public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data,
-			AbstractSubsetDefinition subsetDefinition) {
-		// this should always be the case
-		if(subsetDefinition instanceof CopernicusSubsetDefinition){
-			
-			LOG.info("Preparing SentinelJob JobDetail");
-			
-			CopernicusSubsetDefinition copDef = (CopernicusSubsetDefinition) subsetDefinition;
-			if (copDef.getMaximumCloudCoverage() > 0) {
-	            data.put(SentinelJob.MAX_CLOUD_COVERAGE_KEY, copDef.getMaximumCloudCoverage());
-	        }
-	        
-	        switch (copDef.getSatellite()) {
-	            case _1:
-	                data.put(SentinelJob.PLATFORM_KEY, QueryBuilder.PlatformName.Sentinel1);
-	                break;
-	            case _2:
-	                data.put(SentinelJob.PLATFORM_KEY, QueryBuilder.PlatformName.Sentinel2);
-	                break;
-	            case _3:
-	                data.put(SentinelJob.PLATFORM_KEY, QueryBuilder.PlatformName.Sentinel3);
-	                break;
-	        }
-	        
-	        if (job.getTemporalCoverage() != null && !StringUtils.isEmpty(job.getTemporalCoverage().getDuration())) {
-	            Period period = ISOPeriodFormat.standard().parsePeriod(job.getTemporalCoverage().getDuration());
-	            int baseDays = period.getDays();
-	            if (period.getHours() > 11) {
-	                // round to full days
-	                baseDays++;
-	            }
-	            data.put(SentinelJob.PREVIOUS_DAYS_KEY, baseDays);
-	        }
-	        
-	        data.put("executionInterval", intervalConfig.getSentinel());
+    @Override
+    public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data,
+                                           AbstractSubsetDefinition subsetDefinition) {
+        // this should always be the case
+        if (subsetDefinition instanceof CopernicusSubsetDefinition) {
 
-		}
-		
-		// create the quartz object
-	    return JobBuilder.newJob(SentinelJob.class)
-	            .usingJobData(data);
-		
-	}
+            LOG.info("Preparing SentinelJob JobDetail");
 
-	@Override
-	public Stream<AbstractSubsetDefinition> filterJobInputs(WacodisJobDefinition job) {
-		return job.getInputs().stream()
+            CopernicusSubsetDefinition copDef = (CopernicusSubsetDefinition) subsetDefinition;
+            if (copDef.getMaximumCloudCoverage() > 0) {
+                data.put(SentinelJob.MAX_CLOUD_COVERAGE_KEY, copDef.getMaximumCloudCoverage());
+            }
+
+            switch (copDef.getSatellite()) {
+                case _1:
+                    data.put(SentinelJob.PLATFORM_KEY, QueryBuilder.PlatformName.Sentinel1);
+                    break;
+                case _2:
+                    data.put(SentinelJob.PLATFORM_KEY, QueryBuilder.PlatformName.Sentinel2);
+                    break;
+                case _3:
+                    data.put(SentinelJob.PLATFORM_KEY, QueryBuilder.PlatformName.Sentinel3);
+                    break;
+            }
+
+            if (job.getTemporalCoverage() != null && !StringUtils.isEmpty(job.getTemporalCoverage().getDuration())) {
+                Period period = ISOPeriodFormat.standard().parsePeriod(job.getTemporalCoverage().getDuration());
+                int baseDays = period.getDays();
+                if (period.getHours() > 11) {
+                    // round to full days
+                    baseDays++;
+                }
+                data.put(SentinelJob.PREVIOUS_DAYS_KEY, baseDays);
+            }
+
+            data.put("executionInterval", intervalConfig.getSentinel());
+
+        }
+
+        // create the quartz object
+        return JobBuilder.newJob(SentinelJob.class)
+                .usingJobData(data);
+
+    }
+
+    @Override
+    public Stream<AbstractSubsetDefinition> filterJobInputs(WacodisJobDefinition job) {
+        return job.getInputs().stream()
                 .filter((i -> i instanceof CopernicusSubsetDefinition));
-	}
+    }
 
-	@Override
-	public String generateSubsetSpecificIdentifier(AbstractSubsetDefinition subsetDefinition) {
-		
-		StringBuilder builder = new StringBuilder("");
-		
-		if(subsetDefinition instanceof CopernicusSubsetDefinition){
-			CopernicusSubsetDefinition copDef = (CopernicusSubsetDefinition) subsetDefinition;
-			builder.append(copDef.getSourceType());
-			
-			if(copDef.getSatellite() != null){
-				builder.append("_" + copDef.getSatellite());
-			}
-		}
-		
-		return builder.toString();
-	}
+    @Override
+    public String generateSubsetSpecificIdentifier(AbstractSubsetDefinition subsetDefinition) {
+
+        StringBuilder builder = new StringBuilder("");
+
+        if (subsetDefinition instanceof CopernicusSubsetDefinition) {
+            CopernicusSubsetDefinition copDef = (CopernicusSubsetDefinition) subsetDefinition;
+            builder.append(copDef.getSourceType());
+
+            if (copDef.getSatellite() != null) {
+                builder.append("_" + copDef.getSatellite());
+            }
+        }
+
+        return builder.toString();
+    }
 
 }

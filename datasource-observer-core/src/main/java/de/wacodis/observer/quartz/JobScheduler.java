@@ -24,7 +24,7 @@ public class JobScheduler {
     private static final int DEFAULT_EXEC_INTERVAL = 3600; // in seconds
 
 
-	private static final Logger LOG = LoggerFactory.getLogger(JobScheduler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobScheduler.class);
 
 
     @Autowired
@@ -36,203 +36,201 @@ public class JobScheduler {
     public void scheduleJob(WacodisJobDefinition job, JobFactory factory) {
         try {
 
-        	// first validate temporalCoverage
-        	WacodisJobValidator.validateJobParameters(job);
+            // first validate temporalCoverage
+            WacodisJobValidator.validateJobParameters(job);
 
-        	// generate all Quartz job definitions for each WACODIS job input (SubsetDefinition)
+            // generate all Quartz job definitions for each WACODIS job input (SubsetDefinition)
 
-        	Collection<JobDetail> quartzJobDefinitions = generateQuartzJobDefinitions(job, factory);
+            Collection<JobDetail> quartzJobDefinitions = generateQuartzJobDefinitions(job, factory);
 
-        	// if job queries data from the past, then execute each job ONCE to ensure that queried data exists
-        	if(queriesDataFromThePast(job)){
-        		// execute each quartz job definition one single time
-        		LOG.info("WACODIS job has a duration temporalCoverage specification. Thus it queries data from the past. " +
-						"Hence each generated quartz job instance will be executed once before scheduling management in " +
-						"order to ensure that queried temporal coverage for associated data source is retrieved.");
+            // if job queries data from the past, then execute each job ONCE to ensure that queried data exists
+            if (queriesDataFromThePast(job)) {
+                // execute each quartz job definition one single time
+                LOG.info("WACODIS job has a duration temporalCoverage specification. Thus it queries data from the past. " +
+                        "Hence each generated quartz job instance will be executed once before scheduling management in " +
+                        "order to ensure that queried temporal coverage for associated data source is retrieved.");
 
-        		executeQuartzJobsOnce(quartzJobDefinitions);
-        	}
+                executeQuartzJobsOnce(quartzJobDefinitions);
+            }
 
-        	// then for each Quartz job definition
-    		/*
-    		 * manage Quartz job instances;
-    		 *
-    		 * if is a single time execution, then skip
-    		 *
-    		 * else
-    		 * 		check if existing jobs already watch the same set of queried data
-    		 * 		if so just update JobDataMap with WACODIS ID
-    		 * 		else generate and execute new job & trigger for scheduling
-    		 */
-			WacodisJobDefinitionExecution execution = job.getExecution();
-			AbstractWacodisJobExecutionEvent event = execution.getEvent();
-			if(event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)){
-				// specification of a job, that shall only be executed once
-				// e.g. for on demand jobs
+            // then for each Quartz job definition
+            /*
+             * manage Quartz job instances;
+             *
+             * if is a single time execution, then skip
+             *
+             * else
+             * 		check if existing jobs already watch the same set of queried data
+             * 		if so just update JobDataMap with WACODIS ID
+             * 		else generate and execute new job & trigger for scheduling
+             */
+            WacodisJobDefinitionExecution execution = job.getExecution();
+            AbstractWacodisJobExecutionEvent event = execution.getEvent();
+            if (event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)) {
+                // specification of a job, that shall only be executed once
+                // e.g. for on demand jobs
 
-				// in this case, the job was already executed and thus, we may skip the rest
+                // in this case, the job was already executed and thus, we may skip the rest
 
-				//TODO what if single time job shall start in the future?
-			}
-			else{
-				manageQuartzJobDefinitions_onAddNewWacodisJob(job, quartzJobDefinitions);
-			}
+                //TODO what if single time job shall start in the future?
+            } else {
+                manageQuartzJobDefinitions_onAddNewWacodisJob(job, quartzJobDefinitions);
+            }
         } catch (Exception e) {
             LOG.warn(e.getClass() + ": " + e.getMessage());
             LOG.debug(e.getClass() + ": " + e.getMessage(), e);
             e.printStackTrace();
         }
-	}
+    }
 
 
-	public void onDeleteWacodisJob(WacodisJobDefinition wacodisJob, JobFactory factory) {
-		/*
-		 * when a WACODIS job is deleted we must check if there are running quartz jobs
-		 * for each input of the WACODIS job
-		 * --> within those eisting quartz jobs, we must remove the WACODIS job ID from quartz JobDataMap
-		 *
-		 * if there is no remaining WACODIS job ID in quartz JobDataMap --> then pause/unschedule job (remove trigger!)!
-		 */
+    public void onDeleteWacodisJob(WacodisJobDefinition wacodisJob, JobFactory factory) {
+        /*
+         * when a WACODIS job is deleted we must check if there are running quartz jobs
+         * for each input of the WACODIS job
+         * --> within those eisting quartz jobs, we must remove the WACODIS job ID from quartz JobDataMap
+         *
+         * if there is no remaining WACODIS job ID in quartz JobDataMap --> then pause/unschedule job (remove trigger!)!
+         */
 
-		// generate all Quartz job definitions for each WACODIS job input (SubsetDefinition)
-		// they will be used to inspect existing quartz jobs
+        // generate all Quartz job definitions for each WACODIS job input (SubsetDefinition)
+        // they will be used to inspect existing quartz jobs
 
-    	try {
-    		Collection<JobDetail> quartzJobDefinitions = generateQuartzJobDefinitions(wacodisJob, factory);
-			manageQuartzJobDefinitions_onDeleteWacodisJob(wacodisJob, quartzJobDefinitions);
-		} catch (SchedulerException e) {
-			LOG.warn(e.getMessage());
+        try {
+            Collection<JobDetail> quartzJobDefinitions = generateQuartzJobDefinitions(wacodisJob, factory);
+            manageQuartzJobDefinitions_onDeleteWacodisJob(wacodisJob, quartzJobDefinitions);
+        } catch (SchedulerException e) {
+            LOG.warn(e.getMessage());
             LOG.debug(e.getMessage(), e);
-		}
-	}
+        }
+    }
 
-	private void manageQuartzJobDefinitions_onDeleteWacodisJob(WacodisJobDefinition wacodisJob,
-			Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
+    private void manageQuartzJobDefinitions_onDeleteWacodisJob(WacodisJobDefinition wacodisJob,
+                                                               Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
 
-		for (JobDetail jobDetail : quartzJobDefinitions) {
-			if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)){
-				LOG.info("Existing quartz job with the same parameters identified. Will remove WACODIS job ID from its associated WACODIS jobs");
-				JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
-				// get Trigger, which has associated Key in case we only want to unschedule job
-				Trigger trigger = prepareTrigger(jobDetail);
-				wacodisQuartz.removeWacodisJobIdFromQuartzJobDataMap(existingQuartzJob, wacodisJob.getId(), trigger.getKey(), true);
-			} else {
-				LOG.warn("No existing quartz jobs found for deletion parameters identifier '{}'.", jobDetail.getKey());
-			}
-		}
+        for (JobDetail jobDetail : quartzJobDefinitions) {
+            if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)) {
+                LOG.info("Existing quartz job with the same parameters identified. Will remove WACODIS job ID from its associated WACODIS jobs");
+                JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
+                // get Trigger, which has associated Key in case we only want to unschedule job
+                Trigger trigger = prepareTrigger(jobDetail);
+                wacodisQuartz.removeWacodisJobIdFromQuartzJobDataMap(existingQuartzJob, wacodisJob.getId(), trigger.getKey(), true);
+            } else {
+                LOG.warn("No existing quartz jobs found for deletion parameters identifier '{}'.", jobDetail.getKey());
+            }
+        }
 
-	}
+    }
 
-	private void manageQuartzJobDefinitions_onAddNewWacodisJob(WacodisJobDefinition job, Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
+    private void manageQuartzJobDefinitions_onAddNewWacodisJob(WacodisJobDefinition job, Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
 
-		/*
-		 * check if existing jobs already watch the same set of queried data
-    	 * 		if so just update JobDataMap with WACODIS ID
-    	 * 		else generate and execute new job & trigger for scheduling
-		 */
-		for (JobDetail jobDetail : quartzJobDefinitions) {
-			if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)){
-				LOG.info("Existing quartz job with the same parameters identified. Will add WACODIS job ID to its associated WACODIS jobs");
-				JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
-				wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId(), true);
+        /*
+         * check if existing jobs already watch the same set of queried data
+         * 		if so just update JobDataMap with WACODIS ID
+         * 		else generate and execute new job & trigger for scheduling
+         */
+        for (JobDetail jobDetail : quartzJobDefinitions) {
+            if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)) {
+                LOG.info("Existing quartz job with the same parameters identified. Will add WACODIS job ID to its associated WACODIS jobs");
+                JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
+                wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId(), true);
 
-				// if the execution-interval, specified in WACODIS job definition, is shorter than the already existing trigger
-				// then we might want to adjust the trigger --> shorten execution interval
-				adjustTriggerIfIntervalIsShorter(existingQuartzJob, job.getExecution().getPattern());
-			}
-			else{
-				// initialize wacodisJobIdStorage in jobDataMap
-				LOG.info("No existing quartz job with the same parameters was found. Will create and schedule a new quartz job and add WACODIS job ID to its associated WACODIS jobs");
-				wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(jobDetail, job.getId(), false);
+                // if the execution-interval, specified in WACODIS job definition, is shorter than the already existing trigger
+                // then we might want to adjust the trigger --> shorten execution interval
+                adjustTriggerIfIntervalIsShorter(existingQuartzJob, job.getExecution().getPattern());
+            } else {
+                // initialize wacodisJobIdStorage in jobDataMap
+                LOG.info("No existing quartz job with the same parameters was found. Will create and schedule a new quartz job and add WACODIS job ID to its associated WACODIS jobs");
+                wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(jobDetail, job.getId(), false);
 
-				Trigger trigger = prepareTrigger(jobDetail);
-		        wacodisQuartz.scheduleJob(jobDetail, trigger);
-			}
-		}
+                Trigger trigger = prepareTrigger(jobDetail);
+                wacodisQuartz.scheduleJob(jobDetail, trigger);
+            }
+        }
 
-	}
+    }
 
-	private void adjustTriggerIfIntervalIsShorter(JobDetail existingQuartzJob, String pattern) {
-		// TODO FIXME implement
-		LOG.info("Adjustment of Triggers is currently not implemented.");
+    private void adjustTriggerIfIntervalIsShorter(JobDetail existingQuartzJob, String pattern) {
+        // TODO FIXME implement
+        LOG.info("Adjustment of Triggers is currently not implemented.");
 
-		/*
-		 * it might happen, that an existing job was just paused!
-		 *
-		 * TODO detect that and if it is state=paused/unscheduled, then we might just define a new trigger
-		 */
+        /*
+         * it might happen, that an existing job was just paused!
+         *
+         * TODO detect that and if it is state=paused/unscheduled, then we might just define a new trigger
+         */
 
 //		CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(pattern);
 //		
 //		
 //		Trigger associatedTrigger = wacodisQuartz.getAssociatedTrigger(existingQuartzJob);
 
-	}
+    }
 
-	private void executeQuartzJobsOnce(Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
-		for (JobDetail jobDetail : quartzJobDefinitions) {
-			// create a jonCopy in order to adjust the quartz job KEY definition for single time execution
-			JobKey key = jobDetail.getKey();
-			JobKey key_singleTime = generateUniqueSingleTimeExecutionJobKey(key);
-			JobDetail jobDetail_singleTimeCopy = (JobDetail) jobDetail.clone();
+    private void executeQuartzJobsOnce(Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
+        for (JobDetail jobDetail : quartzJobDefinitions) {
+            // create a jonCopy in order to adjust the quartz job KEY definition for single time execution
+            JobKey key = jobDetail.getKey();
+            JobKey key_singleTime = generateUniqueSingleTimeExecutionJobKey(key);
+            JobDetail jobDetail_singleTimeCopy = (JobDetail) jobDetail.clone();
 
-			jobDetail_singleTimeCopy = jobDetail_singleTimeCopy.getJobBuilder().withIdentity(key_singleTime).build();
+            jobDetail_singleTimeCopy = jobDetail_singleTimeCopy.getJobBuilder().withIdentity(key_singleTime).build();
 
-			Trigger oneTimeTrigger = prepareSingleExecutionTrigger(jobDetail);
+            Trigger oneTimeTrigger = prepareSingleExecutionTrigger(jobDetail);
 
-			LOG.info("Scheduling new one time execution job with jobID {} and groupName {}", key_singleTime.getName(), key_singleTime.getGroup());
-			wacodisQuartz.scheduleJob(jobDetail_singleTimeCopy, oneTimeTrigger);
-		}
+            LOG.info("Scheduling new one time execution job with jobID {} and groupName {}", key_singleTime.getName(), key_singleTime.getGroup());
+            wacodisQuartz.scheduleJob(jobDetail_singleTimeCopy, oneTimeTrigger);
+        }
 
-	}
+    }
 
-	private JobKey generateUniqueSingleTimeExecutionJobKey(JobKey key) {
+    private JobKey generateUniqueSingleTimeExecutionJobKey(JobKey key) {
 
-		// make a single time job key unique by adding a unique random UUID
+        // make a single time job key unique by adding a unique random UUID
 
-		/*
-		 * this can be necessary as a single time job might be startet immediately or
-		 * in future (i.e. 1 year in the future). Hence the job must exist that long in order to be
-		 * triggered!
-		 *
-		 * --> hence it must have a unique jobKey
-		 */
-		UUID uuid = UUID.randomUUID();
+        /*
+         * this can be necessary as a single time job might be startet immediately or
+         * in future (i.e. 1 year in the future). Hence the job must exist that long in order to be
+         * triggered!
+         *
+         * --> hence it must have a unique jobKey
+         */
+        UUID uuid = UUID.randomUUID();
 
-		return new JobKey(key.getName() + "_" + uuid + SINGLE_TIME_EXECUTION_SUFFIX,
-				key.getGroup()  + "_" + uuid + SINGLE_TIME_EXECUTION_SUFFIX);
-	}
+        return new JobKey(key.getName() + "_" + uuid + SINGLE_TIME_EXECUTION_SUFFIX,
+                key.getGroup() + "_" + uuid + SINGLE_TIME_EXECUTION_SUFFIX);
+    }
 
     private Trigger prepareSingleExecutionTrigger(JobDetail jobDetail) {
 
-    	//TODO what if single time job shall start in the future?
+        //TODO what if single time job shall start in the future?
 
-    	return TriggerBuilder.newTrigger()
-    			.withIdentity(jobDetail.getKey().getName() + SINGLE_TIME_EXECUTION_SUFFIX, jobDetail.getKey().getGroup() + SINGLE_TIME_EXECUTION_SUFFIX + "_" + UUID.randomUUID())
+        return TriggerBuilder.newTrigger()
+                .withIdentity(jobDetail.getKey().getName() + SINGLE_TIME_EXECUTION_SUFFIX, jobDetail.getKey().getGroup() + SINGLE_TIME_EXECUTION_SUFFIX + "_" + UUID.randomUUID())
                 .startNow()
                 .build();
-	}
+    }
 
-	private boolean queriesDataFromThePast(WacodisJobDefinition job) {
-		WacodisJobDefinitionTemporalCoverage temporalCoverage = job.getTemporalCoverage();
+    private boolean queriesDataFromThePast(WacodisJobDefinition job) {
+        WacodisJobDefinitionTemporalCoverage temporalCoverage = job.getTemporalCoverage();
 
-		// temporalCoverage can either have property "duration" or "previousExecution"
+        // temporalCoverage can either have property "duration" or "previousExecution"
 
-		// only "duration" is used to query data from the past. Hence existence of that property is sufficient
+        // only "duration" is used to query data from the past. Hence existence of that property is sufficient
 
-		return WacodisJobValidator.isValidIso8601DurationString(temporalCoverage.getDuration());
-	}
+        return WacodisJobValidator.isValidIso8601DurationString(temporalCoverage.getDuration());
+    }
 
-	private Collection<JobDetail> generateQuartzJobDefinitions(WacodisJobDefinition job, JobFactory factory) {
-    	JobDataMap data = new JobDataMap();
+    private Collection<JobDetail> generateQuartzJobDefinitions(WacodisJobDefinition job, JobFactory factory) {
+        JobDataMap data = new JobDataMap();
         data.put(AOI_KEY, job.getAreaOfInterest());
 
-		return factory.initializeJobs(job, data);
-	}
+        return factory.initializeJobs(job, data);
+    }
 
-	private Trigger prepareTrigger(JobDetail jobDetail) {
+    private Trigger prepareTrigger(JobDetail jobDetail) {
 
-		JobDataMap data = jobDetail.getJobDataMap();
+        JobDataMap data = jobDetail.getJobDataMap();
         /*
          * set a default execution interval
          */

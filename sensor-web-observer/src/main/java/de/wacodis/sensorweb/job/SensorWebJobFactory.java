@@ -20,20 +20,20 @@ import de.wacodis.observer.model.WacodisJobDefinition;
 @Component
 public class SensorWebJobFactory implements JobFactory {
 
-	private static final Logger log = LoggerFactory.getLogger(SensorWebJobFactory.class);
-        
-        @Autowired
-        private ExecutionIntervalConfig intervalConfig;
+    private static final Logger log = LoggerFactory.getLogger(SensorWebJobFactory.class);
 
-	@Override
-	public boolean supportsJobDefinition(WacodisJobDefinition job) {
-		Optional<AbstractSubsetDefinition> sweDefs = job.getInputs().stream()
-				.filter(in -> in instanceof SensorWebSubsetDefinition).findAny();
+    @Autowired
+    private ExecutionIntervalConfig intervalConfig;
 
-		return sweDefs.isPresent();
-	}
+    @Override
+    public boolean supportsJobDefinition(WacodisJobDefinition job) {
+        Optional<AbstractSubsetDefinition> sweDefs = job.getInputs().stream()
+                .filter(in -> in instanceof SensorWebSubsetDefinition).findAny();
 
-	//access job specific inputs
+        return sweDefs.isPresent();
+    }
+
+    //access job specific inputs
 //	@Override
 //	public void initializeParameters(WacodisJobDefinition job, JobDataMap data) {
 //		for (AbstractSubsetDefinition subset : job.getInputs()) {
@@ -59,58 +59,58 @@ public class SensorWebJobFactory implements JobFactory {
 //				.build();
 //	}
 
-	@Override
-	public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition) {
-		if (subsetDefinition instanceof SensorWebSubsetDefinition) {
-			SensorWebSubsetDefinition senSubset = (SensorWebSubsetDefinition) subsetDefinition;
-			data.put("procedures", Collections.singletonList(senSubset.getProcedure()));
-			data.put("observedProperties", Collections.singletonList(senSubset.getObservedProperty()));
-			data.put("offerings", Collections.singletonList(senSubset.getOffering()));
-			data.put("featureIdentifiers", Collections.singletonList(senSubset.getFeatureOfInterest()));
-			data.put("serviceURL", senSubset.getServiceUrl());
-			data.put("executionInterval", intervalConfig.getSensorWeb());
-		}
-		
-		log.info("Preparing JobDetail");
+    @Override
+    public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition) {
+        if (subsetDefinition instanceof SensorWebSubsetDefinition) {
+            SensorWebSubsetDefinition senSubset = (SensorWebSubsetDefinition) subsetDefinition;
+            data.put("procedures", Collections.singletonList(senSubset.getProcedure()));
+            data.put("observedProperties", Collections.singletonList(senSubset.getObservedProperty()));
+            data.put("offerings", Collections.singletonList(senSubset.getOffering()));
+            data.put("featureIdentifiers", Collections.singletonList(senSubset.getFeatureOfInterest()));
+            data.put("serviceURL", senSubset.getServiceUrl());
+            data.put("executionInterval", intervalConfig.getSensorWeb());
+        }
 
-		return JobBuilder.newJob(SensorWebJob.class)
-				.usingJobData(data);
-	}
+        log.info("Preparing JobDetail");
 
-	@Override
-	public Stream<AbstractSubsetDefinition> filterJobInputs(WacodisJobDefinition job) {
-		return job.getInputs().stream()
-				.filter(in -> in instanceof SensorWebSubsetDefinition);
-	}
+        return JobBuilder.newJob(SensorWebJob.class)
+                .usingJobData(data);
+    }
 
-	@Override
-	public String generateSubsetSpecificIdentifier(AbstractSubsetDefinition subsetDefinition) {
-		StringBuilder builder = new StringBuilder("");
-		
-		// TODO check ID generation --> what parameters shall be used?
-		
-		if(subsetDefinition instanceof SensorWebSubsetDefinition){
-			SensorWebSubsetDefinition senDef = (SensorWebSubsetDefinition) subsetDefinition;
-			builder.append(senDef.getSourceType());
-			
-			if(senDef.getProcedure() != null){
-				builder.append("_" + Collections.singletonList(senDef.getProcedure()));
-			}
-			if(senDef.getObservedProperty() != null){
-				builder.append("_" + Collections.singletonList(senDef.getObservedProperty()));
-			}
-			if(senDef.getOffering() != null){
-				builder.append("_" + Collections.singletonList(senDef.getOffering()));
-			}
-			if(senDef.getFeatureOfInterest() != null){
-				builder.append("_" + Collections.singletonList(senDef.getFeatureOfInterest()));
-			}
-			if(senDef.getServiceUrl() != null){
-				builder.append("_" + Collections.singletonList(senDef.getServiceUrl()));
-			}
-		}
-		
-		return builder.toString();
-	}
+    @Override
+    public Stream<AbstractSubsetDefinition> filterJobInputs(WacodisJobDefinition job) {
+        return job.getInputs().stream()
+                .filter(in -> in instanceof SensorWebSubsetDefinition);
+    }
+
+    @Override
+    public String generateSubsetSpecificIdentifier(AbstractSubsetDefinition subsetDefinition) {
+        StringBuilder builder = new StringBuilder("");
+
+        // TODO check ID generation --> what parameters shall be used?
+
+        if (subsetDefinition instanceof SensorWebSubsetDefinition) {
+            SensorWebSubsetDefinition senDef = (SensorWebSubsetDefinition) subsetDefinition;
+            builder.append(senDef.getSourceType());
+
+            if (senDef.getProcedure() != null) {
+                builder.append("_" + Collections.singletonList(senDef.getProcedure()));
+            }
+            if (senDef.getObservedProperty() != null) {
+                builder.append("_" + Collections.singletonList(senDef.getObservedProperty()));
+            }
+            if (senDef.getOffering() != null) {
+                builder.append("_" + Collections.singletonList(senDef.getOffering()));
+            }
+            if (senDef.getFeatureOfInterest() != null) {
+                builder.append("_" + Collections.singletonList(senDef.getFeatureOfInterest()));
+            }
+            if (senDef.getServiceUrl() != null) {
+                builder.append("_" + Collections.singletonList(senDef.getServiceUrl()));
+            }
+        }
+
+        return builder.toString();
+    }
 
 }

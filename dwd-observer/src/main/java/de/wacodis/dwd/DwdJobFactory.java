@@ -73,10 +73,10 @@ public class DwdJobFactory implements JobFactory {
 //				.storeDurably(true).build();
 //    }
 
-	@Override
-	public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition) {
-		if (subsetDefinition instanceof DwdSubsetDefinition) {
-			LOG.info("Preparing DwdJob JobDetail");
+    @Override
+    public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition) {
+        if (subsetDefinition instanceof DwdSubsetDefinition) {
+            LOG.info("Preparing DwdJob JobDetail");
             DwdSubsetDefinition dwdDef = (DwdSubsetDefinition) subsetDefinition;
 
             // Put all required request parameters into JobDataMap
@@ -97,35 +97,35 @@ public class DwdJobFactory implements JobFactory {
 
         }
         return JobBuilder.newJob(DwdJob.class)
-        		.usingJobData(data);
-	}
+                .usingJobData(data);
+    }
 
-	@Override
-	public Stream<AbstractSubsetDefinition> filterJobInputs(WacodisJobDefinition job) {
-		return job.getInputs().stream()
+    @Override
+    public Stream<AbstractSubsetDefinition> filterJobInputs(WacodisJobDefinition job) {
+        return job.getInputs().stream()
                 .filter(in -> in instanceof DwdSubsetDefinition);
-	}
+    }
 
-	@Override
-	public String generateSubsetSpecificIdentifier(AbstractSubsetDefinition subsetDefinition) {
-		StringBuilder builder = new StringBuilder("");
-		
-		// TODO check ID generation --> what parameters shall be used?
-		
-		if(subsetDefinition instanceof DwdSubsetDefinition){
-			DwdSubsetDefinition dwdDef = (DwdSubsetDefinition) subsetDefinition;
-			builder.append(dwdDef.getSourceType());
-			
-			if(dwdDef.getServiceUrl() != null){
-				builder.append("_" + Collections.singletonList(dwdDef.getServiceUrl()));
-			}
-			if(dwdDef.getLayerName() != null){
-				builder.append("_" + Collections.singletonList(dwdDef.getLayerName()));
-			}
-		}
-		
-		return builder.toString();
-		
-	}
+    @Override
+    public String generateSubsetSpecificIdentifier(AbstractSubsetDefinition subsetDefinition) {
+        StringBuilder builder = new StringBuilder("");
+
+        // TODO check ID generation --> what parameters shall be used?
+
+        if (subsetDefinition instanceof DwdSubsetDefinition) {
+            DwdSubsetDefinition dwdDef = (DwdSubsetDefinition) subsetDefinition;
+            builder.append(dwdDef.getSourceType());
+
+            if (dwdDef.getServiceUrl() != null) {
+                builder.append("_" + Collections.singletonList(dwdDef.getServiceUrl()));
+            }
+            if (dwdDef.getLayerName() != null) {
+                builder.append("_" + Collections.singletonList(dwdDef.getLayerName()));
+            }
+        }
+
+        return builder.toString();
+
+    }
 
 }
