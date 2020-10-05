@@ -1,8 +1,11 @@
 package de.wacodis.codede;
 
+import de.wacodis.observer.model.AbstractSubsetDefinition;
 import de.wacodis.observer.model.CopernicusSubsetDefinition;
 import de.wacodis.observer.model.DwdSubsetDefinition;
 import de.wacodis.observer.model.WacodisJobDefinition;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.jupiter.api.*;
 
 /**
@@ -57,4 +60,18 @@ public class CodeDeJobFactoryTest {
 
         Assertions.assertEquals("EOP:CODE-DE:S3_SLSTR_L1_RBT", jobFactory.buildProductIdentifier(subsetDef));
     }
+
+    @Test
+    public void testGenerateSubsetSpecificIdentifier(){
+        CopernicusSubsetDefinition def = new CopernicusSubsetDefinition();
+        def.setSourceType(AbstractSubsetDefinition.SourceTypeEnum.COPERNICUSSUBSETDEFINITION);
+        def.setSatellite(CopernicusSubsetDefinition.SatelliteEnum._2);
+
+        CodeDeJobFactory jobFactory = new CodeDeJobFactory();
+        String identifier = jobFactory.generateSubsetSpecificIdentifier(def);
+
+        Assertions.assertEquals("CopernicusSubsetDefinition_sentinel-2", identifier);
+    }
+
+
 }
