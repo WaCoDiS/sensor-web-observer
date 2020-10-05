@@ -7,7 +7,6 @@ import de.wacodis.observer.model.CopernicusSubsetDefinition;
 import de.wacodis.observer.model.WacodisJobDefinition;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:tim.kurowski@hs-bochum.de">Tim Kurowski</a>
@@ -27,14 +27,14 @@ import java.util.Optional;
 @ConditionalOnProperty(value = "datasource-observer.code-de.enabled", havingValue = "true")
 public class CodeDeJobFactory implements JobFactory {
     private final static String PRODUCT_IDENTIFIER_PREFIX = "EOP:CODE-DE:";
-    private final static Map<String, String> SATELLTIE_MAPPING;
+    private final static Map<String, String> SATELLITE_MAPPING;
 
     static {
         Map<String, String> map = new HashMap<>();
         map.put("sentinel-1", "Sentinel1");
         map.put("sentinel-2", "Sentinel2");
         map.put("sentinel-3", "Sentinel3");
-        SATELLTIE_MAPPING = Collections.unmodifiableMap(map);
+        SATELLITE_MAPPING = Collections.unmodifiableMap(map);
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(CodeDeJobFactory.class);
@@ -51,18 +51,15 @@ public class CodeDeJobFactory implements JobFactory {
     }
 
     @Override
-    public JobDetail initializeJob(WacodisJobDefinition job, JobDataMap data) {
-        LOG.info("Preparing CodeDeJob JobDetail");
-
-        Optional<AbstractSubsetDefinition> defOpt = job.getInputs().stream()
-                .filter((i -> i instanceof CopernicusSubsetDefinition)).findFirst();
-
+    public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition) {
         // this should always be the case
-        if (defOpt.isPresent()) {
-            CopernicusSubsetDefinition def = (CopernicusSubsetDefinition) defOpt.get();
+        if (subsetDefinition instanceof CopernicusSubsetDefinition) {
+            LOG.info("Preparing CodeDeJob JobDetail");
+
+            CopernicusSubsetDefinition def = (CopernicusSubsetDefinition) subsetDefinition;
 
             // Put all required request parameters into JobDataMap
-            data.put(CodeDeJob.SATTELITE_KEY, SATELLTIE_MAPPING.get(def.getSatellite().toString()));
+            data.put(CodeDeJob.SATTELITE_KEY, SATELLITE_MAPPING.get(def.getSatellite().toString()));
             data.put(CodeDeJob.INSTRUMENT_KEY, def.getInstrument());
             data.put(CodeDeJob.PRODUCT_TYPE_KEY, def.getProductType());
             data.put(CodeDeJob.PROCESSING_LEVEL_KEY, def.getProductLevel());
@@ -81,15 +78,39 @@ public class CodeDeJobFactory implements JobFactory {
                     + job.getAreaOfInterest().getExtent().get(3);
             data.put(CodeDeJob.BBOX_KEY, extent);    // e.g. "52.0478 6.0124,52.5687 7.1420"
             data.put(CodeDeJob.EXECUTION_INTERVAL_KEY, intervalConfig.getSentinel());
-
         }
-        return JobBuilder.newJob(CodeDeJob.class).withIdentity(job.getId().toString(), job.getName()).usingJobData(data)
-                .build();
+
+        // create the quartz object
+        return JobBuilder.newJob(CodeDeJob.class)
+                .usingJobData(data);
+    }
+
+    @Override
+    public Stream<AbstractSubsetDefinition> filterJobInputs(WacodisJobDefinition job) {
+        return job.getInputs().stream()
+                .filter((i -> i instanceof CopernicusSubsetDefinition));
+    }
+
+    @Override
+    public String generateSubsetSpecificIdentifier(AbstractSubsetDefinition subsetDefinition) {
+        StringBuilder builder = new StringBuilder();
+
+        if (subsetDefinition instanceof CopernicusSubsetDefinition) {
+            CopernicusSubsetDefinition copDef = (CopernicusSubsetDefinition) subsetDefinition;
+            builder.append(copDef.getSourceType());
+
+            if (copDef.getSatellite() != null) {
+                builder.append("_")
+                        .append(copDef.getSatellite());
+            }
+        }
+
+        return builder.toString();
     }
 
     @Deprecated
     protected String buildProductIdentifier(CopernicusSubsetDefinition def) {
-        String satelliteAbr = SATELLTIE_MAPPING.get(def.getSatellite().toString());
+        String satelliteAbr = SATELLITE_MAPPING.get(def.getSatellite().toString());
         String productId = PRODUCT_IDENTIFIER_PREFIX
                 + String.join("_", satelliteAbr, def.getInstrument(), def.getProductLevel());
 
