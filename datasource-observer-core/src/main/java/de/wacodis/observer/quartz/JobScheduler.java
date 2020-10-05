@@ -31,6 +31,9 @@ import exception.InvalidWacodisJobParameterException;
 public class JobScheduler {
     
     private static final String SINGLE_TIME_EXECUTION_SUFFIX = "_ONCE";
+    private static final String AOI_KEY = "areaOfInterest";
+    private static final String EXEC_INTERVAL_KEY = "executionInterval";
+    private static final int DEFAULT_EXEC_INTERVAL = 3600; // in seconds
 
 
 	private static final Logger LOG = LoggerFactory.getLogger(JobScheduler.class);
@@ -247,7 +250,7 @@ public class JobScheduler {
 
 	private Collection<JobDetail> generateQuartzJobDefinitions(WacodisJobDefinition job, JobFactory factory) {  
     	JobDataMap data = new JobDataMap();
-        data.put("areaOfInterest", job.getAreaOfInterest());
+        data.put(AOI_KEY, job.getAreaOfInterest());
         
     	Collection<JobDetail> jobDetails = factory.initializeJobs(job, data);
     	
@@ -260,11 +263,11 @@ public class JobScheduler {
         /**
          * set a default execution interval
          */
-        if (!data.containsKey("executionInterval")) {
-            data.put("executionInterval", 60 * 60);
+        if (!data.containsKey(EXEC_INTERVAL_KEY)) {
+            data.put(EXEC_INTERVAL_KEY, DEFAULT_EXEC_INTERVAL);
         }
         
-        LOG.info("Build new Trigger with execution interval: {} seconds", data.get("executionInterval"));
+        LOG.info("Build new Trigger with execution interval: {} seconds", data.get(EXEC_INTERVAL_KEY));
 
         // use the jobDetails key information for the trigger to "group" them
         
@@ -273,7 +276,7 @@ public class JobScheduler {
                 .startNow()
                 .withSchedule(SimpleScheduleBuilder
                         .simpleSchedule().repeatForever()
-                        .withIntervalInSeconds(data.getInt("executionInterval")))
+                        .withIntervalInSeconds(data.getInt(EXEC_INTERVAL_KEY)))
                 .build();
     }
 }
