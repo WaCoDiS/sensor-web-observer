@@ -112,7 +112,6 @@ public interface JobFactory {
 	 * Pack business logic data into JobDataMap's data package and build new JobDetail
 	 * @param job - Instance of a new Job
 	 * @param data - Contains the business logic
-	 * @param jobId - the jobId to use for quartz JobDetail
 	 * @return JobBuilder using job's data within JobDataMap
 	 */   
 	JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data, AbstractSubsetDefinition subsetDefinition);
