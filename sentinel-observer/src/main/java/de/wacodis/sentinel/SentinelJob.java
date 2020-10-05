@@ -72,20 +72,20 @@ public class SentinelJob implements Job {
     public void execute(JobExecutionContext ctxt) throws JobExecutionException {
         JobDataMap dataMap = ctxt.getJobDetail().getJobDataMap();
 
-        /**
+        /*
          * possibly stored in previous execution
          */
         Object lastLatest = dataMap.get(LAST_LATEST_PRODUCT_KEY);
-        DateTime targettedStartDate = null;
-        if (lastLatest != null && lastLatest instanceof DateTime) {
+        DateTime targettedStartDate;
+        if (lastLatest instanceof DateTime) {
             // also cover the previous 12h to consider late/async arrival of products
             targettedStartDate = ((DateTime) lastLatest).minusHours(12);
         } else {
-            /**
+            /*
              * TODO: temporal coverage not yet clear in business logic
              */
             Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
-            if (previousDaysCandidate != null && previousDaysCandidate instanceof Integer && ((int) previousDaysCandidate) > 0) {
+            if (previousDaysCandidate instanceof Integer && ((int) previousDaysCandidate) > 0) {
                 int previousDays = (int) previousDaysCandidate;
                 targettedStartDate = DateTime.now().minusDays(previousDays);
             } else {
@@ -94,24 +94,24 @@ public class SentinelJob implements Job {
             }
         }
 
-        /**
+        /*
          * defined on the job level
          */
         Object maxCloud = dataMap.get(MAX_CLOUD_COVERAGE_KEY);
         double maxCloudPercentage = 0.0;
-        if (maxCloud != null && maxCloud instanceof Number) {
+        if (maxCloud instanceof Number) {
             maxCloudPercentage = ((Number) maxCloud).doubleValue();
         }
 
-        /**
+        /*
          * defined on the job level
          */
         Object platform = dataMap.get(PLATFORM_KEY);
         String platformName = null;
-        if (platform != null && platform instanceof String) {
+        if (platform instanceof String) {
             platformName = (String) platform;
-        } else if (platform != null && platform instanceof QueryBuilder.PlatformName) {
-            platformName = ((QueryBuilder.PlatformName) platform).toString();
+        } else if (platform instanceof QueryBuilder.PlatformName) {
+            platformName = platform.toString();
         }
 
         if (platform == null) {
@@ -119,16 +119,16 @@ public class SentinelJob implements Job {
             return;
         }
 
-        /**
+        /*
          * defined on the job level *
          */
         Object aoi = dataMap.get("areaOfInterest");
         AbstractDataEnvelopeAreaOfInterest areaOfInterest = null;
-        if (aoi != null && aoi instanceof AbstractDataEnvelopeAreaOfInterest) {
+        if (aoi instanceof AbstractDataEnvelopeAreaOfInterest) {
             areaOfInterest = (AbstractDataEnvelopeAreaOfInterest) aoi;
         }
 
-        /**
+        /*
          * retrieve products from the API
          */
         List<ProductMetadata> newProductCandidates = hubClient
@@ -137,12 +137,12 @@ public class SentinelJob implements Job {
                         platformName,
                         areaOfInterest);
 
-        /**
+        /*
          * filter out duplicates from previous executions *
          */
         Object lastIds = dataMap.get(LAST_EXECUTION_PRODUCT_IDS_KEY);
         List<ProductMetadata> newProducts;
-        if (lastIds != null && lastIds instanceof Set) {
+        if (lastIds instanceof Set) {
             Set<String> lastIdList = (Set<String>) lastIds;
             newProducts = newProductCandidates.stream()
                     .filter(p -> !lastIdList.contains(p.getId()))
@@ -151,7 +151,7 @@ public class SentinelJob implements Job {
             newProducts = newProductCandidates;
         }
 
-        /**
+        /*
          * sort by beginPosition so we can uses this in upcoming executions
          */
         newProducts.sort((ProductMetadata pm1, ProductMetadata pm2) -> {
@@ -159,12 +159,12 @@ public class SentinelJob implements Job {
         });
 
         if (!newProducts.isEmpty()) {
-            /**
+            /*
              * store the last begin position
              */
             dataMap.put(LAST_LATEST_PRODUCT_KEY, newProducts.get(newProducts.size() - 1).getBeginPosition());
 
-            /**
+            /*
              * store the last IDs in the execution environment
              */
             dataMap.put(LAST_EXECUTION_PRODUCT_IDS_KEY, newProducts.stream()

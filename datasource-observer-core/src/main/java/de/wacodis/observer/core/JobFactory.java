@@ -1,24 +1,18 @@
 package de.wacodis.observer.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import de.wacodis.observer.model.AbstractSubsetDefinition;
+import de.wacodis.observer.model.WacodisJobDefinition;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
-import de.wacodis.observer.model.AbstractSubsetDefinition;
-import de.wacodis.observer.model.WacodisJobDefinition;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Factory-Pattern Interface for SubsetDefinitionJobs
@@ -42,7 +36,7 @@ public interface JobFactory {
 	 */
         @Deprecated
         default void initializeParameters(WacodisJobDefinition job, JobDataMap data) {
-        };
+        }
 
 	/**
 	 * Build new JobDetail
@@ -54,7 +48,7 @@ public interface JobFactory {
         @Deprecated
         default JobDetail prepareJob(WacodisJobDefinition job, JobDataMap data) {
             return null;
-        };
+        }
         
 	/**
 	 * Pack business logic data into JobDataMap's data package and build new JobDetail
@@ -80,9 +74,9 @@ public interface JobFactory {
 		
 		List<AbstractSubsetDefinition> inputList = wacodisJobInputs.collect(Collectors.toList());
 		
-		LOG.info("Build and inspect a total number of {} quartz jobs for WACODIS job with id {} and SubsetDefinition of type {}", inputList.size(), job.getId().toString(), inputList.get(0).getClass().getSimpleName().toString());
+		LOG.info("Build and inspect a total number of {} quartz jobs for WACODIS job with id {} and SubsetDefinition of type {}", inputList.size(), job.getId(), inputList.get(0).getClass().getSimpleName());
 		
-		Collection<JobDetail> quartzJobs = new ArrayList<JobDetail>(inputList.size());
+		Collection<JobDetail> quartzJobs = new ArrayList<>(inputList.size());
 		
 		for (AbstractSubsetDefinition subsetDefinition : inputList) {
 			
@@ -92,11 +86,10 @@ public interface JobFactory {
 			
 			// TODO FIXME take care of areaOfInterest from JobDataMap --> maybe as part of the job key
 			List<Float> areaOfInterestExtent = job.getAreaOfInterest().getExtent();
-			String extent = areaOfInterestExtent.get(0) + "-"
-                    + areaOfInterestExtent.get(1) + ","
-                    + areaOfInterestExtent.get(2) + "-"
-                    + areaOfInterestExtent.get(3);
-			jobId = jobId + extent;
+			String extent = areaOfInterestExtent.stream()
+					.map(String::valueOf)
+					.collect(Collectors.joining(","));
+			jobId = String.join("_", jobId, extent);
 			
 			LOG.debug("Initialize a potential quartz job with jobId '{}' and groupName '{}' for input subsetDefinition \n{}", jobId, jobGroupName, subsetDefinition);
 			JobBuilder jobBuilder = initializeJobBuilder(job, data_cloned, subsetDefinition);
@@ -119,7 +112,7 @@ public interface JobFactory {
 	/**
 	 * Method to filter the WACODIS job inputs relevant for the respective JobFactory instance
 	 * @param job - instance of a WACODIS job
-	 * @return
+	 * @return Stream of {@link AbstractSubsetDefinition}
 	 */
 	Stream<AbstractSubsetDefinition> filterJobInputs(WacodisJobDefinition job);
 	
@@ -147,5 +140,5 @@ public interface JobFactory {
 		
 		// a WACODIS job specific group name (e.g. job.getName()) would destroy the possibility to only have one quartz job per unique subsetDefinition
 		return "GROUP";
-	};
+	}
 }

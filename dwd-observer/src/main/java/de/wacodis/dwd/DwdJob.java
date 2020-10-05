@@ -57,7 +57,7 @@ public class DwdJob implements Job {
     private DwdTemporalResolutionHelper temporalResolutionHelper;
 
     @Override
-    public void execute(JobExecutionContext jec) throws JobExecutionException {
+    public void execute(JobExecutionContext jec) throws JobExecutionException{
         LOG.debug("Start DwdJob's execute()");
         JobDataMap dataMap = jec.getJobDetail().getJobDataMap();
 
@@ -78,7 +78,7 @@ public class DwdJob implements Job {
         float bottomLeftX = Float.parseFloat(bottomLeftXStr);
         float upperRightY = Float.parseFloat(upperRightYStr);
         float upperRightX = Float.parseFloat(upperRightXStr);
-        ArrayList<Float> area = new ArrayList<Float>();
+        ArrayList<Float> area = new ArrayList<>();
         area.add(0, bottomLeftY);
         area.add(1, bottomLeftX);
         area.add(2, upperRightY);
@@ -87,7 +87,7 @@ public class DwdJob implements Job {
         Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 
         DateTime endDate = DateTime.now();
-        DateTime startDate = null;
+        DateTime startDate;
         // If there was a Job execution before, consider the latest request
         // end date as start date for the current request.
         // Else, calculate the start date for an initial request by taking a
@@ -120,8 +120,8 @@ public class DwdJob implements Job {
 
         // Start requesting DWD data iteratively if the amount of data is too large
         if (interval != null) {
-            for (int i = 0; i < interval.size(); i++) {
-                DwdWfsRequestParams params = encoder.encode(version, layerName, area, interval.get(i)[0], interval.get(i)[1]);
+            for (DateTime[] dateTimes : interval) {
+                DwdWfsRequestParams params = encoder.encode(version, layerName, area, dateTimes[0], dateTimes[1]);
                 DwdDataEnvelope dataEnvelope = this.requestDwdMetadata(serviceUrl, params);
                 if (dataEnvelope != null) {
                     // Publish DwdDataEnvelope message
@@ -139,7 +139,7 @@ public class DwdJob implements Job {
      *
      * @param serviceUrl the DWD WFS service URL
      * @param params     parameters to use for DWD WFS request
-     * @return
+     * @return new found DWD datasets as {@link DwdDataEnvelope}
      */
     private DwdDataEnvelope requestDwdMetadata(String serviceUrl, DwdWfsRequestParams params) {
         DwdProductsMetadataDecoder decoder = new DwdProductsMetadataDecoder();
@@ -154,7 +154,7 @@ public class DwdJob implements Job {
 
             // Decode DwdProductsMetadata to DwdDataEnvelope
             dataEnvelope = decoder.decode(metadata);
-            LOG.info("Publish new dataEnvelope:\n{}", dataEnvelope.toString());
+            LOG.debug("Publish new dataEnvelope:\n{}", dataEnvelope.toString());
 
         } catch (IOException | ParserConfigurationException | SAXException e) {
             LOG.error(e.getMessage());

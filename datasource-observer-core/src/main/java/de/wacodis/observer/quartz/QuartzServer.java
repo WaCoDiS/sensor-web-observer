@@ -1,19 +1,7 @@
 package de.wacodis.observer.quartz;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
-import javax.validation.Valid;
-
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
+import de.wacodis.observer.publisher.PublisherChannel;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
-import de.wacodis.observer.publisher.PublisherChannel;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 public class QuartzServer implements InitializingBean {
@@ -78,7 +69,7 @@ public class QuartzServer implements InitializingBean {
 	public JobDetail getQuartzJobForWacodisInputDefinition(JobDetail jobDetail) throws SchedulerException {
 		JobKey key = jobDetail.getKey();
 			
-		return this.scheduler.getJobDetail(key);		
+		return this.scheduler.getJobDetail(key);
 	}
 
 	public void addWacodisJobIdToQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId, boolean replaceExistingQuartzJob) throws SchedulerException {
@@ -157,7 +148,7 @@ public class QuartzServer implements InitializingBean {
 		}
 		else{
 			log.info("Associated WACODIS job management: Removal of WACODIS job ID '{}' from the associated jobs of quartz job with key '{}' failed, as there is no WACODIS job id storage in quartz jobDataMap. Will now create a new empty WACODIS job ID storage.", wacodisJobId, quartzJob.getKey());										
-			wacodisJobIds = new HashSet<UUID>();
+			wacodisJobIds = new HashSet<>();
 		}
 		
 		log.info("Associated WACODIS job management: the quartz job with key '{}' now has a total number of '{}' associated WACODIS jobs.", quartzJob.getKey(), wacodisJobIds.size());

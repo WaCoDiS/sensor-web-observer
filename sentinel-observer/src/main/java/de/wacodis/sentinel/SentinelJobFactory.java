@@ -87,7 +87,8 @@ public class SentinelJobFactory implements JobFactory {
 
 	@Override
 	public JobBuilder initializeJobBuilder(WacodisJobDefinition job, JobDataMap data,
-			AbstractSubsetDefinition subsetDefinition) {		
+			AbstractSubsetDefinition subsetDefinition) {
+		// this should always be the case
 		if(subsetDefinition instanceof CopernicusSubsetDefinition){
 			
 			LOG.info("Preparing SentinelJob JobDetail");
