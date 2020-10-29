@@ -50,12 +50,11 @@
         <dependency>
             <groupId>de.wacodis</groupId>
             <artifactId>dwd-observer</artifactId>
-
         </dependency>
-        <!-- <dependency>
+        <dependency>
             <groupId>de.wacodis</groupId>
             <artifactId>code-de-observer</artifactId>
-        </dependency> -->
+        </dependency>
 
         <!-- Test-Scope -->
         <dependency>
