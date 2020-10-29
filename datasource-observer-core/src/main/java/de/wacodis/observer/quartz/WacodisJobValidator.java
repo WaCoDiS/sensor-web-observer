@@ -55,7 +55,7 @@ public class WacodisJobValidator {
 				throw new InvalidWacodisJobParameterException("Wacodis job of type '" + EventTypeEnum.SINGLEJOBEXECUTIONEVENT + "' has invalid parameter value for parameter 'temporalCoverage.duration'. The value of '" + durationString + "' cannot be parsed as ISO8601 duration");				
 			}
 		}
-		if (temporalCoverage.getPreviousExecution()) {
+		if (temporalCoverage.getPreviousExecution() != null && temporalCoverage.getPreviousExecution()) {
 			// make sure that pattern execution is set
 			String patternString = execution.getPattern();
 			if(patternString == null || patternString.isEmpty()) {
@@ -66,7 +66,7 @@ public class WacodisJobValidator {
 			}
 		}
 		// case no previosExecution and not event of type SingleTimeExecution
-		if (! temporalCoverage.getPreviousExecution() && (event == null || !event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT))) {
+		if (temporalCoverage.getPreviousExecution() == null || !temporalCoverage.getPreviousExecution() && (event == null || !event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT))) {
 			// make sure that pattern execution is set
 			String patternString = execution.getPattern();
 			if(patternString == null || patternString.isEmpty()) {
