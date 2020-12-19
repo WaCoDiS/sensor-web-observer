@@ -19,7 +19,7 @@ import javax.validation.constraints.*;
  * query Data Access API for DataEnvelopes 
  */
 @ApiModel(description = "query Data Access API for DataEnvelopes ")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-10-02T13:07:36.861687+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2020-12-19T23:36:58.218875300+01:00[Europe/Berlin]")
 
 public class DataEnvelopeQuery  implements Serializable {
   private static final long serialVersionUID = 1L;
