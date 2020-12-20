@@ -15,6 +15,7 @@
  */
 package de.wacodis.sentinel;
 
+import de.wacodis.observer.core.TemporalCoverageConstants;
 import de.wacodis.observer.model.AbstractDataEnvelope;
 import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.observer.model.AbstractDataEnvelopeTimeFrame;
@@ -70,29 +71,24 @@ public class SentinelJob implements Job {
 
     @Override
     public void execute(JobExecutionContext ctxt) throws JobExecutionException {
-        JobDataMap dataMap = ctxt.getJobDetail().getJobDataMap();
+        JobDataMap dataMap = ctxt.getJobDetail().getJobDataMap();      
 
-        /*
-         * possibly stored in previous execution
-         */
-        Object lastLatest = dataMap.get(LAST_LATEST_PRODUCT_KEY);
-        DateTime targettedStartDate;
-        if (lastLatest instanceof DateTime) {
-            // also cover the previous 12h to consider late/async arrival of products
-            targettedStartDate = ((DateTime) lastLatest).minusHours(12);
-        } else {
-            /*
-             * TODO: temporal coverage not yet clear in business logic
-             */
-            Object previousDaysCandidate = dataMap.get(PREVIOUS_DAYS_KEY);
-            if (previousDaysCandidate instanceof Integer && ((int) previousDaysCandidate) > 0) {
-                int previousDays = (int) previousDaysCandidate;
-                targettedStartDate = DateTime.now().minusDays(previousDays);
-            } else {
-                // lets default to one week
-                targettedStartDate = DateTime.now().minusDays(7);
-            }
+        DateTime endDate;
+        DateTime startDate;        
+
+        // If there was a Job execution before, consider the latest request
+        // end date as start date for the current request.
+        // Else, use the factory level based generic configuration of the first 
+        if (dataMap.get(LAST_LATEST_PRODUCT_KEY) != null) {
+        	startDate = (DateTime) dataMap.get(LAST_LATEST_PRODUCT_KEY);
+        	endDate = DateTime.now();
         }
+            
+        else {
+        	startDate = (DateTime)dataMap.get(TemporalCoverageConstants.START_DATE);
+        	endDate = (DateTime)dataMap.get(TemporalCoverageConstants.END_DATE);
+        }
+        dataMap.put(LAST_LATEST_PRODUCT_KEY, endDate);
 
         /*
          * defined on the job level
@@ -132,7 +128,7 @@ public class SentinelJob implements Job {
          * retrieve products from the API
          */
         List<ProductMetadata> newProductCandidates = hubClient
-                .requestProducts(targettedStartDate.minusHours(12),
+                .requestProducts(startDate.minusHours(12),
                         maxCloudPercentage,
                         platformName,
                         areaOfInterest);

@@ -26,6 +26,7 @@ import de.wacodis.dwd.cdc.model.DwdProductsMetadataDecoder;
 import de.wacodis.dwd.cdc.model.DwdRequestParamsEncoder;
 import de.wacodis.dwd.cdc.model.DwdWfsRequestParams;
 import de.wacodis.dwd.cdc.DwdWfsRequestor;
+import de.wacodis.observer.core.TemporalCoverageConstants;
 import de.wacodis.observer.model.DwdDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
 
@@ -86,16 +87,20 @@ public class DwdJob implements Job {
 
         Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
 
-        DateTime endDate = DateTime.now();
-        DateTime startDate;
+        DateTime endDate;
+        DateTime startDate;        
+
         // If there was a Job execution before, consider the latest request
         // end date as start date for the current request.
-        // Else, calculate the start date for an initial request by taking a
-        // certain period into account
+        // Else, use the factory level based generic configuration of the first 
         if (dataMap.get(LATEST_REQUEST_END_DATE) != null) {
-            startDate = (DateTime) dataMap.get(LATEST_REQUEST_END_DATE);
-        } else {
-            startDate = endDate.withPeriodAdded(period, -1);
+        	startDate = (DateTime) dataMap.get(LATEST_REQUEST_END_DATE);
+        	endDate = DateTime.now();
+        }
+            
+        else {
+        	startDate = (DateTime)dataMap.get(TemporalCoverageConstants.START_DATE);
+        	endDate = (DateTime)dataMap.get(TemporalCoverageConstants.END_DATE);
         }
         dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 

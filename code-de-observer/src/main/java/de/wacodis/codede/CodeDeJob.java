@@ -3,6 +3,7 @@ package de.wacodis.codede;
 import de.wacodis.codede.sentinel.*;
 import de.wacodis.codede.sentinel.exception.HttpConnectionException;
 import de.wacodis.codede.sentinel.exception.ParsingException;
+import de.wacodis.observer.core.TemporalCoverageConstants;
 import de.wacodis.observer.decode.DecodingException;
 import de.wacodis.observer.model.CopernicusDataEnvelope;
 import de.wacodis.observer.publisher.PublisherChannel;
@@ -67,18 +68,21 @@ public class CodeDeJob implements Job {
         LOG.debug("Start CodeDeJob's execute()");
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
-        String durationISO = dataMap.getString(TEMPORAL_COVERAGE_KEY);
-        Period period = Period.parse(durationISO, ISOPeriodFormat.standard());
-        DateTime endDate = DateTime.now();
-        DateTime startDate;
+        DateTime endDate;
+        DateTime startDate;        
 
         // If there was a Job execution before, consider the latest request
         // end date as start date for the current request.
-        // Else, calculate the start date for an initial request by taking a
-        // certain period into account
-        if (dataMap.get(LATEST_REQUEST_END_DATE) != null)
-            startDate = (DateTime) dataMap.get(LATEST_REQUEST_END_DATE);
-        else startDate = endDate.withPeriodAdded(period, -1);
+        // Else, use the factory level based generic configuration of the first 
+        if (dataMap.get(LATEST_REQUEST_END_DATE) != null) {
+        	startDate = (DateTime) dataMap.get(LATEST_REQUEST_END_DATE);
+        	endDate = DateTime.now();
+        }
+            
+        else {
+        	startDate = (DateTime)dataMap.get(TemporalCoverageConstants.START_DATE);
+        	endDate = (DateTime)dataMap.get(TemporalCoverageConstants.END_DATE);
+        }
         dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
         CodeDeRequestParamsEncoder encoder = new CodeDeRequestParamsEncoder();
