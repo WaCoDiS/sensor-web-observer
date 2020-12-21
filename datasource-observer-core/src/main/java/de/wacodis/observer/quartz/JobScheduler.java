@@ -261,6 +261,7 @@ public class JobScheduler {
 		
 		WacodisJobDefinitionExecution execution = wacodisJob.getExecution();
         AbstractWacodisJobExecutionEvent event = execution.getEvent();
+        LOG.info("Start creation of job trigger");
         if (event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)) {
             // specification of a job, that shall only be executed once
             // e.g. for on demand jobs
@@ -270,6 +271,7 @@ public class JobScheduler {
 			
 			// if startAt exists and points to future dateTime
 			if(startAt != null && startAt.isAfterNow()) {
+				LOG.info("SingleExecution job with startAt parameter detected: Hence use startAt dateTime {} to instantiate trigger.", startAt.toString());
 				startDateTime = startAt;
 			}
         } else {
@@ -278,10 +280,12 @@ public class JobScheduler {
         	// to determine the next/first planned execution
 
         	// the next/first execution dateTime according to pattern and startDate is already computed for pattern based regular job within jobData map
+        	LOG.info("Regular pattern based execution job detected: Hence analyse optional startAt '{}' and pattern '{}' to instantiate trigger.", execution.getStartAt().toString(), execution.getPattern());			
         	startDateTime = DateTime.parse((String)jobDetail.getJobDataMap().get(TemporalCoverageConstants.END_DATE));
         }
-		
+		        
 		if(startDateTime != null) {
+			LOG.info("Finish quartz job trigger creation with startAt dateTime of: {}", startDateTime.toString());
 			trigger = triggerBuilder
 	                .startAt(startDateTime.toDate())
 	                .build();
@@ -289,6 +293,7 @@ public class JobScheduler {
 			
 		// fallback strategy, start trigger/job immediately
 		if(trigger == null) {
+			LOG.info("Finish quartz job trigger creation with immediate execution time.");
 			trigger = triggerBuilder
 	                .startNow()
 	                .build();
