@@ -1,8 +1,10 @@
 package de.wacodis.observer.core;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +16,12 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.cronutils.model.Cron;
+import com.cronutils.model.CronType;
+import com.cronutils.model.definition.CronDefinitionBuilder;
+import com.cronutils.model.time.ExecutionTime;
+import com.cronutils.parser.CronParser;
 
 import de.wacodis.observer.model.AbstractSubsetDefinition;
 import de.wacodis.observer.model.AbstractSubsetDefinitionTemporalCoverage;
@@ -163,22 +171,56 @@ public interface JobFactory {
 		String duration = getAssociatedDuration(job, subsetDefinition);
 		String offset = getAssociatedDurationOffset(job, subsetDefinition);
 		
-		DateTime temporalCoverageStartDate = computeTemporalCoverageStartDate(temporalCoverageEndDate, duration, offset);
+		DateTime temporalCoverageStartDate = computeTemporalCoverageStartDate_regularJobs(temporalCoverageEndDate, duration, offset, job);
 		
 		data_cloned = setTemporalCoverage(data_cloned, temporalCoverageStartDate, temporalCoverageEndDate);
 		
         return data_cloned;
 	};
 
-	default DateTime getTemporalCoverageEndDate_regularJob(WacodisJobDefinition job) {		
-		DateTime startAt = job.getExecution().getStartAt();
+	default DateTime computeTemporalCoverageStartDate_regularJobs(DateTime temporalCoverageEndDate, String duration,
+			String offset, WacodisJobDefinition job) {
+		Boolean previousExecution = job.getTemporalCoverage().getPreviousExecution();
 		
-		if(startAt != null) {
-			return startAt;
+		if (previousExecution != null && previousExecution) {
+			CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+			
+			ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(job.getExecution().getPattern()));
+			
+			Optional<ZonedDateTime> lastExecution = executionTime.lastExecution(temporalCoverageEndDate.toGregorianCalendar().toZonedDateTime());
+			return new DateTime(lastExecution.get().toInstant().toEpochMilli());
 		}
 		else {
-			return job.getCreated();
+			return computeTemporalCoverageStartDate(temporalCoverageEndDate, duration, offset);
 		}
+	};
+
+	default DateTime getTemporalCoverageEndDate_regularJob(WacodisJobDefinition job) {	
+		
+		/*
+		 * consider previous execution 
+		 * if present no duration is available
+		 * 
+		 * anhand pattern ableiten, was ist der nächste Ausführungszeitpunkt 
+		 * 
+		 * (bsp. 25.11. angelegt aber Ausführung einmal monatlich am 1. --> 1.12. erste Ausführung)
+		 * 
+		 * mit cron-utils
+		 */
+		
+		DateTime startAt = job.getExecution().getStartAt();
+		
+		if(startAt == null) {
+			startAt = job.getCreated();
+		}
+		
+		CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+				
+		ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(job.getExecution().getPattern()));
+		Optional<ZonedDateTime> nextExecution = executionTime.nextExecution(startAt.toGregorianCalendar().toZonedDateTime());
+		
+		return new DateTime(nextExecution.get().toInstant().toEpochMilli());
+		
 	};
 
 	default JobDataMap configureFirstDataQueryPeriod_singleExecutionJob(WacodisJobDefinition job, JobDataMap data_cloned,
@@ -202,8 +244,8 @@ public interface JobFactory {
 
 	default JobDataMap setTemporalCoverage(JobDataMap data_cloned, DateTime temporalCoverageStartDate,
 			DateTime temporalCoverageEndDate) {
-		data_cloned.put(TemporalCoverageConstants.START_DATE, temporalCoverageStartDate);
-		data_cloned.put(TemporalCoverageConstants.END_DATE, temporalCoverageEndDate);
+		data_cloned.put(TemporalCoverageConstants.START_DATE, temporalCoverageStartDate.toString());
+		data_cloned.put(TemporalCoverageConstants.END_DATE, temporalCoverageEndDate.toString());
 		
 		return data_cloned;
 	};

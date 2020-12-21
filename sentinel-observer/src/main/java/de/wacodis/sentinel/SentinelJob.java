@@ -85,8 +85,8 @@ public class SentinelJob implements Job {
         }
             
         else {
-        	startDate = (DateTime)dataMap.get(TemporalCoverageConstants.START_DATE);
-        	endDate = (DateTime)dataMap.get(TemporalCoverageConstants.END_DATE);
+        	startDate = DateTime.parse((String)dataMap.get(TemporalCoverageConstants.START_DATE));
+        	endDate = DateTime.parse((String)dataMap.get(TemporalCoverageConstants.END_DATE));
         }
         dataMap.put(LAST_LATEST_PRODUCT_KEY, endDate);
 

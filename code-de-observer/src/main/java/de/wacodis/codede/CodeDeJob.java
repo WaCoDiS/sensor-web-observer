@@ -80,8 +80,8 @@ public class CodeDeJob implements Job {
         }
             
         else {
-        	startDate = (DateTime)dataMap.get(TemporalCoverageConstants.START_DATE);
-        	endDate = (DateTime)dataMap.get(TemporalCoverageConstants.END_DATE);
+        	startDate = DateTime.parse((String)dataMap.get(TemporalCoverageConstants.START_DATE));
+        	endDate = DateTime.parse((String)dataMap.get(TemporalCoverageConstants.END_DATE));
         }
         dataMap.put(LATEST_REQUEST_END_DATE, endDate);
 
