@@ -7,6 +7,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
 import org.quartz.JobDataMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
@@ -23,6 +25,8 @@ import de.wacodis.observer.model.WacodisJobDefinitionTemporalCoverage;
 import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent.EventTypeEnum;
 
 public class WacodisJobConfiguration {
+	
+	static Logger logger = LoggerFactory.getLogger(WacodisJobConfiguration.class);
 
 	public static JobDataMap configureFirstDataQueryPeriod(WacodisJobDefinition job, JobDataMap data_cloned,
 			AbstractSubsetDefinition subsetDefinition) {
@@ -36,13 +40,16 @@ public class WacodisJobConfiguration {
     	 * 
     	 * later executions will consider endDate from previous query
     	 */
-    	
+		logger.info("Begin initial configuration of initial temporalCoverage start and end date for subsetDefinition with id {}", subsetDefinition.getIdentifier());
+    	logger.info("Job execution is: \n{}", job.getExecution());
+    	logger.info("Job temporalCoverage is: \n{}", job.getTemporalCoverage());
+    	logger.info("subsetDefinition temporalCoverage is: \n{}", subsetDefinition.getTemporalCoverage());
+		
     	WacodisJobDefinitionExecution execution = job.getExecution();
         AbstractWacodisJobExecutionEvent event = execution.getEvent();
         if (event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)) {
             // specification of a job, that shall only be executed once
             // e.g. for on demand jobs
-        	
 
             data_cloned = configureFirstDataQueryPeriod_singleExecutionJob(job, data_cloned,
         			subsetDefinition, (SingleJobExecutionEvent) event);
@@ -142,6 +149,8 @@ public class WacodisJobConfiguration {
 
 	private static JobDataMap setTemporalCoverage(JobDataMap data_cloned, DateTime temporalCoverageStartDate,
 			DateTime temporalCoverageEndDate) {
+		logger.info("Set initial temporalCoverage startDate to {}", temporalCoverageStartDate.toString());
+		logger.info("Set initial temporalCoverage endDate to {}", temporalCoverageEndDate.toString());
 		data_cloned.put(TemporalCoverageConstants.START_DATE, temporalCoverageStartDate.toString());
 		data_cloned.put(TemporalCoverageConstants.END_DATE, temporalCoverageEndDate.toString());
 		
