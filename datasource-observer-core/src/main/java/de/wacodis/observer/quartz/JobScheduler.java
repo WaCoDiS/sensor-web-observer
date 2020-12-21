@@ -280,7 +280,7 @@ public class JobScheduler {
         	// to determine the next/first planned execution
 
         	// the next/first execution dateTime according to pattern and startDate is already computed for pattern based regular job within jobData map
-        	LOG.info("Regular pattern based execution job detected: Hence analyse optional startAt '{}' and pattern '{}' to instantiate trigger.", execution.getStartAt().toString(), execution.getPattern());			
+        	LOG.info("Regular pattern based execution job detected: Hence analyse optional startAt '{}' and pattern '{}' to instantiate trigger.", execution.getStartAt(), execution.getPattern());			
         	startDateTime = DateTime.parse((String)jobDetail.getJobDataMap().get(TemporalCoverageConstants.END_DATE));
         }
 		        
