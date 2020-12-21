@@ -88,11 +88,18 @@ public class WacodisJobConfiguration {
 		Boolean previousExecution = job.getTemporalCoverage().getPreviousExecution();
 		
 		if (previousExecution != null && previousExecution) {
+			
+			DateTime startAt = job.getExecution().getStartAt();
+			
+			if(startAt == null) {
+				startAt = job.getCreated();
+			}
+			
 			CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
 			
 			ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(job.getExecution().getPattern()));
 			
-			Optional<ZonedDateTime> lastExecution = executionTime.lastExecution(temporalCoverageEndDate.toGregorianCalendar().toZonedDateTime());
+			Optional<ZonedDateTime> lastExecution = executionTime.lastExecution(startAt.toGregorianCalendar().toZonedDateTime());
 			return new DateTime(lastExecution.get().toInstant().toEpochMilli());
 		}
 		else {
