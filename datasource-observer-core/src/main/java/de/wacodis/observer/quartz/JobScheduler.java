@@ -52,15 +52,7 @@ public class JobScheduler {
             Collection<JobDetail> quartzJobDefinitions = generateQuartzJobDefinitions(job, factory);
             
             /*
-             * TODO FIXME abfrage egal --> alle Jobs einmla ausführen
-             * --> wenn dnn Startdatum des Triggers auch richtig gesetzt, dann brauchen wir hier keine Überprüfung mehr
-             * 
-             *  --> startAt, created und bei regulären jobs zusätzlich previousExecution beachten --> siehe JobFactory
-             *  
-             *  
-             *  UND TESTFÄLLE SCHREIBEN FÜR DIE NEUERUNGEN (ggf ALTE TESTS PRÜFEN UND ANPASSEN)
-             *  
-             *  danach Taiga Karten auf Ready for Test schieben
+             * execute each job once in order to ensure that queried data is available.
              */
 
             executeQuartzJobsOnce(quartzJobDefinitions, job);
