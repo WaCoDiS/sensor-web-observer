@@ -24,7 +24,7 @@ import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent.EventTypeEnum;
 
 public class WacodisJobConfiguration {
 
-	static JobDataMap configureFirstDataQueryPeriod(WacodisJobDefinition job, JobDataMap data_cloned,
+	public static JobDataMap configureFirstDataQueryPeriod(WacodisJobDefinition job, JobDataMap data_cloned,
 			AbstractSubsetDefinition subsetDefinition) {
 		/*
     	 * Analyse subsetDefinition and job information to detect and set the query start and end date for the very first data query
