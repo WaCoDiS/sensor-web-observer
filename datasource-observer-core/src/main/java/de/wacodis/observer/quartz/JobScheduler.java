@@ -1,19 +1,27 @@
 package de.wacodis.observer.quartz;
 
+import java.util.Collection;
+import java.util.UUID;
+
+import org.joda.time.DateTime;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent;
 import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent.EventTypeEnum;
 import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.model.WacodisJobDefinitionExecution;
 import de.wacodis.observer.model.WacodisJobDefinitionTemporalCoverage;
-import org.quartz.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.Collection;
-import java.util.UUID;
 
 @Component
 public class JobScheduler {
@@ -50,7 +58,7 @@ public class JobScheduler {
                         "Hence each generated quartz job instance will be executed once before scheduling management in " +
                         "order to ensure that queried temporal coverage for associated data source is retrieved.");
 
-                executeQuartzJobsOnce(quartzJobDefinitions);
+                executeQuartzJobsOnce(quartzJobDefinitions, job);
             }
 
             // then for each Quartz job definition
@@ -113,7 +121,7 @@ public class JobScheduler {
                 LOG.info("Existing quartz job with the same parameters identified. Will remove WACODIS job ID from its associated WACODIS jobs");
                 JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
                 // get Trigger, which has associated Key in case we only want to unschedule job
-                Trigger trigger = prepareTrigger(jobDetail);
+                Trigger trigger = prepareTrigger(jobDetail, wacodisJob);
                 wacodisQuartz.removeWacodisJobIdFromQuartzJobDataMap(existingQuartzJob, wacodisJob.getId(), trigger.getKey(), true);
             } else {
                 LOG.warn("No existing quartz jobs found for deletion parameters identifier '{}'.", jobDetail.getKey());
@@ -143,7 +151,7 @@ public class JobScheduler {
                 LOG.info("No existing quartz job with the same parameters was found. Will create and schedule a new quartz job and add WACODIS job ID to its associated WACODIS jobs");
                 wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(jobDetail, job.getId(), false);
 
-                Trigger trigger = prepareTrigger(jobDetail);
+                Trigger trigger = prepareTrigger(jobDetail, job);
                 wacodisQuartz.scheduleJob(jobDetail, trigger);
             }
         }
@@ -167,7 +175,7 @@ public class JobScheduler {
 
     }
 
-    private void executeQuartzJobsOnce(Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
+    private void executeQuartzJobsOnce(Collection<JobDetail> quartzJobDefinitions, WacodisJobDefinition wacodisJob) throws SchedulerException {
         for (JobDetail jobDetail : quartzJobDefinitions) {
             // create a jonCopy in order to adjust the quartz job KEY definition for single time execution
             JobKey key = jobDetail.getKey();
@@ -176,7 +184,7 @@ public class JobScheduler {
 
             jobDetail_singleTimeCopy = jobDetail_singleTimeCopy.getJobBuilder().withIdentity(key_singleTime).build();
 
-            Trigger oneTimeTrigger = prepareSingleExecutionTrigger(jobDetail);
+            Trigger oneTimeTrigger = prepareSingleExecutionTrigger(jobDetail, wacodisJob);
 
             LOG.info("Scheduling new one time execution job with jobID {} and groupName {}", key_singleTime.getName(), key_singleTime.getGroup());
             wacodisQuartz.scheduleJob(jobDetail_singleTimeCopy, oneTimeTrigger);
@@ -201,14 +209,14 @@ public class JobScheduler {
                 key.getGroup() + "_" + uuid + SINGLE_TIME_EXECUTION_SUFFIX);
     }
 
-    private Trigger prepareSingleExecutionTrigger(JobDetail jobDetail) {
+    private Trigger prepareSingleExecutionTrigger(JobDetail jobDetail, WacodisJobDefinition wacodisJob) {
 
-        //TODO what if single time job shall start in the future?
-
-        return TriggerBuilder.newTrigger()
-                .withIdentity(jobDetail.getKey().getName() + SINGLE_TIME_EXECUTION_SUFFIX, jobDetail.getKey().getGroup() + SINGLE_TIME_EXECUTION_SUFFIX + "_" + UUID.randomUUID())
-                .startNow()
-                .build();
+    	TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger()
+                .withIdentity(jobDetail.getKey().getName() + SINGLE_TIME_EXECUTION_SUFFIX, jobDetail.getKey().getGroup() + SINGLE_TIME_EXECUTION_SUFFIX + "_" + UUID.randomUUID());
+		
+    	Trigger trigger = configureWacodisTrigger(wacodisJob, triggerBuilder);
+        
+		return trigger;
     }
 
     private boolean queriesDataFromThePast(WacodisJobDefinition job) {
@@ -228,7 +236,7 @@ public class JobScheduler {
         return factory.initializeJobs(job, data);
     }
 
-    private Trigger prepareTrigger(JobDetail jobDetail) {
+    private Trigger prepareTrigger(JobDetail jobDetail, WacodisJobDefinition wacodisJob) {
 
         JobDataMap data = jobDetail.getJobDataMap();
         /*
@@ -241,13 +249,39 @@ public class JobScheduler {
         LOG.info("Build new Trigger with execution interval: {} seconds", data.get(EXEC_INTERVAL_KEY));
 
         // use the jobDetails key information for the trigger to "group" them
-
-        return TriggerBuilder.newTrigger()
-                .withIdentity(jobDetail.getKey().getName(), jobDetail.getKey().getGroup())
-                .startNow()
-                .withSchedule(SimpleScheduleBuilder
-                        .simpleSchedule().repeatForever()
-                        .withIntervalInSeconds(data.getInt(EXEC_INTERVAL_KEY)))
-                .build();
+        
+        TriggerBuilder triggerBuilder = TriggerBuilder.newTrigger()
+        .withIdentity(jobDetail.getKey().getName(), jobDetail.getKey().getGroup())
+        .withSchedule(SimpleScheduleBuilder
+                .simpleSchedule().repeatForever()
+                .withIntervalInSeconds(data.getInt(EXEC_INTERVAL_KEY)));
+        
+    	Trigger trigger = configureWacodisTrigger(wacodisJob, triggerBuilder);
+        
+		return trigger;
     }
+
+	private Trigger configureWacodisTrigger(WacodisJobDefinition wacodisJob, TriggerBuilder triggerBuilder) {
+		Trigger trigger = null;
+
+		WacodisJobDefinitionExecution execution = wacodisJob.getExecution();
+		if(execution != null) {
+			DateTime startAt = execution.getStartAt();
+			
+			// if startAt exists and points to future dateTime
+			if(startAt != null && startAt.isAfterNow()) {
+				trigger = triggerBuilder
+		                .startAt(startAt.toDate())
+		                .build();
+			}
+		}
+		
+		// fallback strategy, start trigger/job immediately
+		if(trigger == null) {
+			trigger = triggerBuilder
+	                .startNow()
+	                .build();
+		}
+		return trigger;
+	}
 }
