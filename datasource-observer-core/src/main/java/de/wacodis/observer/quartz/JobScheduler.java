@@ -17,11 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import de.wacodis.observer.core.JobFactory;
+import de.wacodis.observer.core.TemporalCoverageConstants;
 import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent;
 import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent.EventTypeEnum;
 import de.wacodis.observer.model.WacodisJobDefinition;
 import de.wacodis.observer.model.WacodisJobDefinitionExecution;
-import de.wacodis.observer.model.WacodisJobDefinitionTemporalCoverage;
 
 @Component
 public class JobScheduler {
@@ -50,16 +50,20 @@ public class JobScheduler {
             // generate all Quartz job definitions for each WACODIS job input (SubsetDefinition)
 
             Collection<JobDetail> quartzJobDefinitions = generateQuartzJobDefinitions(job, factory);
+            
+            /*
+             * TODO FIXME abfrage egal --> alle Jobs einmla ausführen
+             * --> wenn dnn Startdatum des Triggers auch richtig gesetzt, dann brauchen wir hier keine Überprüfung mehr
+             * 
+             *  --> startAt, created und bei regulären jobs zusätzlich previousExecution beachten --> siehe JobFactory
+             *  
+             *  
+             *  UND TESTFÄLLE SCHREIBEN FÜR DIE NEUERUNGEN (ggf ALTE TESTS PRÜFEN UND ANPASSEN)
+             *  
+             *  danach Taiga Karten auf Ready for Test schieben
+             */
 
-            // if job queries data from the past, then execute each job ONCE to ensure that queried data exists
-            if (queriesDataFromThePast(job)) {
-                // execute each quartz job definition one single time
-                LOG.info("WACODIS job has a duration temporalCoverage specification. Thus it queries data from the past. " +
-                        "Hence each generated quartz job instance will be executed once before scheduling management in " +
-                        "order to ensure that queried temporal coverage for associated data source is retrieved.");
-
-                executeQuartzJobsOnce(quartzJobDefinitions, job);
-            }
+            executeQuartzJobsOnce(quartzJobDefinitions, job);
 
             // then for each Quartz job definition
             /*
@@ -214,19 +218,9 @@ public class JobScheduler {
     	TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger()
                 .withIdentity(jobDetail.getKey().getName() + SINGLE_TIME_EXECUTION_SUFFIX, jobDetail.getKey().getGroup() + SINGLE_TIME_EXECUTION_SUFFIX + "_" + UUID.randomUUID());
 		
-    	Trigger trigger = configureWacodisTrigger(wacodisJob, triggerBuilder);
+    	Trigger trigger = configureWacodisTrigger(jobDetail, wacodisJob, triggerBuilder);
         
 		return trigger;
-    }
-
-    private boolean queriesDataFromThePast(WacodisJobDefinition job) {
-        WacodisJobDefinitionTemporalCoverage temporalCoverage = job.getTemporalCoverage();
-
-        // temporalCoverage can either have property "duration" or "previousExecution"
-
-        // only "duration" is used to query data from the past. Hence existence of that property is sufficient
-
-        return WacodisJobValidator.isValidIso8601DurationString(temporalCoverage.getDuration());
     }
 
     private Collection<JobDetail> generateQuartzJobDefinitions(WacodisJobDefinition job, JobFactory factory) {
@@ -256,26 +250,43 @@ public class JobScheduler {
                 .simpleSchedule().repeatForever()
                 .withIntervalInSeconds(data.getInt(EXEC_INTERVAL_KEY)));
         
-    	Trigger trigger = configureWacodisTrigger(wacodisJob, triggerBuilder);
+    	Trigger trigger = configureWacodisTrigger(jobDetail, wacodisJob, triggerBuilder);
         
 		return trigger;
     }
 
-	private Trigger configureWacodisTrigger(WacodisJobDefinition wacodisJob, TriggerBuilder triggerBuilder) {
+	private Trigger configureWacodisTrigger(JobDetail jobDetail, WacodisJobDefinition wacodisJob, TriggerBuilder triggerBuilder) {
 		Trigger trigger = null;
-
+		DateTime startDateTime = null;
+		
 		WacodisJobDefinitionExecution execution = wacodisJob.getExecution();
-		if(execution != null) {
-			DateTime startAt = execution.getStartAt();
+        AbstractWacodisJobExecutionEvent event = execution.getEvent();
+        if (event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)) {
+            // specification of a job, that shall only be executed once
+            // e.g. for on demand jobs
+        	
+        	// only inspect optional startAt parameter
+        	DateTime startAt = execution.getStartAt();
 			
 			// if startAt exists and points to future dateTime
 			if(startAt != null && startAt.isAfterNow()) {
-				trigger = triggerBuilder
-		                .startAt(startAt.toDate())
-		                .build();
+				startDateTime = startAt;
 			}
-		}
+        } else {
+        	// regular pattern based job
+        	// inspect optional startAt and mandatory pattern properties
+        	// to determine the next/first planned execution
+
+        	// the next/first execution dateTime according to pattern and startDate is already computed for pattern based regular job within jobData map
+        	startDateTime = DateTime.parse((String)jobDetail.getJobDataMap().get(TemporalCoverageConstants.END_DATE));
+        }
 		
+		if(startDateTime != null) {
+			trigger = triggerBuilder
+	                .startAt(startDateTime.toDate())
+	                .build();
+		}
+			
 		// fallback strategy, start trigger/job immediately
 		if(trigger == null) {
 			trigger = triggerBuilder
