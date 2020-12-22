@@ -25,12 +25,12 @@ import de.wacodis.observer.model.WacodisJobDefinitionTemporalCoverage;
 import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent.EventTypeEnum;
 
 public class WacodisJobConfiguration {
-	
-	static Logger logger = LoggerFactory.getLogger(WacodisJobConfiguration.class);
 
-	public static JobDataMap configureFirstDataQueryPeriod(WacodisJobDefinition job, JobDataMap data_cloned,
-			AbstractSubsetDefinition subsetDefinition) {
-		/*
+    static Logger logger = LoggerFactory.getLogger(WacodisJobConfiguration.class);
+
+    public static JobDataMap configureFirstDataQueryPeriod(WacodisJobDefinition job, JobDataMap data_cloned,
+            AbstractSubsetDefinition subsetDefinition) {
+        /*
     	 * Analyse subsetDefinition and job information to detect and set the query start and end date for the very first data query
     	 * 
     	 * it depends on several aspects such as job type, execution time or job/input specific settings.
@@ -39,174 +39,186 @@ public class WacodisJobConfiguration {
     	 * --> then consider observing backwards period from execution date and set it as startDate and endDate for first execution
     	 * 
     	 * later executions will consider endDate from previous query
-    	 */
-		logger.info("Begin initial configuration of initial temporalCoverage start and end date for subsetDefinition with id {}", subsetDefinition.getIdentifier());
-    	logger.info("Job execution is: \n{}", job.getExecution());
-    	logger.info("Job temporalCoverage is: \n{}", job.getTemporalCoverage());
-    	logger.info("subsetDefinition temporalCoverage is: \n{}", subsetDefinition.getTemporalCoverage());
-		
-    	WacodisJobDefinitionExecution execution = job.getExecution();
+         */
+        logger.info("Begin initial configuration of initial temporalCoverage start and end date for subsetDefinition with id {}", subsetDefinition.getIdentifier());
+        logger.info("Job execution is: \n{}", job.getExecution());
+        logger.info("Job temporalCoverage is: \n{}", job.getTemporalCoverage());
+        logger.info("subsetDefinition temporalCoverage is: \n{}", subsetDefinition.getTemporalCoverage());
+
+        WacodisJobDefinitionExecution execution = job.getExecution();
         AbstractWacodisJobExecutionEvent event = execution.getEvent();
         if (event != null && event.getEventType().equals(EventTypeEnum.SINGLEJOBEXECUTIONEVENT)) {
             // specification of a job, that shall only be executed once
             // e.g. for on demand jobs
 
             data_cloned = configureFirstDataQueryPeriod_singleExecutionJob(job, data_cloned,
-        			subsetDefinition, (SingleJobExecutionEvent) event);
+                    subsetDefinition, (SingleJobExecutionEvent) event);
         } else {
-        	data_cloned = configureFirstDataQueryPeriod_regularExecutionJob(job, data_cloned,
-        			subsetDefinition);
+            data_cloned = configureFirstDataQueryPeriod_regularExecutionJob(job, data_cloned,
+                    subsetDefinition);
         }
-    	
-    	
-    	return data_cloned;
-	}
-	
-	private static JobDataMap configureFirstDataQueryPeriod_regularExecutionJob(WacodisJobDefinition job, JobDataMap data_cloned,
-			AbstractSubsetDefinition subsetDefinition) {
-		
-		/*
+
+        return data_cloned;
+    }
+
+    private static JobDataMap configureFirstDataQueryPeriod_regularExecutionJob(WacodisJobDefinition job, JobDataMap data_cloned,
+            AbstractSubsetDefinition subsetDefinition) {
+
+        /*
 		 * Regular Execution Job
 		 * check if the startAt parameter is present, which might cause job to be executed in future
 		 * 
 		 * if not present then use created setting from job level
-		 */
-		DateTime temporalCoverageEndDate = getTemporalCoverageEndDate_regularJob(job);
-		
-		String duration = getAssociatedDuration(job, subsetDefinition);
-		String offset = getAssociatedDurationOffset(job, subsetDefinition);
-		
-		DateTime temporalCoverageStartDate = computeTemporalCoverageStartDate_regularJobs(temporalCoverageEndDate, duration, offset, job);
-		
-		data_cloned = setTemporalCoverage(data_cloned, temporalCoverageStartDate, temporalCoverageEndDate);
-		
+         */
+        DateTime temporalCoverageEndDate = getTemporalCoverageEndDate_regularJob(job);
+
+        String duration = getAssociatedDuration(job, subsetDefinition);
+        String offset = getAssociatedDurationOffset(job, subsetDefinition);
+
+        DateTime temporalCoverageStartDate = computeTemporalCoverageStartDate_regularJobs(temporalCoverageEndDate, duration, offset, job);
+
+        data_cloned = setTemporalCoverage(data_cloned, temporalCoverageStartDate, temporalCoverageEndDate);
+
         return data_cloned;
-	};
+    }
+
+    ;
 
 	private static DateTime computeTemporalCoverageStartDate_regularJobs(DateTime temporalCoverageEndDate, String duration,
-			String offset, WacodisJobDefinition job) {
-		Boolean previousExecution = job.getTemporalCoverage().getPreviousExecution();
-		
-		if (previousExecution != null && previousExecution) {
-			
-			DateTime startAt = job.getExecution().getStartAt();
-			
-			if(startAt == null) {
-				startAt = job.getCreated();
-			}
-			
-			CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
-			
-			ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(job.getExecution().getPattern()));
-			
-			Optional<ZonedDateTime> lastExecution = executionTime.lastExecution(startAt.toGregorianCalendar().toZonedDateTime());
-			return new DateTime(lastExecution.get().toInstant().toEpochMilli());
-		}
-		else {
-			return computeTemporalCoverageStartDate(temporalCoverageEndDate, duration, offset);
-		}
-	};
+            String offset, WacodisJobDefinition job) {
+        Boolean previousExecution = job.getTemporalCoverage().getPreviousExecution();
 
-	private static DateTime getTemporalCoverageEndDate_regularJob(WacodisJobDefinition job) {	
-		
-		/*
+        if (previousExecution != null && previousExecution) {
+
+            DateTime startAt = job.getExecution().getStartAt();
+
+            if (startAt == null) {
+                startAt = job.getCreated();
+            }
+
+            CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+
+            ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(job.getExecution().getPattern()));
+
+            Optional<ZonedDateTime> lastExecution = executionTime.lastExecution(startAt.toGregorianCalendar().toZonedDateTime());
+            return new DateTime(lastExecution.get().toInstant().toEpochMilli());
+        } else {
+            return computeTemporalCoverageStartDate(temporalCoverageEndDate, duration, offset);
+        }
+    }
+
+    ;
+
+	private static DateTime getTemporalCoverageEndDate_regularJob(WacodisJobDefinition job) {
+
+        /*
 		 * consider previous execution 
 		 * if present no duration is available
 		 * 
-		 * anhand pattern ableiten, was ist der nächste Ausführungszeitpunkt 
+		 * derive first execution time from cron pattern
 		 * 
-		 * (bsp. 25.11. angelegt aber Ausführung einmal monatlich am 1. --> 1.12. erste Ausführung)
+		 * (e.g. regular job executes on the first day of each month, created on 25. November --> first execution will be on 12. December)
 		 * 
-		 * mit cron-utils
-		 */
-		
-		DateTime startAt = job.getExecution().getStartAt();
-		
-		if(startAt == null) {
-			startAt = job.getCreated();
-		}
-		
-		CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
-				
-		ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(job.getExecution().getPattern()));
-		Optional<ZonedDateTime> nextExecution = executionTime.nextExecution(startAt.toGregorianCalendar().toZonedDateTime());
-		
-		return new DateTime(nextExecution.get().toInstant().toEpochMilli());
-		
-	};
+		 * using cron-utils
+         */
+        DateTime startAt = job.getExecution().getStartAt();
+
+        if (startAt == null) {
+            startAt = job.getCreated();
+        }
+
+        CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+
+        ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(job.getExecution().getPattern()));
+        Optional<ZonedDateTime> nextExecution = executionTime.nextExecution(startAt.toGregorianCalendar().toZonedDateTime());
+
+        return new DateTime(nextExecution.get().toInstant().toEpochMilli());
+
+    }
+
+    ;
 
 	private static JobDataMap configureFirstDataQueryPeriod_singleExecutionJob(WacodisJobDefinition job, JobDataMap data_cloned,
-			AbstractSubsetDefinition subsetDefinition, SingleJobExecutionEvent event) {
+            AbstractSubsetDefinition subsetDefinition, SingleJobExecutionEvent event) {
 
-		/*
+        /*
 		 * Single Execution Job
-		 * Event --> temporalCoverageEndDate  --> ist immer das Enddatum der Betrachtung --> duration backwards from that date
-		 */
-		DateTime temporalCoverageEndDate = event.getTemporalCoverageEndDate();
-		
-		String duration = getAssociatedDuration(job, subsetDefinition);
-		String offset = getAssociatedDurationOffset(job, subsetDefinition);
-		
-		DateTime temporalCoverageStartDate = computeTemporalCoverageStartDate(temporalCoverageEndDate, duration, offset);
-		
-		data_cloned = setTemporalCoverage(data_cloned, temporalCoverageStartDate, temporalCoverageEndDate);
-		
+		 * Event --> temporalCoverageEndDate  --> always end date to be considered --> duration backwards from that date
+         */
+        DateTime temporalCoverageEndDate = event.getTemporalCoverageEndDate();
+
+        String duration = getAssociatedDuration(job, subsetDefinition);
+        String offset = getAssociatedDurationOffset(job, subsetDefinition);
+
+        DateTime temporalCoverageStartDate = computeTemporalCoverageStartDate(temporalCoverageEndDate, duration, offset);
+
+        data_cloned = setTemporalCoverage(data_cloned, temporalCoverageStartDate, temporalCoverageEndDate);
+
         return data_cloned;
-	};
+    }
+
+    ;
 
 	private static JobDataMap setTemporalCoverage(JobDataMap data_cloned, DateTime temporalCoverageStartDate,
-			DateTime temporalCoverageEndDate) {
-		logger.info("Set initial temporalCoverage startDate to {}", temporalCoverageStartDate.toString());
-		logger.info("Set initial temporalCoverage endDate to {}", temporalCoverageEndDate.toString());
-		data_cloned.put(TemporalCoverageConstants.START_DATE, temporalCoverageStartDate.toString());
-		data_cloned.put(TemporalCoverageConstants.END_DATE, temporalCoverageEndDate.toString());
-		
-		return data_cloned;
-	};
+            DateTime temporalCoverageEndDate) {
+        logger.info("Set initial temporalCoverage startDate to {}", temporalCoverageStartDate.toString());
+        logger.info("Set initial temporalCoverage endDate to {}", temporalCoverageEndDate.toString());
+        data_cloned.put(TemporalCoverageConstants.START_DATE, temporalCoverageStartDate.toString());
+        data_cloned.put(TemporalCoverageConstants.END_DATE, temporalCoverageEndDate.toString());
+
+        return data_cloned;
+    }
+
+    ;
 
 	private static DateTime computeTemporalCoverageStartDate(DateTime temporalCoverageEndDate, String duration,
-			String offset) {
-		DateTime temporalCoverageStartDate;
-		Period durationPeriod = Period.parse(duration, ISOPeriodFormat.standard());        
+            String offset) {
+        DateTime temporalCoverageStartDate;
+        Period durationPeriod = Period.parse(duration, ISOPeriodFormat.standard());
 
         temporalCoverageStartDate = temporalCoverageEndDate.withPeriodAdded(durationPeriod, -1);
-        
+
         // apply additional offset if present
-        if(offset != null) {
-        	Period offsetPeriod = Period.parse(offset, ISOPeriodFormat.standard());
+        if (offset != null) {
+            Period offsetPeriod = Period.parse(offset, ISOPeriodFormat.standard());
 
             temporalCoverageStartDate = temporalCoverageStartDate.withPeriodAdded(offsetPeriod, -1);
         }
-        
+
         return temporalCoverageStartDate;
-	};
+    }
+
+    ;
 
 	private static String getAssociatedDurationOffset(WacodisJobDefinition job, AbstractSubsetDefinition subsetDefinition) {
-		// use input specific details if available; else use job level details
-		String offset = null;
-		AbstractSubsetDefinitionTemporalCoverage temporalCoverage_subsetDef = subsetDefinition.getTemporalCoverage();
-		WacodisJobDefinitionTemporalCoverage temporalCoverage_job = job.getTemporalCoverage();
-		if (temporalCoverage_subsetDef != null) {
-			offset = temporalCoverage_subsetDef.getOffset();
-		} else {
-			offset = temporalCoverage_job.getOffset();
-		}
+        // use input specific details if available; else use job level details
+        String offset = null;
+        AbstractSubsetDefinitionTemporalCoverage temporalCoverage_subsetDef = subsetDefinition.getTemporalCoverage();
+        WacodisJobDefinitionTemporalCoverage temporalCoverage_job = job.getTemporalCoverage();
+        if (temporalCoverage_subsetDef != null) {
+            offset = temporalCoverage_subsetDef.getOffset();
+        } else {
+            offset = temporalCoverage_job.getOffset();
+        }
 
-		return offset;
-	};
+        return offset;
+    }
+
+    ;
 
 	private static String getAssociatedDuration(WacodisJobDefinition job, AbstractSubsetDefinition subsetDefinition) {
-		// use input specific details if available; else use job level details
-		String duration = null;
-		AbstractSubsetDefinitionTemporalCoverage temporalCoverage_subsetDef = subsetDefinition.getTemporalCoverage();
-		WacodisJobDefinitionTemporalCoverage temporalCoverage_job = job.getTemporalCoverage();
-		if (temporalCoverage_subsetDef != null) {
-			duration = temporalCoverage_subsetDef.getDuration();
-		} else {
-			duration = temporalCoverage_job.getDuration();
-		}
+        // use input specific details if available; else use job level details
+        String duration = null;
+        AbstractSubsetDefinitionTemporalCoverage temporalCoverage_subsetDef = subsetDefinition.getTemporalCoverage();
+        WacodisJobDefinitionTemporalCoverage temporalCoverage_job = job.getTemporalCoverage();
+        if (temporalCoverage_subsetDef != null) {
+            duration = temporalCoverage_subsetDef.getDuration();
+        } else {
+            duration = temporalCoverage_job.getDuration();
+        }
 
-		return duration;
-	};
+        return duration;
+    }
+;
 
 }
