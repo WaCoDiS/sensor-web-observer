@@ -117,7 +117,7 @@ public class WacodisJobConfiguration {
 		 * 
 		 * derive first execution time from cron pattern
 		 * 
-		 * (e.g. regular job executes on the first day of each month, created on 25. November --> first execution will be on 12. December)
+		 * (e.g. regular job executes on the first day of each month, created on 25. November --> first execution will be on 01. December)
 		 * 
 		 * using cron-utils
          */
