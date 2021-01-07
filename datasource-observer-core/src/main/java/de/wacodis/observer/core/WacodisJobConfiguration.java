@@ -148,7 +148,11 @@ public class WacodisJobConfiguration {
         DateTime temporalCoverageEndDate = event.getTemporalCoverageEndDate();
         
         if (temporalCoverageEndDate == null) {
-        	temporalCoverageEndDate = DateTime.now();
+        	temporalCoverageEndDate = job.getCreated(); 
+        	
+        	if(temporalCoverageEndDate == null) {
+        		temporalCoverageEndDate = DateTime.now();
+        	}
         }
 
         String duration = getAssociatedDuration(job, subsetDefinition);
