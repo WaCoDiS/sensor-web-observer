@@ -146,6 +146,10 @@ public class WacodisJobConfiguration {
 		 * Event --> temporalCoverageEndDate  --> always end date to be considered --> duration backwards from that date
          */
         DateTime temporalCoverageEndDate = event.getTemporalCoverageEndDate();
+        
+        if (temporalCoverageEndDate == null) {
+        	temporalCoverageEndDate = DateTime.now();
+        }
 
         String duration = getAssociatedDuration(job, subsetDefinition);
         String offset = getAssociatedDurationOffset(job, subsetDefinition);
