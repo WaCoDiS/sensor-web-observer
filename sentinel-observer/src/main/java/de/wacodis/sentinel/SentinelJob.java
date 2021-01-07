@@ -80,7 +80,7 @@ public class SentinelJob implements Job {
         // end date as start date for the current request.
         // Else, use the factory level based generic configuration of the first 
         if (dataMap.get(LAST_LATEST_PRODUCT_KEY) != null) {
-        	startDate = (DateTime) dataMap.get(LAST_LATEST_PRODUCT_KEY);
+        	startDate = DateTime.parse((String)dataMap.get(LAST_LATEST_PRODUCT_KEY));
         	endDate = DateTime.now();
         }
             
@@ -88,7 +88,7 @@ public class SentinelJob implements Job {
         	startDate = DateTime.parse((String)dataMap.get(TemporalCoverageConstants.START_DATE));
         	endDate = DateTime.parse((String)dataMap.get(TemporalCoverageConstants.END_DATE));
         }
-        dataMap.put(LAST_LATEST_PRODUCT_KEY, endDate);
+        dataMap.put(LAST_LATEST_PRODUCT_KEY, endDate.toString());
 
         /*
          * defined on the job level
@@ -158,7 +158,7 @@ public class SentinelJob implements Job {
             /*
              * store the last begin position
              */
-            dataMap.put(LAST_LATEST_PRODUCT_KEY, newProducts.get(newProducts.size() - 1).getBeginPosition());
+            dataMap.put(LAST_LATEST_PRODUCT_KEY, newProducts.get(newProducts.size() - 1).getBeginPosition().toString());
 
             /*
              * store the last IDs in the execution environment
