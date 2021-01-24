@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,5 +113,17 @@ public class SensorWebJobFactory implements JobFactory {
 
         return builder.toString();
     }
+    
+    @Override
+	public Class getQuartzJobClass() {
+		// TODO Auto-generated method stub
+		return SensorWebJob.class;
+	}
+    
+    @Override
+	public JobDetail modifyBboxParameter(JobDetail jobDetail, String expandedBbox) {
+		// here we must do nothing as this Job dies not specify BBOX parameter
+		return jobDetail;
+	}
 
 }

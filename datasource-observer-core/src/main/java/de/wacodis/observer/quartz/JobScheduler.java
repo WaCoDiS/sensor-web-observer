@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import de.wacodis.observer.core.BboxHelper;
 import de.wacodis.observer.core.JobFactory;
 import de.wacodis.observer.core.TemporalCoverageConstants;
 import de.wacodis.observer.model.AbstractWacodisJobExecutionEvent;
@@ -37,6 +38,9 @@ public class JobScheduler {
 
     @Autowired
     private QuartzServer wacodisQuartz;
+    
+    @Autowired
+    private BboxHelper bboxHelper;
 
     public JobScheduler() {
     }
@@ -113,9 +117,9 @@ public class JobScheduler {
                                                                Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
 
         for (JobDetail jobDetail : quartzJobDefinitions) {
-            if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)) {
+            if (wacodisQuartz.jobForSameDatasourceAndTypeAndBBOXAlreadyExists(jobDetail)) {
                 LOG.info("Existing quartz job with the same parameters identified. Will remove WACODIS job ID from its associated WACODIS jobs");
-                JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
+                JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition_includingIdenticalBBOXString(jobDetail);
                 // get Trigger, which has associated Key in case we only want to unschedule job
                 Trigger trigger = prepareTrigger(jobDetail, wacodisJob);
                 wacodisQuartz.removeWacodisJobIdFromQuartzJobDataMap(existingQuartzJob, wacodisJob.getId(), trigger.getKey(), true);
@@ -126,7 +130,7 @@ public class JobScheduler {
 
     }
 
-    private void manageQuartzJobDefinitions_onAddNewWacodisJob(WacodisJobDefinition job, Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
+    private void manageQuartzJobDefinitions_onAddNewWacodisJob(WacodisJobDefinition job, Collection<JobDetail> quartzJobDefinitions) throws Exception {
 
         /*
          * check if existing jobs already watch the same set of queried data
@@ -134,15 +138,34 @@ public class JobScheduler {
          * 		else generate and execute new job & trigger for scheduling
          */
         for (JobDetail jobDetail : quartzJobDefinitions) {
-            if (wacodisQuartz.jobForSameDatasourceAndTypeAlreadyExists(jobDetail)) {
+            if (wacodisQuartz.jobForSameDatasourceAndTypeAndBBOXAlreadyExists(jobDetail)) {
                 LOG.info("Existing quartz job with the same parameters identified. Will add WACODIS job ID to its associated WACODIS jobs");
-                JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition(jobDetail);
+                JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition_includingIdenticalBBOXString(jobDetail);
                 wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId(), true);
 
                 // if the execution-interval, specified in WACODIS job definition, is shorter than the already existing trigger
                 // then we might want to adjust the trigger --> shorten execution interval
                 adjustTriggerIfIntervalIsShorter(existingQuartzJob, job.getExecution().getPattern());
-            } else {
+            }
+            else if (wacodisQuartz.jobForSameDatasourceAndTypeWithIntersectingBBOXAlreadyExists(jobDetail)) {
+            	LOG.info("Existing quartz job with the same input definition parameters and an overlapping BBOX was identified. Will modify the existing Quartz job expanding the BBOX to include the new BBOX of the new WACODIS job. Also will add WACODIS job ID to the associated WACODIS jobs of the modified Quartz job.");
+            	
+            	JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition_withIntersectingBBOXString(jobDetail);
+                JobKey quartzKey_old = existingQuartzJob.getKey();                
+				Object bbox_old = existingQuartzJob.getJobDataMap().get(AOI_KEY);
+            	wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId(), true);
+                existingQuartzJob = bboxHelper.expandBboxOfExistingQuartzJob(existingQuartzJob, jobDetail, AOI_KEY);
+                Object bbox_expanded = existingQuartzJob.getJobDataMap().get(AOI_KEY);
+                Trigger trigger = prepareTrigger(jobDetail, job);
+                wacodisQuartz.replaceExistingJob_byKey(quartzKey_old, existingQuartzJob, trigger);
+                LOG.info("Replaced quartz job with ID {} by similar quartz job with expanded BBOX and new ID {}. Previous BBOX {} was expanded to {}", quartzKey_old, existingQuartzJob, bbox_old, bbox_expanded);
+            	
+
+                // if the execution-interval, specified in WACODIS job definition, is shorter than the already existing trigger
+                // then we might want to adjust the trigger --> shorten execution interval
+                adjustTriggerIfIntervalIsShorter(existingQuartzJob, job.getExecution().getPattern());
+            }
+            else {
                 // initialize wacodisJobIdStorage in jobDataMap
                 LOG.info("No existing quartz job with the same parameters was found. Will create and schedule a new quartz job and add WACODIS job ID to its associated WACODIS jobs");
                 wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(jobDetail, job.getId(), false);

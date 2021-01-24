@@ -1,7 +1,19 @@
 package de.wacodis.observer.quartz;
 
-import de.wacodis.observer.publisher.PublisherChannel;
-import org.quartz.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -9,10 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import de.wacodis.observer.core.BboxHelper;
+import de.wacodis.observer.publisher.PublisherChannel;
 
 @Component
 public class QuartzServer implements InitializingBean {
@@ -27,6 +37,9 @@ public class QuartzServer implements InitializingBean {
 
     @Autowired
     private PublisherChannel publisher;
+    
+    @Autowired
+    private BboxHelper bboxHelper;
 
     @Autowired
     private SchedulerFactoryBean schedulerBean;
@@ -58,15 +71,55 @@ public class QuartzServer implements InitializingBean {
 
     }
 
-    public boolean jobForSameDatasourceAndTypeAlreadyExists(JobDetail jobDetail) throws SchedulerException {
+    public boolean jobForSameDatasourceAndTypeAndBBOXAlreadyExists(JobDetail jobDetail) throws SchedulerException {
         // this should work, as the jobKey is generated from WACODIS SubsetDefinition
         // specific properties
 
         // hence the same key is guaranteed to be generated for equal SubsetDefinitions
         return this.scheduler.checkExists(jobDetail.getKey());
     }
+    
+    public boolean jobForSameDatasourceAndTypeWithIntersectingBBOXAlreadyExists(JobDetail jobDetailCandidate) throws SchedulerException {
+		String keyPart_withoutBBOX = bboxHelper.getQuartzKeyPartWithoutBbox(jobDetailCandidate);
+		
+		List<JobKey> possibleQuartzJobKeys = findQuartzJobsWithSameJobKeyPart(keyPart_withoutBBOX);
+		
+		// analyze possible quartz job keys to find one whose BBOX part intersects the BBOX part of the new Wacodis Job
+		JobKey jobKey = bboxHelper.findQuartzJobKeyIntersectingNewWacodisJobBBOX(possibleQuartzJobKeys, jobDetailCandidate);
+		return jobKey != null;
+    }
 
-    public JobDetail getQuartzJobForWacodisInputDefinition(JobDetail jobDetail) throws SchedulerException {
+	private List<JobKey> findQuartzJobsWithSameJobKeyPart(String keyPart_withoutBBOX) throws SchedulerException {
+		List<JobKey> possibleQuartzJobKeys = new ArrayList<JobKey>();
+		
+		for (String groupName : this.scheduler.getJobGroupNames()) {
+
+		     for (JobKey jobKey : this.scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+		                
+		      String jobName = jobKey.getName();
+		      String jobGroup = jobKey.getGroup();
+		                
+		      if (jobName.contains(keyPart_withoutBBOX)) {
+		    	  // found a Quartz jobDetail that observes the same Wacodis input as a new Wacodis job
+		    	  possibleQuartzJobKeys.add(jobKey);
+		      }
+
+		    }		
+		}
+		return possibleQuartzJobKeys;
+	}
+	
+	public JobDetail getQuartzJobForWacodisInputDefinition_withIntersectingBBOXString(JobDetail jobDetailCandidate) throws SchedulerException {
+		String keyPart_withoutBBOX = bboxHelper.getQuartzKeyPartWithoutBbox(jobDetailCandidate);
+		
+		List<JobKey> possibleQuartzJobKeys = findQuartzJobsWithSameJobKeyPart(keyPart_withoutBBOX);
+		
+		// analyze possible quartz job keys to find one whose BBOX part intersects the BBOX part of the new Wacodis Job
+		JobKey jobKey = bboxHelper.findQuartzJobKeyIntersectingNewWacodisJobBBOX(possibleQuartzJobKeys, jobDetailCandidate);
+		return this.scheduler.getJobDetail(jobKey);	
+	}
+
+    public JobDetail getQuartzJobForWacodisInputDefinition_includingIdenticalBBOXString(JobDetail jobDetail) throws SchedulerException {
         JobKey key = jobDetail.getKey();
 
         return this.scheduler.getJobDetail(key);
@@ -171,5 +224,10 @@ public class QuartzServer implements InitializingBean {
         }
 
     }
+
+	public void replaceExistingJob_byKey(JobKey quartzKey_old, JobDetail quartzJob, Trigger trigger) throws SchedulerException {
+		this.scheduler.deleteJob(quartzKey_old);
+		this.scheduler.scheduleJob(quartzJob, trigger);
+	}
 
 }
