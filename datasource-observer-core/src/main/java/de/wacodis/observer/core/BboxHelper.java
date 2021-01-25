@@ -154,9 +154,13 @@ public class BboxHelper {
 		String quartzKeyPartWithoutBbox = getQuartzKeyPartWithoutBbox(existingQuartzJob);
 		String newJobKeyName = String.join("_", quartzKeyPartWithoutBbox, expandedBbox);
 		
-		JobDetail newJobDetail = jobDetail.getJobBuilder().withIdentity(newJobKeyName, existingQuartzJob.getKey().getGroup()).usingJobData(existingQuartzJob.getJobDataMap()).build();
+		JobDataMap jobDataMap = existingQuartzJob.getJobDataMap();
 		
-		newJobDetail = modifyJobDetailBboxForJobExecution(jobDetail, expandedBbox, aoiKey);
+		JobDetail newJobDetail = existingQuartzJob.getJobBuilder().withIdentity(newJobKeyName, existingQuartzJob.getKey().getGroup()).usingJobData(jobDataMap).storeDurably(true).build();
+		
+		JobDataMap jobDataMap_newJob = newJobDetail.getJobDataMap();
+		
+		newJobDetail = modifyJobDetailBboxForJobExecution(newJobDetail, expandedBbox, aoiKey);
 		
 		return newJobDetail;
 	}
