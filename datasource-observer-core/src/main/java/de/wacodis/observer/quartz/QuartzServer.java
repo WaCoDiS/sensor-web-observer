@@ -148,7 +148,8 @@ public class QuartzServer implements InitializingBean {
             wacodisJobIds.add(wacodisJobId);
         }
 
-        log.info("Associated WACODIS job management: the quartz job with key '{}' now has a total number of '{}' associated WACODIS jobs.", quartzJob.getKey(), wacodisJobIds.size());
+        log.info("Associated WACODIS job management: the quartz job with key '{}' now has a total number of '{}' associated WACODIS jobs. The WACODIS job IDs are: '{}'", quartzJob.getKey(), wacodisJobIds.size(), wacodisJobIds);
+
 
         // modify element in quartz job data map
         jobDataMap.put(WACODIS_JOB_ID_STORAGE, wacodisJobIds);
