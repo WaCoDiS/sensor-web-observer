@@ -153,13 +153,12 @@ public class JobScheduler {
             	JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition_withIntersectingBBOXString(jobDetail);
                 JobKey quartzKey_old = existingQuartzJob.getKey();                
 				Object bbox_old = existingQuartzJob.getJobDataMap().get(AOI_KEY);
-            	wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId(), true);
                 existingQuartzJob = bboxHelper.expandBboxOfExistingQuartzJob(existingQuartzJob, jobDetail, AOI_KEY);
                 Object bbox_expanded = existingQuartzJob.getJobDataMap().get(AOI_KEY);
                 Trigger trigger = prepareTrigger(jobDetail, job);
-                wacodisQuartz.replaceExistingJob_byKey(quartzKey_old, existingQuartzJob, trigger);
+                wacodisQuartz.replaceExistingJob_byKey(quartzKey_old, existingQuartzJob, trigger);                
                 LOG.info("Replaced quartz job with ID {} by similar quartz job with expanded BBOX and new ID {}. Previous BBOX {} was expanded to {}", quartzKey_old, existingQuartzJob, bbox_old, bbox_expanded);
-            	
+            	wacodisQuartz.addWacodisJobIdToQuartzJobDataMap(existingQuartzJob, job.getId(), true);
 
                 // if the execution-interval, specified in WACODIS job definition, is shorter than the already existing trigger
                 // then we might want to adjust the trigger --> shorten execution interval
