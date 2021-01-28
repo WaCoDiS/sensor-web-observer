@@ -22,7 +22,14 @@ public class BboxHelper {
 	
 	@Autowired
 	private List<JobFactory> jobFactories;
-
+	
+	public BboxHelper () {
+		
+	};
+	
+	public BboxHelper (List<JobFactory> jobFactories) {
+		this.jobFactories = jobFactories;
+	};
 
 	public String appendAreaOfInterestToQuartzJobKey(WacodisJobDefinition job, String jobId) {
 		List<Float> areaOfInterestExtent = job.getAreaOfInterest().getExtent();
