@@ -3,6 +3,7 @@ package de.wacodis.observer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -299,6 +300,24 @@ public class WacodisBboxHelperIT {
 				CoreMatchers.not(expandedBBoxJob.getJobDataMap().get(AOI_KEY)));
 		Assert.assertThat(expandedBBoxJob.getJobDataMap().get(AOI_KEY),
 				CoreMatchers.equalTo(areaOfInterest_merged));
+		
+		// add and remove ids nd bboxes to job data map
+		// and check resulting bbox of new job
+		
+		bboxHelper.addWacodisJobIdAndBBOXToJobDataMap(expandedBBoxJob, wacodisJob1.getId(), wacodisJob1.getAreaOfInterest());
+		bboxHelper.addWacodisJobIdAndBBOXToJobDataMap(expandedBBoxJob, wacodisJob2_intersecting.getId(), wacodisJob2_intersecting.getAreaOfInterest());
+		
+		Assert.assertThat(expandedBBoxJob.getJobDataMap().getString(wacodisJob1.getId().toString()), CoreMatchers.equalTo(bboxHelper.getBboxStringFromAreaOfInterest(wacodisJob1.getAreaOfInterest().getExtent())));
+		Assert.assertThat(expandedBBoxJob.getJobDataMap().getString(wacodisJob2_intersecting.getId().toString()), CoreMatchers.equalTo(bboxHelper.getBboxStringFromAreaOfInterest(wacodisJob2_intersecting.getAreaOfInterest().getExtent())));
+		
+		bboxHelper.removeWacodisJobIdAndBBOXFromJobDataMap(expandedBBoxJob, wacodisJob1.getId());		
+		HashSet<UUID> remainingWacodisJobIds = new HashSet<UUID>();
+		remainingWacodisJobIds.add(wacodisJob2_intersecting.getId());
+		JobDetail newJob = bboxHelper.regenerateBboxForQuartzJob(expandedBBoxJob, wacodisJob1.getId(), remainingWacodisJobIds, AOI_KEY);
+		String bbox_newJob = bboxHelper.getBboxSubstringFromQuartzJobKey(newJob.getKey());
+		Assert.assertThat(bbox_newJob, CoreMatchers.equalTo(bboxHelper.getBboxStringFromAreaOfInterest(wacodisJob2_intersecting.getAreaOfInterest().getExtent())));
+		Assert.assertThat(newJob.getJobDataMap().get(AOI_KEY), CoreMatchers.equalTo(areaOfInterest2));
+	
 	}
 
 }
