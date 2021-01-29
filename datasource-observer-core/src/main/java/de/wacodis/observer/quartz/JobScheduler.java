@@ -116,15 +116,8 @@ public class JobScheduler {
     private void manageQuartzJobDefinitions_onDeleteWacodisJob(WacodisJobDefinition wacodisJob,
                                                                Collection<JobDetail> quartzJobDefinitions) throws SchedulerException {
 
-        for (JobDetail jobDetail : quartzJobDefinitions) {
-            if (wacodisQuartz.jobForSameDatasourceAndTypeAndBBOXAlreadyExists(jobDetail)) {
-                LOG.info("Existing quartz job with the same parameters identified. Will remove WACODIS job ID from its associated WACODIS jobs");
-                JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition_includingIdenticalBBOXString(jobDetail);
-                // get Trigger, which has associated Key in case we only want to unschedule job
-                Trigger trigger = prepareTrigger(jobDetail, wacodisJob);
-                wacodisQuartz.removeWacodisJobIdAndBboxFromQuartzJobDataMap(existingQuartzJob, wacodisJob.getId(), trigger.getKey(), true);
-            } 
-            else if (wacodisQuartz.jobForSameDatasourceAndTypeWithIntersectingBBOXAlreadyExists(jobDetail)) {
+        for (JobDetail jobDetail : quartzJobDefinitions) {             
+            if (wacodisQuartz.jobForSameDatasourceAndTypeWithIntersectingBBOXAlreadyExists(jobDetail)) {
             	LOG.info("Existing quartz job with the same input definition parameters and an intersecting BBOX was identified. Will modify the existing Quartz job, removing the Wacodis jobId and its BBOX.");
             	
             	JobDetail existingQuartzJob = wacodisQuartz.getQuartzJobForWacodisInputDefinition_withIntersectingBBOXString(jobDetail);
