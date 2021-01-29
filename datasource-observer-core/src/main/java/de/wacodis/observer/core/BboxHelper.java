@@ -1,7 +1,10 @@
 package de.wacodis.observer.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.quartz.JobDataMap;
@@ -33,12 +36,17 @@ public class BboxHelper {
 
 	public String appendAreaOfInterestToQuartzJobKey(WacodisJobDefinition job, String jobId) {
 		List<Float> areaOfInterestExtent = job.getAreaOfInterest().getExtent();
-		String extent = areaOfInterestExtent.stream()
-		        .map(String::valueOf)
-		        .collect(Collectors.joining(","));
+		String extent = getBboxStringFromAreaOfInterest(areaOfInterestExtent);
 		jobId = String.join("_", jobId, extent);
 		
 		return jobId;
+	}
+
+	public String getBboxStringFromAreaOfInterest(List<Float> areaOfInterestExtent) {
+		String extent = areaOfInterestExtent.stream()
+		        .map(String::valueOf)
+		        .collect(Collectors.joining(","));
+		return extent;
 	}
 
 	public String getQuartzKeyPartWithoutBbox(JobDetail jobDetailCandidate) {
@@ -158,17 +166,19 @@ public class BboxHelper {
 		
 		String expandedBbox = getExpandedBbox(bboxSubstring_quartzJob, bboxSubstring_wacodisJob);
 		
+		JobDetail newJobDetail = createNewQuartzJobWithExpandedBbox(existingQuartzJob, expandedBbox, aoiKey);
+		
+		return newJobDetail;
+	}
+
+	private JobDetail createNewQuartzJobWithExpandedBbox(JobDetail existingQuartzJob, String expandedBbox, String aoiKey) {
 		String quartzKeyPartWithoutBbox = getQuartzKeyPartWithoutBbox(existingQuartzJob);
 		String newJobKeyName = String.join("_", quartzKeyPartWithoutBbox, expandedBbox);
 		
 		JobDataMap jobDataMap = existingQuartzJob.getJobDataMap();
 		
 		JobDetail newJobDetail = existingQuartzJob.getJobBuilder().withIdentity(newJobKeyName, existingQuartzJob.getKey().getGroup()).usingJobData(jobDataMap).storeDurably(true).build();
-		
-		JobDataMap jobDataMap_newJob = newJobDetail.getJobDataMap();
-		
 		newJobDetail = modifyJobDetailBboxForJobExecution(newJobDetail, expandedBbox, aoiKey);
-		
 		return newJobDetail;
 	}
 
@@ -225,6 +235,52 @@ public class BboxHelper {
 		String extent = bbox_expanded[0] + "," + bbox_expanded[1] + "," + bbox_expanded[2] + "," + bbox_expanded[3];
 		
 		return extent;
+	}
+
+	public void addWacodisJobIdAndBBOXToJobDataMap(JobDetail quartzJob, UUID wacodisJobId,
+			AbstractDataEnvelopeAreaOfInterest areaOfInterest, JobDataMap jobDataMap) {
+		String bbox = this.getBboxStringFromAreaOfInterest(areaOfInterest.getExtent());
+		logger.info("Associated WACODIS job management: add WACODIS job ID '{}' and BBOX '{}' to the quartz job with key '{}'. Set wocodisJobId as map key and the BBOX string as map value.", wacodisJobId, bbox, quartzJob.getKey());
+
+        jobDataMap.put(wacodisJobId.toString(), bbox);	
+	}
+	
+	public String removeWacodisJobIdAndBBOXFromJobDataMap(JobDetail quartzJob, UUID wacodisJobId,
+			JobDataMap jobDataMap) {
+		Object bbox = jobDataMap.get(wacodisJobId.toString());
+		logger.info("Associated WACODIS job management: remove WACODIS job ID '{}' and its BBOX '{}' from the quartz job with key '{}'. ", wacodisJobId, bbox, quartzJob.getKey());
+        jobDataMap.remove(wacodisJobId.toString());	
+        
+        return (String) bbox;
+	}
+
+	public JobDetail regenerateBboxForQuartzJob(JobDetail quartzJob, UUID wacodisJobId, String bboxOfDeletedWacodisJob,
+			HashSet<UUID> remainingWacodisJobIds, String aoiKey) {
+		
+		JobDataMap jobDataMap = quartzJob.getJobDataMap();
+		
+		// get all relevant and existing BBOX strings
+		// then create merged BBOXes
+		// make new quartzJob from the other with the updated jobDataMap
+		List<String> bboxes = new ArrayList<String>();
+		
+		for (UUID remainingWacodisJobId : remainingWacodisJobIds) {
+			if(jobDataMap.containsKey(remainingWacodisJobId.toString())) {
+				bboxes.add((String) jobDataMap.get(remainingWacodisJobId.toString()));
+			}
+		}
+		
+		String newBbox = bboxes.get(0);
+		
+		if(bboxes.size() > 1) {
+			for (int i = 1; i < bboxes.size(); i++) {
+				newBbox = getExpandedBbox(newBbox, bboxes.get(i));
+			}
+		}
+		
+		JobDetail newJobDetail = createNewQuartzJobWithExpandedBbox(quartzJob, newBbox, aoiKey);
+		
+		return newJobDetail;
 	}
 	
 	

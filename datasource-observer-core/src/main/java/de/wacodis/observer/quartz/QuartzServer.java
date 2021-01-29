@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -22,6 +25,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
 import de.wacodis.observer.core.BboxHelper;
+import de.wacodis.observer.model.AbstractDataEnvelopeAreaOfInterest;
 import de.wacodis.observer.publisher.PublisherChannel;
 
 @Component
@@ -125,10 +129,22 @@ public class QuartzServer implements InitializingBean {
         return this.scheduler.getJobDetail(key);
     }
 
-    public void addWacodisJobIdToQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId, boolean replaceExistingQuartzJob) throws SchedulerException {
+    public void addWacodisJobIdAndBBOXToQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId, AbstractDataEnvelopeAreaOfInterest areaOfInterest, boolean replaceExistingQuartzJob) throws SchedulerException {
         JobDataMap jobDataMap = quartzJob.getJobDataMap();
 
-        log.info("Associated WACODIS job management: add WACODIS job ID '{}' to the associated jobs of quartz job with key '{}' .", wacodisJobId, quartzJob.getKey());
+        addWacodisJobIdToJobDataMap(quartzJob, wacodisJobId, jobDataMap);
+        
+        bboxHelper.addWacodisJobIdAndBBOXToJobDataMap(quartzJob, wacodisJobId, areaOfInterest, jobDataMap);
+
+        // now we must replace the existing job innscheduler in order to apply the updated jobDataMap !
+        // otherwise the initial jobDataMa will still be used
+        if (replaceExistingQuartzJob) {
+            this.scheduler.addJob(quartzJob, true);
+        }
+    }
+
+	private void addWacodisJobIdToJobDataMap(JobDetail quartzJob, UUID wacodisJobId, JobDataMap jobDataMap) {
+		log.info("Associated WACODIS job management: add WACODIS job ID '{}' to the associated jobs of quartz job with key '{}' .", wacodisJobId, quartzJob.getKey());
 
 
         // implement a storage for associated WACODIS job ids than require the quartz job
@@ -153,13 +169,7 @@ public class QuartzServer implements InitializingBean {
 
         // modify element in quartz job data map
         jobDataMap.put(WACODIS_JOB_ID_STORAGE, wacodisJobIds);
-
-        // now we must replace the existing job innscheduler in order to apply the updated jobDataMap !
-        // otherwise the initial jobDataMa will still be used
-        if (replaceExistingQuartzJob) {
-            this.scheduler.addJob(quartzJob, true);
-        }
-    }
+	}
 
     public Trigger getAssociatedTrigger(JobDetail existingQuartzJob) throws SchedulerException {
 
@@ -173,12 +183,53 @@ public class QuartzServer implements InitializingBean {
         return triggersOfJob.get(0);
     }
 
-    public void removeWacodisJobIdFromQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId, TriggerKey triggerKey, boolean completelyRemoveQuartzJob) throws SchedulerException {
-        JobDataMap jobDataMap = quartzJob.getJobDataMap();
+    public JobDetail removeWacodisJobIdAndBboxFromQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId, TriggerKey triggerKey, boolean completelyRemoveQuartzJob) throws SchedulerException {
+        HashSet<UUID> wacodisJobIds = removeWacodisJobIdFromJobDataMap(quartzJob, wacodisJobId);
+        
+        quartzJob = scheduler.getJobDetail(quartzJob.getKey());
 
-        log.info("Associated WACODIS job management: try to remove WACODIS job ID '{}' from the associated jobs of quartz job with key '{}' .", wacodisJobId, quartzJob.getKey());
+        // now check if there is any remaining WACODIS job ID in JobDataMap
+        // if not, we must remove/pause the quartz job
+        if (wacodisJobIds.size() == 0) {
+            // depending on boolean parameter remove whole job or just unschedule it
+            if (completelyRemoveQuartzJob) {
+                this.scheduler.deleteJob(quartzJob.getKey());
+                log.info("Associated WACODIS job management: the quartz job with key '{}' was deleted.", quartzJob.getKey());
 
+            } else {
+                this.scheduler.unscheduleJob(triggerKey);
+                log.info("Associated WACODIS job management: the quartz job with key '{}' was unscheduled. Hence the trigger with key '{}' was removed.", quartzJob.getKey(), triggerKey);
+            }
+            return null;
+        }
+        else {
+        	// if there is at least one remaining entry, we must reduce the BBOX observation area
+        	JobDetail newQuartzJob = removeWacodisJobBboxFromJobDataMap(quartzJob, wacodisJobId, wacodisJobIds);
+        	return newQuartzJob;
+        }
 
+    }
+
+	private JobDetail removeWacodisJobBboxFromJobDataMap(JobDetail quartzJob, UUID wacodisJobId,
+			HashSet<UUID> remainingWacodisJobIds) throws SchedulerException {
+		JobDataMap jobDataMap = quartzJob.getJobDataMap();
+		
+		String bboxOfDeletedWacodisJob = bboxHelper.removeWacodisJobIdAndBBOXFromJobDataMap(quartzJob, wacodisJobId, jobDataMap);
+		
+		// now we must replace the existing job innscheduler in order to apply the updated jobDataMap !
+        // otherwise the initial jobDataMa will still be used
+        this.scheduler.addJob(quartzJob, true);
+        quartzJob = this.scheduler.getJobDetail(quartzJob.getKey());
+        
+		JobDetail newQuartzJob = bboxHelper.regenerateBboxForQuartzJob(quartzJob, wacodisJobId, bboxOfDeletedWacodisJob, remainingWacodisJobIds, JobScheduler.AOI_KEY);
+		
+		return newQuartzJob;		
+	}
+
+	private HashSet<UUID> removeWacodisJobIdFromJobDataMap(JobDetail quartzJob, UUID wacodisJobId) throws SchedulerException {
+		log.info("Associated WACODIS job management: try to remove WACODIS job ID '{}' from the associated jobs of quartz job with key '{}' .", wacodisJobId, quartzJob.getKey());
+
+		JobDataMap jobDataMap = quartzJob.getJobDataMap();
         // implement a storage for associated WACODIS job ids than require the quartz job
 
         // implement as HashSet in order to ensure that WACODIS jobIds cannot be inserted twice
@@ -209,22 +260,8 @@ public class QuartzServer implements InitializingBean {
         // now we must replace the existing job innscheduler in order to apply the updated jobDataMap !
         // otherwise the initial jobDataMa will still be used
         this.scheduler.addJob(quartzJob, true);
-
-        // now check if there is any remaining WACODIS job ID in JobDataMap
-        // if not, we must remove/pause the quartz job
-        if (wacodisJobIds.size() == 0) {
-            // depending on boolean parameter remove whole job or just unschedule it
-            if (completelyRemoveQuartzJob) {
-                this.scheduler.deleteJob(quartzJob.getKey());
-                log.info("Associated WACODIS job management: the quartz job with key '{}' was deleted.", quartzJob.getKey());
-
-            } else {
-                this.scheduler.unscheduleJob(triggerKey);
-                log.info("Associated WACODIS job management: the quartz job with key '{}' was unscheduled. Hence the trigger with key '{}' was removed.", quartzJob.getKey(), triggerKey);
-            }
-        }
-
-    }
+		return wacodisJobIds;
+	}
 
 	public void replaceExistingJob_byKey(JobKey quartzKey_old, JobDetail quartzJob, Trigger trigger) throws SchedulerException {
 		this.scheduler.deleteJob(quartzKey_old);
