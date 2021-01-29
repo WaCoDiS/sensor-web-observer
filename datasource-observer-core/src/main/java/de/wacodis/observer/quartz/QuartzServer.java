@@ -6,9 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -130,11 +127,9 @@ public class QuartzServer implements InitializingBean {
     }
 
     public void addWacodisJobIdAndBBOXToQuartzJobDataMap(JobDetail quartzJob, UUID wacodisJobId, AbstractDataEnvelopeAreaOfInterest areaOfInterest, boolean replaceExistingQuartzJob) throws SchedulerException {
-        JobDataMap jobDataMap = quartzJob.getJobDataMap();
-
-        addWacodisJobIdToJobDataMap(quartzJob, wacodisJobId, jobDataMap);
+        addWacodisJobIdToJobDataMap(quartzJob, wacodisJobId);
         
-        bboxHelper.addWacodisJobIdAndBBOXToJobDataMap(quartzJob, wacodisJobId, areaOfInterest, jobDataMap);
+        bboxHelper.addWacodisJobIdAndBBOXToJobDataMap(quartzJob, wacodisJobId, areaOfInterest);
 
         // now we must replace the existing job innscheduler in order to apply the updated jobDataMap !
         // otherwise the initial jobDataMa will still be used
@@ -143,10 +138,10 @@ public class QuartzServer implements InitializingBean {
         }
     }
 
-	private void addWacodisJobIdToJobDataMap(JobDetail quartzJob, UUID wacodisJobId, JobDataMap jobDataMap) {
+	private void addWacodisJobIdToJobDataMap(JobDetail quartzJob, UUID wacodisJobId) {
 		log.info("Associated WACODIS job management: add WACODIS job ID '{}' to the associated jobs of quartz job with key '{}' .", wacodisJobId, quartzJob.getKey());
 
-
+		JobDataMap jobDataMap = quartzJob.getJobDataMap();
         // implement a storage for associated WACODIS job ids than require the quartz job
 
         // implement as HashSet in order to ensure that WACODIS jobIds cannot be inserted twice
@@ -212,9 +207,7 @@ public class QuartzServer implements InitializingBean {
 
 	private JobDetail removeWacodisJobBboxFromJobDataMap(JobDetail quartzJob, UUID wacodisJobId,
 			HashSet<UUID> remainingWacodisJobIds) throws SchedulerException {
-		JobDataMap jobDataMap = quartzJob.getJobDataMap();
-		
-		String bboxOfDeletedWacodisJob = bboxHelper.removeWacodisJobIdAndBBOXFromJobDataMap(quartzJob, wacodisJobId, jobDataMap);
+		String bboxOfDeletedWacodisJob = bboxHelper.removeWacodisJobIdAndBBOXFromJobDataMap(quartzJob, wacodisJobId);
 		
 		// now we must replace the existing job innscheduler in order to apply the updated jobDataMap !
         // otherwise the initial jobDataMa will still be used

@@ -238,15 +238,15 @@ public class BboxHelper {
 	}
 
 	public void addWacodisJobIdAndBBOXToJobDataMap(JobDetail quartzJob, UUID wacodisJobId,
-			AbstractDataEnvelopeAreaOfInterest areaOfInterest, JobDataMap jobDataMap) {
+			AbstractDataEnvelopeAreaOfInterest areaOfInterest) {
 		String bbox = this.getBboxStringFromAreaOfInterest(areaOfInterest.getExtent());
 		logger.info("Associated WACODIS job management: add WACODIS job ID '{}' and BBOX '{}' to the quartz job with key '{}'. Set wocodisJobId as map key and the BBOX string as map value.", wacodisJobId, bbox, quartzJob.getKey());
 
-        jobDataMap.put(wacodisJobId.toString(), bbox);	
+        quartzJob.getJobDataMap().put(wacodisJobId.toString(), bbox);	
 	}
 	
-	public String removeWacodisJobIdAndBBOXFromJobDataMap(JobDetail quartzJob, UUID wacodisJobId,
-			JobDataMap jobDataMap) {
+	public String removeWacodisJobIdAndBBOXFromJobDataMap(JobDetail quartzJob, UUID wacodisJobId) {
+		JobDataMap jobDataMap = quartzJob.getJobDataMap();
 		Object bbox = jobDataMap.get(wacodisJobId.toString());
 		logger.info("Associated WACODIS job management: remove WACODIS job ID '{}' and its BBOX '{}' from the quartz job with key '{}'. ", wacodisJobId, bbox, quartzJob.getKey());
         jobDataMap.remove(wacodisJobId.toString());	
