@@ -254,7 +254,7 @@ public class BboxHelper {
         return (String) bbox;
 	}
 
-	public JobDetail regenerateBboxForQuartzJob(JobDetail quartzJob, UUID wacodisJobId, String bboxOfDeletedWacodisJob,
+	public JobDetail regenerateBboxForQuartzJob(JobDetail quartzJob, UUID wacodisJobId, 
 			HashSet<UUID> remainingWacodisJobIds, String aoiKey) {
 		
 		JobDataMap jobDataMap = quartzJob.getJobDataMap();

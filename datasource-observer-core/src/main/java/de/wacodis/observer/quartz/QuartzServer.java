@@ -214,7 +214,7 @@ public class QuartzServer implements InitializingBean {
         this.scheduler.addJob(quartzJob, true);
         quartzJob = this.scheduler.getJobDetail(quartzJob.getKey());
         
-		JobDetail newQuartzJob = bboxHelper.regenerateBboxForQuartzJob(quartzJob, wacodisJobId, bboxOfDeletedWacodisJob, remainingWacodisJobIds, JobScheduler.AOI_KEY);
+		JobDetail newQuartzJob = bboxHelper.regenerateBboxForQuartzJob(quartzJob, wacodisJobId, remainingWacodisJobIds, JobScheduler.AOI_KEY);
 		
 		return newQuartzJob;		
 	}
