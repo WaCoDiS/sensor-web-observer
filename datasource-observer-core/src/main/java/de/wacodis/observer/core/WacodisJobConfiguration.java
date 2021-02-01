@@ -169,8 +169,8 @@ public class WacodisJobConfiguration {
 
 	private static JobDataMap setTemporalCoverage(JobDataMap data_cloned, DateTime temporalCoverageStartDate,
             DateTime temporalCoverageEndDate) {
-        logger.info("Set initial temporalCoverage startDate to {}", temporalCoverageStartDate.toString());
-        logger.info("Set initial temporalCoverage endDate to {}", temporalCoverageEndDate.toString());
+        logger.debug("Set initial temporalCoverage startDate to {}", temporalCoverageStartDate.toString());
+        logger.debug("Set initial temporalCoverage endDate to {}", temporalCoverageEndDate.toString());
         data_cloned.put(TemporalCoverageConstants.START_DATE, temporalCoverageStartDate.toString());
         data_cloned.put(TemporalCoverageConstants.END_DATE, temporalCoverageEndDate.toString());
 

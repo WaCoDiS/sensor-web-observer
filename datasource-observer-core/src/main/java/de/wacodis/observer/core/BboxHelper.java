@@ -94,7 +94,7 @@ public class BboxHelper {
 	private boolean intersects(String bboxString_newWacodisJob, String bboxString_quartzJob) {
 		// input strings follow pattern: "minLon,minLat,maxLon,maxLat" in EPSG:4326
 		
-		logger.info("Spatially compare BBOXes {} and {}", bboxString_quartzJob, bboxString_newWacodisJob);
+		logger.debug("Spatially compare BBOXes {} and {}", bboxString_quartzJob, bboxString_newWacodisJob);
 		
 		// an intersection of two BBOXes is only true, if BBoxes are not disjoint and actually touch each other
 		
@@ -204,7 +204,7 @@ public class BboxHelper {
 
 	private String getExpandedBbox(String bboxSubstring_quartzJob, String bboxSubstring_wacodisJob) {
 		
-		logger.info("Create expanded BBOX from input BBOXes {} and {}", bboxSubstring_quartzJob, bboxSubstring_wacodisJob);
+		logger.debug("Create expanded BBOX from input BBOXes {} and {}", bboxSubstring_quartzJob, bboxSubstring_wacodisJob);
 		
 		String[] bbox_wacodisJob_stringSplit = bboxSubstring_wacodisJob.split(",");
 		String[] bbox_quartzJob_stringSplit = bboxSubstring_quartzJob.split(",");
