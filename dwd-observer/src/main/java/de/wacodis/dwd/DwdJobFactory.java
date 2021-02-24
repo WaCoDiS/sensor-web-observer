@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,5 +128,19 @@ public class DwdJobFactory implements JobFactory {
         return builder.toString();
 
     }
+    
+    @Override
+	public Class getQuartzJobClass() {
+		// TODO Auto-generated method stub
+		return DwdJob.class;
+	}
+    
+    @Override
+	public JobDetail modifyBboxParameter(JobDetail jobDetail, String expandedBbox) {
+		String[] split = expandedBbox.split(",");
+		String extent = split[0] + " " + split[1] + "," + split[2] + " " + split[3];
+		jobDetail.getJobDataMap().put(DwdJob.EXECUTION_AREA_KEY, extent);    // e.g. "52.0478 6.0124,52.5687 7.1420"
+		return jobDetail;
+	}
 
 }

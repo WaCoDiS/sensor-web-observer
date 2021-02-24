@@ -7,6 +7,7 @@ import de.wacodis.observer.model.CopernicusSubsetDefinition;
 import de.wacodis.observer.model.WacodisJobDefinition;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,4 +119,18 @@ public class CodeDeJobFactory implements JobFactory {
                 ? String.join("_", productId, def.getProductType())
                 : productId;
     }
+
+	@Override
+	public Class getQuartzJobClass() {
+		// TODO Auto-generated method stub
+		return CodeDeJob.class;
+	}
+
+	@Override
+	public JobDetail modifyBboxParameter(JobDetail jobDetail, String expandedBbox) {
+		String[] split = expandedBbox.split(",");
+		String extent = split[0] + " " + split[1] + "," + split[2] + " " + split[3];
+		jobDetail.getJobDataMap().put(CodeDeJob.BBOX_KEY, extent);    // e.g. "52.0478 6.0124,52.5687 7.1420"
+		return jobDetail;
+	}
 }
