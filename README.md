@@ -30,7 +30,7 @@ For a detailed overview about the WaCoDiS system architecture please visit the
 **[WaCoDiS Core Engine](https://github.com/WaCoDiS/core-engine)** repository.  
 
 ## Overview  
-The WaCoDiS Datasource Observer is capable of querying metadata about concrete datasets of required datasources. Currently supported datasources comprise (the list can be extended through implementation of the relevant source code interfaces):
+The WaCoDiS Datasource Observer is capable of querying metadata about concrete datasets from different datasources that is needed as input data for WaCoDiS processing jobs. Currently supported datasources comprise (the list can be extended through implementation of the relevant source code interfaces):
 
  - **Copernicus satellite** data from either 
     - SentinelHub
@@ -46,7 +46,7 @@ For each supported datasource additional spatio-temporal information is required
  Within the WaCoDiS system, the Datasource Observer subscribes to message broker *WacodisJobDefinition* creation/deletion events sent by the [Job Definition API](https://github.com/WaCoDiS/job-definition-api). Each *WacodisJobDefinition* includes all necessary information about the previously mentioned spatio-temporal aspects as well as details about required datasets from the upper listed datasources (so-called WaCoDiS *SubsetDefinitions*). 
  
 On *WacodisJobDefinition* creation events the Datasource Observer analyzes the job details and may start to observe the relevent datasources, i.e. query metadata about actual datasets for the job specific spatio-temporal and Subset-depending settings.
-According to the various *WacoidsJobDefinition* settings these observations may vary between single-time-execution events or regularly repeated processes, observing processes might be started immediately or in the future, and data queries might cover datasets from the past or current datasets.
+According to the various *WacodisJobDefinition* settings these observations may vary between single-time-execution events or regularly repeated processes, observing processes might be started immediately or in the future, and data queries might cover datasets from the past or current datasets.
 
 As soon as relevant datasets are identified the queried dataset metadata is sent as *DataEnvelope* event to the message broker. Subscribed components (i.e. [WaCoDiS Metadata Connector](https://github.com/WaCoDiS/metadata-connector)) pick up and process that information (e.g. check whether metadata for the found datasets have been already registered at the 
 **[Data Access API](https://github.com/WaCoDiS/data-access-api)**)
