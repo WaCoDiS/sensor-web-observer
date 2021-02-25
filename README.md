@@ -35,7 +35,7 @@ The WaCoDiS Datasource Observer is capable of querying metadata about concrete d
  - **Copernicus satellite** data from either 
     - SentinelHub
     - Code-DE
- - **Sensor Data** served by standardized Sensor Observation Service APIs
+ - **Sensor Data** served by standardized OGC Sensor Observation Service APIs (OGC SOS)
  - **Weather Information** available from German weather service (DWD)
  
 For each supported datasource additional spatio-temporal information is required so the Datasource Observer may know which concrete datasets must be queried. In essence, the following aspects are consumed:
