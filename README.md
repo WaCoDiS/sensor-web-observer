@@ -238,20 +238,20 @@ For each of the previously listed supported datasource types, the Datasource Obs
 
 It is possible to enhance Datasource Observer for handling additional dataset types. To do so, the following steps are 
 required:
-  1. Make sure that the datasource type is present within the WaCoDiS data model as implementation of the abstract model ``AbstractSubsetDefinition``. 
-     1.1 In order to be consistent with other WaCoDiS components regarding the support for different data types, we strongly recommend generating the new model classes from an [OpenAPI definition](https://github.com/WaCoDiS/apis-and-workflows/tree/master/openapi).
+ 1. Make sure that the datasource type is present within the WaCoDiS data model as implementation of the abstract model ``AbstractSubsetDefinition``. 
+    1. In order to be consistent with other WaCoDiS components regarding the support for different data types, we strongly recommend generating the new model classes from an [OpenAPI definition](https://github.com/WaCoDiS/apis-and-workflows/tree/master/openapi).
 If not already done, first define your new _DataEnvelope_ within the OpenAPI document.
-     1.2 The [Datasource Observer Models module](data-models) provides Maven profiles for automatically
+    2. The [Datasource Observer Models module](data-models) provides Maven profiles for automatically
 generating model classes from an OpenAPI document. The _generate-models_ profile generates the models from a Maven
 artifact you first have to create for the [OpenAPI definition](https://github.com/WaCoDiS/apis-and-workflows/tree/master/openapi)
 project. By using the _download-generate-models_ profile there is no need to create the artifact in beforehand, since
 the execution of this profile will download the latest OpenAPI definitions and then creates the models on top of it. 
 You can trigger the profiles by respectively running `mvn clean compile -Pgenerate-models` and
 `mvn clean compile -Pdownload-generate-models`.
-  2. Implement the core module interface `JobFactory` and associated Quartz's ``Job`` class.
-     2.1 It is advised to encapsulate the implementation within a separate Maven module to keep it clean from the core code and focus the code on the actual data query means. 
-     2.2 For examples inspect the already existing Maven Modules ``code-de-observer``, ``sentinel-observer``, ``dwd-observer`` or ``sensor-web-observer``
-     2.3 edit the root ``pom.xml`` and include the new Maven module in the ``modules`` section
+ 2. Implement the core module interface `JobFactory` and associated Quartz's ``Job`` class.
+    1. It is advised to encapsulate the implementation within a separate Maven module to keep it clean from the core code and focus the code on the actual data query means. 
+    2. For examples inspect the already existing Maven Modules ``code-de-observer``, ``sentinel-observer``, ``dwd-observer`` or ``sensor-web-observer``
+    3. edit the root ``pom.xml`` and include the new Maven module in the ``modules`` section
 
 
 ### How to contribute
