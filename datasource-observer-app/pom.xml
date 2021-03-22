@@ -55,13 +55,6 @@
             <groupId>de.wacodis</groupId>
             <artifactId>code-de-observer</artifactId>
         </dependency>
-
-        <!-- Test-Scope -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <dependencyManagement>
