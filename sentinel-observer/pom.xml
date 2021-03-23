@@ -4,7 +4,7 @@
     <parent>
         <artifactId>datasource-observer</artifactId>
         <groupId>de.wacodis</groupId>
-        <version>2.1.3-SNAPSHOT</version>
+        <version>3.0.0</version>
     </parent>
 
     <artifactId>sentinel-observer</artifactId>
